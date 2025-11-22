@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { Send, MessageSquare, ThumbsUp, AlertTriangle, X } from 'lucide-react';
-import TypingText from './ui/TypingText';
+import { useState, useEffect } from 'react';
+import { Send, ThumbsUp, AlertTriangle, X } from 'lucide-react';
+
 
 interface Post {
     id: string;

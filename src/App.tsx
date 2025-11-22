@@ -115,7 +115,7 @@ export default function App() {
         if (elapsed < totalDuration || parsed.isExamFinished) {
           // Restore session if within 45 mins OR if exam is already finished (to see results)
           setQuestions(parsed.questions);
-          setUserState(prev => ({
+          setUserState(() => ({
             ...parsed.userState,
             timeRemaining: parsed.isExamFinished ? 0 : Math.max(0, totalDuration - elapsed)
           }));
