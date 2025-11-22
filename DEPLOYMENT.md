@@ -45,7 +45,7 @@ Vercel ospiterà il sito (React).
 1.  Nel tuo codice locale, apri il file `vercel.json` (l'ho appena creato).
 2.  Modifica la riga `destination` inserendo l'URL di Render che hai appena copiato:
     ```json
-    "destination": "https://stresstest-api.onrender.com/api/$1"
+    "destination": "https://stresstest-pvuf.onrender.com/api/$1"
     ```
 3.  Fai un commit e push di questa modifica:
     ```bash
