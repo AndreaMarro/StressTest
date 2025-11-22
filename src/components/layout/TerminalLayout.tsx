@@ -1,4 +1,5 @@
-import { ReactNode, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { Shield, Cookie, Sun, Moon } from 'lucide-react';
 import PrivacyPolicy from '../PrivacyPolicy';
 import CookiePolicy from '../CookiePolicy';
