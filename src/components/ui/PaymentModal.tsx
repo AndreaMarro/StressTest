@@ -124,6 +124,18 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess }: PaymentModalProps) 
                         <p className="mt-4 font-bold text-gray-500">Caricamento Stripe...</p>
                     </div>
                 )}
+
+                {/* DEV BYPASS BUTTON */}
+                {import.meta.env.DEV && (
+                    <div className="mt-4 pt-4 border-t-2 border-dashed border-gray-300">
+                        <button
+                            onClick={onSuccess}
+                            className="w-full py-2 bg-yellow-400 text-black font-bold rounded border-2 border-black hover:bg-yellow-500 transition-colors text-xs uppercase tracking-widest"
+                        >
+                            ⚠️ DEV_MODE: BYPASS PAYMENT
+                        </button>
+                    </div>
+                )}
             </NeoCard>
         </div>
     );

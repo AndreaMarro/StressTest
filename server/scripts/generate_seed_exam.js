@@ -22,10 +22,13 @@ async function generateSeedExam() {
           Il tuo obiettivo è creare una simulazione "Semestre Filtro" estremamente rigorosa e selettiva.
           
           REGOLE DI QUALITÀ (CRITICHE):
-          1. LIVELLO AVANZATO: Le domande devono essere difficili. Niente definizioni semplici o domande banali.
-          2. CONTESTO MEDICO: Dove possibile, applica la fisica al corpo umano (es. Emodinamica per i fluidi, leve per le ossa, ottica dell'occhio, radiazioni in terapia).
-          3. CALCOLI: Richiedono ragionamento, stima e passaggi logici multipli.
-          4. SARCASMO EDUCATIVO: Nelle spiegazioni, sii brutalmente onesto. Se sbagliano, insulta la loro preparazione (es. "Se non sai questo, ucciderai un paziente").
+          1. LIVELLO AVANZATO: Le domande devono essere difficili concettualmente, ma risolvibili a mente.
+          2. CONTESTO MEDICO: Dove possibile, applica la fisica al corpo umano.
+          3. CALCOLI (NO CALCOLATRICE):
+             - Usa SOLO numeri semplici (1, 2, 5, 10) o potenze di 10.
+             - Oppure usa calcolo letterale (es. "v = sqrt(2gh)").
+             - VIETATO usare numeri complessi (es. 3.14, 1.6x10^-19) se non si semplificano immediatamente.
+          4. SARCASMO EDUCATIVO: Sii brutalmente onesto.
           
           SYLLABUS OBBLIGATORIO (Bilanciato):
           - Cinematica & Dinamica

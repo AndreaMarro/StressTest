@@ -401,7 +401,7 @@ export default function App() {
           <p className="text-sm text-terminal-dim mb-4">Focus verticale. Scopri dove sei carente prima che sia troppo tardi.</p>
 
           {examType === 'topic' && (
-            <div className="mt-4 animate-in fade-in slide-in-from-top-2">
+            <div className="mt-4 animate-in fade-in duration-300">
               <select
                 value={selectedTopic}
                 onChange={(e) => setSelectedTopic(e.target.value)}
@@ -418,7 +418,7 @@ export default function App() {
       </div>
 
       {examType && (
-        <div className="terminal-box animate-in fade-in zoom-in duration-300 border-terminal-green">
+        <div className="terminal-box animate-in fade-in duration-300 border-terminal-green">
           <div className="flex items-center gap-2 mb-4 text-terminal-green">
             <Terminal size={16} />
             <span className="text-sm font-bold">CONFIGURE_DIFFICULTY_LEVEL</span>
@@ -671,7 +671,7 @@ export default function App() {
           </div>
 
           {aiStudyPlan && (
-            <div className="mt-8 text-left border-t border-terminal-dim pt-8 animate-in fade-in slide-in-from-bottom-4">
+            <div className="mt-8 text-left border-t border-terminal-dim pt-8 animate-in fade-in duration-500">
               <h3 className="text-terminal-green font-bold mb-4 flex items-center gap-2"><Brain size={16} /> NEURAL_ANALYSIS_LOG</h3>
               <div className="prose prose-invert max-w-none text-sm font-mono text-terminal-text">
                 <MathText content={aiStudyPlan} />
