@@ -36,8 +36,12 @@ We have successfully built the "StressTest FISICA" web application, a Neo-Brutal
 2.  **Start Dev Server**: `npm run dev`
 3.  **Build for Production**: `npm run build`
 
-## Deployment
-To deploy on Hostinger or similar:
-1.  Run `npm run build`.
-2.  Upload the contents of the `dist/` folder to your `public_html`.
-3.  Ensure your server supports SPA routing (rewrite rules to `index.html`).
+## Live Deployment
+- **Frontend (Vercel)**: [https://stress-test-taupe.vercel.app](https://stress-test-taupe.vercel.app)
+- **Backend (Render)**: [https://stresstest-pvuf.onrender.com](https://stresstest-pvuf.onrender.com)
+
+## Deployment Steps
+1.  **Backend**: Deployed to Render (Node.js service).
+2.  **Frontend**: Deployed to Vercel (Vite SPA).
+3.  **Connection**: `vercel.json` proxies API requests to Render.
+
