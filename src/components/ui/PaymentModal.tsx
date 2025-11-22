@@ -65,7 +65,7 @@ const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 {isLoading ? (
                     <span className="animate-pulse">ELABORAZIONE...</span>
                 ) : (
-                    <><Lock size={18} /> PAGA €0.49</>
+                    <><Lock size={18} /> PAGA €0.50</>
                 )}
             </NeoButton>
 
@@ -111,7 +111,7 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess }: PaymentModalProps) 
 
                 <div className="bg-neo-bg p-4 rounded-lg border-2 border-black mb-6 text-center">
                     <span className="block text-sm font-bold text-gray-500 uppercase">Totale da pagare</span>
-                    <span className="block text-4xl font-black text-black">€0.49</span>
+                    <span className="block text-4xl font-black text-black">€0.50</span>
                 </div>
 
                 {clientSecret ? (

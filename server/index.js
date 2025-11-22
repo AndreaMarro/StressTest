@@ -10,6 +10,9 @@ const rateLimit = require('express-rate-limit');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Trust Proxy for Render/Heroku
+app.set('trust proxy', 1);
+
 // Security Middleware
 app.use(helmet());
 app.use(cors({
@@ -130,7 +133,7 @@ app.post('/api/create-payment-intent', async (req, res) => {
     try {
         // Create a PaymentIntent with the order amount and currency
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: 49, // €0.49
+            amount: 50, // €0.50 (Minimum allowed by Stripe)
             currency: 'eur',
             automatic_payment_methods: {
                 enabled: true,
