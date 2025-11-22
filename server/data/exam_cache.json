@@ -1,1 +1,600 @@
-[]
+[
+  {
+    "id": "1763840554807",
+    "topic": "Cinematica",
+    "difficulty": "easy",
+    "questions": [
+      {
+        "text": "Un'auto parte da ferma e accelera uniformemente. Se percorre $100 \\text{ m}$ in $10 \\text{ s}$, qual è la sua accelerazione?",
+        "type": "multiple_choice",
+        "options": [
+          "$1 \\text{ m/s}^2$",
+          "$2 \\text{ m/s}^2$",
+          "$5 \\text{ m/s}^2$",
+          "$10 \\text{ m/s}^2$",
+          "$20 \\text{ m/s}^2$"
+        ],
+        "correctAnswer": "$2 \\text{ m/s}^2$",
+        "explanation": "Hai dimenticato il fattore $\\frac{1}{2}$? In corsia, errori di base come questo possono portare a dosaggi sbagliati. La formula corretta per lo spostamento con accelerazione costante da fermo è $s = \\frac{1}{2} a t^2$. Quindi, $100 = \\frac{1}{2} a (10)^2$, che semplifica a $100 = 50a$, da cui $a = 2 \\text{ m/s}^2$."
+      },
+      {
+        "text": "Un oggetto viene lanciato verticalmente verso l'alto con velocità iniziale $20 \\text{ m/s}$. Qual è l'altezza massima raggiunta? (usa $g = 10 \\text{ m/s}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$10 \\text{ m}$",
+          "$20 \\text{ m}$",
+          "$40 \\text{ m}$",
+          "$100 \\text{ m}$",
+          "$200 \\text{ m}$"
+        ],
+        "correctAnswer": "$20 \\text{ m}$",
+        "explanation": "Se pensavi che l'altezza massima fosse semplicemente $u t$, ripassa le equazioni del moto uniformemente accelerato. All'altezza massima, la velocità è zero, quindi usa $v^2 = u^2 - 2g h$. Impostando $v=0$, si ottiene $0 = (20)^2 - 2 \\times 10 \\times h$, quindi $400 = 20h$, e $h = 20 \\text{ m}$."
+      },
+      {
+        "text": "Un proiettile è sparato con velocità iniziale $50 \\text{ m/s}$ ad un angolo di $45^\\circ$. Qual è il suo range? (usa $g = 10 \\text{ m/s}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$50 \\text{ m}$",
+          "$100 \\text{ m}$",
+          "$125 \\text{ m}$",
+          "$250 \\text{ m}$",
+          "$500 \\text{ m}$"
+        ],
+        "correctAnswer": "$250 \\text{ m}$",
+        "explanation": "Il range massimo per un proiettile si ha a $45^\\circ$ ed è dato da $R = \\frac{u^2 \\sin 2\\theta}{g}$. Qui $\\sin 90^\\circ = 1$, quindi $R = \\frac{(50)^2 \\times 1}{10} = \\frac{2500}{10} = 250 \\text{ m}$. Se hai ottenuto un altro valore, forse hai confuso l'angolo o la formula."
+      },
+      {
+        "text": "Due auto viaggiano nella stessa direzione. Auto A a $20 \\text{ m/s}$, Auto B a $25 \\text{ m/s}$. Qual è la velocità relativa di B rispetto ad A?",
+        "type": "multiple_choice",
+        "options": [
+          "$5 \\text{ m/s}$ nella direzione di B",
+          "$5 \\text{ m/s}$ nella direzione opposta",
+          "$45 \\text{ m/s}$",
+          "$20 \\text{ m/s}$",
+          "$25 \\text{ m/s}$"
+        ],
+        "correctAnswer": "$5 \\text{ m/s}$ nella direzione di B",
+        "explanation": "Velocità relativa per oggetti nella stessa direzione: $v_{B/A} = v_B - v_A = 25 - 20 = 5 \\text{ m/s}$. Poiché B è più veloce, la direzione è quella di B. In medicina, confondere direzioni può portare a errori diagnostici."
+      },
+      {
+        "text": "Un treno accelera da $10 \\text{ m/s}$ a $30 \\text{ m/s}$ in $4 \\text{ s}$. Qual è la sua accelerazione?",
+        "type": "multiple_choice",
+        "options": [
+          "$2 \\text{ m/s}^2$",
+          "$5 \\text{ m/s}^2$",
+          "$10 \\text{ m/s}^2$",
+          "$15 \\text{ m/s}^2$",
+          "$20 \\text{ m/s}^2$"
+        ],
+        "correctAnswer": "$5 \\text{ m/s}^2$",
+        "explanation": "Accelerazione media: $a = \\frac{\\Delta v}{\\Delta t} = \\frac{30 - 10}{4} = \\frac{20}{4} = 5 \\text{ m/s}^2$. Semplice, ma se non lo calcoli correttamente, potresti sbagliare stime critiche in emergenze."
+      },
+      {
+        "text": "Un corpo in caduta libera da un'altezza di $80 \\text{ m}$. Quanto tempo impiega a raggiungere il suolo? (usa $g = 10 \\text{ m/s}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$2 \\text{ s}$",
+          "$4 \\text{ s}$",
+          "$8 \\text{ s}$",
+          "$10 \\text{ s}$",
+          "$16 \\text{ s}$"
+        ],
+        "correctAnswer": "$4 \\text{ s}$",
+        "explanation": "Tempo di caduta: $t = \\sqrt{\\frac{2s}{g}} = \\sqrt{\\frac{2 \\times 80}{10}} = \\sqrt{\\frac{160}{10}} = \\sqrt{16} = 4 \\text{ s}$. Se hai usato $s = g t$ senza il $\\frac{1}{2}$, è un errore da principiante che in terapia intensiva potrebbe essere fatale."
+      },
+      {
+        "text": "La velocità di un oggetto è data da $v(t) = 5t + 2$ (in m/s). Qual è l'accelerazione all'istante $t=3 \\text{ s}$?",
+        "type": "multiple_choice",
+        "options": [
+          "$2 \\text{ m/s}^2$",
+          "$5 \\text{ m/s}^2$",
+          "$15 \\text{ m/s}^2$",
+          "$17 \\text{ m/s}^2$",
+          "$20 \\text{ m/s}^2$"
+        ],
+        "correctAnswer": "$5 \\text{ m/s}^2$",
+        "explanation": "L'accelerazione è la derivata della velocità rispetto al tempo: $a = \\frac{dv}{dt} = 5 \\text{ m/s}^2$, costante. Se hai provato a sostituire $t=3$, hai confuso velocità e accelerazione—un errore che in farmacologia può alterare le dosi."
+      },
+      {
+        "text": "Un oggetto si muove con accelerazione costante $a = 4 \\text{ m/s}^2$. Se la velocità iniziale è $0$, qual è la velocità dopo $5 \\text{ s}$?",
+        "type": "multiple_choice",
+        "options": [
+          "$4 \\text{ m/s}$",
+          "$10 \\text{ m/s}$",
+          "$20 \\text{ m/s}$",
+          "$25 \\text{ m/s}$",
+          "$100 \\text{ m/s}$"
+        ],
+        "correctAnswer": "$20 \\text{ m/s}$",
+        "explanation": "Equazione della velocità: $v = u + a t = 0 + 4 \\times 5 = 20 \\text{ m/s}$. Se non ricordi questa formula base, forse dovresti ripassare prima di pensare di entrare in aula operatoria."
+      },
+      {
+        "text": "Un proiettile è lanciato orizzontalmente da un'altezza di $45 \\text{ m}$ con velocità $15 \\text{ m/s}$. Quanto tempo impiega a toccare terra? (usa $g = 10 \\text{ m/s}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$1 \\text{ s}$",
+          "$3 \\text{ s}$",
+          "$4.5 \\text{ s}$",
+          "$9 \\text{ s}$",
+          "$15 \\text{ s}$"
+        ],
+        "correctAnswer": "$3 \\text{ s}$",
+        "explanation": "Il tempo di volo per un lancio orizzontale dipende solo dall'altezza: $t = \\sqrt{\\frac{2h}{g}} = \\sqrt{\\frac{2 \\times 45}{10}} = \\sqrt{\\frac{90}{10}} = \\sqrt{9} = 3 \\text{ s}$. La velocità orizzontale è irrilevante per il tempo—confonderlo è come scambiare sintomi in anamnesi."
+      },
+      {
+        "text": "Un auto viaggia a $72 \\text{ km/h}$. Converti in m/s.",
+        "type": "multiple_choice",
+        "options": [
+          "$10 \\text{ m/s}$",
+          "$15 \\text{ m/s}$",
+          "$20 \\text{ m/s}$",
+          "$25 \\text{ m/s}$",
+          "$30 \\text{ m/s}$"
+        ],
+        "correctAnswer": "$20 \\text{ m/s}$",
+        "explanation": "Conversione: $1 \\text{ km/h} = \\frac{5}{18} \\text{ m/s}$, quindi $72 \\text{ km/h} = 72 \\times \\frac{5}{18} = 4 \\times 5 = 20 \\text{ m/s}$. Se non converti le unità, in laboratorio potresti mischiare campioni con scale diverse."
+      },
+      {
+        "text": "La posizione di una particella è data da $s(t) = t^2 - 4t + 3$ (in metri). Qual è la velocità all'istante $t=2 \\text{ s}$?",
+        "type": "multiple_choice",
+        "options": [
+          "$0 \\text{ m/s}$",
+          "$2 \\text{ m/s}$",
+          "$4 \\text{ m/s}$",
+          "$6 \\text{ m/s}$",
+          "$8 \\text{ m/s}$"
+        ],
+        "correctAnswer": "$0 \\text{ m/s}$",
+        "explanation": "Velocità: $v(t) = \\frac{ds}{dt} = 2t - 4$. A $t=2 \\text{ s}$, $v = 2(2) - 4 = 4 - 4 = 0 \\text{ m/s}$. Se hai derivato male, è come interpretare erroneamente un tracciato ECG."
+      },
+      {
+        "text": "Un oggetto è lanciato verso l'alto e ritorna al punto di partenza in $6 \\text{ s}$. Qual era la velocità iniziale? (usa $g=10 \\text{ m/s}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$10 \\text{ m/s}$",
+          "$20 \\text{ m/s}$",
+          "$30 \\text{ m/s}$",
+          "$40 \\text{ m/s}$",
+          "$60 \\text{ m/s}$"
+        ],
+        "correctAnswer": "$30 \\text{ m/s}$",
+        "explanation": "Tempo totale di volo per lancio verticale: $T = \\frac{2u}{g}$. Quindi $6 = \\frac{2u}{10}$, da cui $2u = 60$ e $u = 30 \\text{ m/s}$. Se hai usato solo il tempo di salita, hai trascurato la simmetria—in fisiologia, ignorare simmetrie può portare a diagnosi errate."
+      },
+      {
+        "text": "Un treno lungo $100 \\text{ m}$ attraversa un ponte lungo $200 \\text{ m}$ a velocità costante $20 \\text{ m/s}$. Quanto tempo impiega per attraversare completamente il ponte?",
+        "type": "multiple_choice",
+        "options": [
+          "$5 \\text{ s}$",
+          "$10 \\text{ s}$",
+          "$15 \\text{ s}$",
+          "$20 \\text{ s}$",
+          "$25 \\text{ s}$"
+        ],
+        "correctAnswer": "$15 \\text{ s}$",
+        "explanation": "Il treno deve coprire la sua lunghezza più quella del ponte: $s = 100 + 200 = 300 \\text{ m}$. Tempo: $t = \\frac{s}{v} = \\frac{300}{20} = 15 \\text{ s}$. Se consideri solo la lunghezza del ponte, è come dimenticare le dimensioni di un organo in chirurgia."
+      },
+      {
+        "text": "Un auto accelera da $0$ a $60 \\text{ km/h}$ in $5 \\text{ s}$. Qual è l'accelerazione in $\\text{m/s}^2$? (converti prima)",
+        "type": "multiple_choice",
+        "options": [
+          "$2 \\text{ m/s}^2$",
+          "$3.33 \\text{ m/s}^2$",
+          "$4 \\text{ m/s}^2$",
+          "$5 \\text{ m/s}^2$",
+          "$6 \\text{ m/s}^2$"
+        ],
+        "correctAnswer": "$3.33 \\text{ m/s}^2$",
+        "explanation": "Prima converti: $60 \\text{ km/h} = 60 \\times \\frac{5}{18} = \\frac{300}{18} = \\frac{50}{3} \\approx 16.67 \\text{ m/s}$. Poi accelerazione: $a = \\frac{\\Delta v}{\\Delta t} = \\frac{50/3}{5} = \\frac{50}{15} = \\frac{10}{3} \\approx 3.33 \\text{ m/s}^2$. Errori di conversione in medicina possono causare sovradosaggi."
+      },
+      {
+        "text": "La velocità di un oggetto diminuisce uniformemente da $30 \\text{ m/s}$ a $10 \\text{ m/s}$ in $4 \\text{ s}$. Qual è l'accelerazione?",
+        "type": "multiple_choice",
+        "options": [
+          "$-5 \\text{ m/s}^2$",
+          "$-10 \\text{ m/s}^2$",
+          "$5 \\text{ m/s}^2$",
+          "$10 \\text{ m/s}^2$",
+          "$20 \\text{ m/s}^2$"
+        ],
+        "correctAnswer": "$-5 \\text{ m/s}^2$",
+        "explanation": "Accelerazione: $a = \\frac{v_f - v_i}{t} = \\frac{10 - 30}{4} = \\frac{-20}{4} = -5 \\text{ m/s}^2$. Il segno negativo indica decelerazione. Ignorare il segno è come non riconoscere un trend in un grafico vitale."
+      },
+      {
+        "text": "Un corpo in caduta libera da $80 \\text{ m}$ impiega quanto tempo? (usa $g=10 \\text{ m/s}^2$)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$4 \\text{ s}$",
+        "explanation": "Tempo di caduta: $t = \\sqrt{\\frac{2s}{g}} = \\sqrt{\\frac{2 \\times 80}{10}} = \\sqrt{\\frac{160}{10}} = \\sqrt{16} = 4 \\text{ s}$. Se hai sbagliato, forse confondi caduta libera con moto uniforme—in pronto soccorso, ogni secondo conta."
+      },
+      {
+        "text": "Velocità iniziale per lancio verticale se tempo totale di volo è $8 \\text{ s}$? (usa $g=10 \\text{ m/s}^2$)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$40 \\text{ m/s}$",
+        "explanation": "Tempo totale: $T = \\frac{2u}{g}$, quindi $8 = \\frac{2u}{10}$, da cui $2u = 80$ e $u = 40 \\text{ m/s}$. Se non ricordi questa relazione, è come non conoscere la farmacocinetica di base."
+      },
+      {
+        "text": "Accelerazione se velocità passa da $10 \\text{ m/s}$ a $30 \\text{ m/s}$ in $5 \\text{ s}$?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$4 \\text{ m/s}^2$",
+        "explanation": "Accelerazione media: $a = \\frac{\\Delta v}{\\Delta t} = \\frac{30 - 10}{5} = \\frac{20}{5} = 4 \\text{ m/s}^2$. Calcoli così semplici devono essere automatici, come contare i battiti cardiaci."
+      },
+      {
+        "text": "Distanza percorsa in $6 \\text{ s}$ da un oggetto con accelerazione costante $2 \\text{ m/s}^2$ da fermo?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$36 \\text{ m}$",
+        "explanation": "Spostamento: $s = \\frac{1}{2} a t^2 = \\frac{1}{2} \\times 2 \\times (6)^2 = \\frac{1}{2} \\times 2 \\times 36 = 36 \\text{ m}$. Omettere il $\\frac{1}{2}$ è un errore che in radiologia potrebbe falsare le misurazioni."
+      },
+      {
+        "text": "Velocità media di un auto che percorre $72 \\text{ km}$ in $1 \\text{ h}$? (in m/s)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$20 \\text{ m/s}$",
+        "explanation": "Conversione: $72 \\text{ km/h} = 72 \\times \\frac{5}{18} = 4 \\times 5 = 20 \\text{ m/s}$. Velocità media è costante qui. In ematologia, non convertire unità può alterare i conteggi cellulari."
+      },
+      {
+        "text": "Tempo per attraversare un tunnel lungo $300 \\text{ m}$ con velocità $15 \\text{ m/s}$?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$20 \\text{ s}$",
+        "explanation": "Tempo: $t = \\frac{s}{v} = \\frac{300}{15} = 20 \\text{ s}$. Se hai diviso male, è come calcolare erroneamente il tempo di infusione di un farmaco."
+      },
+      {
+        "text": "Accelerazione centripeta per un oggetto in moto circolare uniforme con raggio $5 \\text{ m}$ e velocità $10 \\text{ m/s}$?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$20 \\text{ m/s}^2$",
+        "explanation": "Accelerazione centripeta: $a_c = \\frac{v^2}{r} = \\frac{(10)^2}{5} = \\frac{100}{5} = 20 \\text{ m/s}^2$. Se non la calcoli, potresti sottostimare forze in sistemi biologici."
+      },
+      {
+        "text": "Velocità relativa di due treni che viaggiano in direzioni opposte a $20 \\text{ m/s}$ e $30 \\text{ m/s}$?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$50 \\text{ m/s}$",
+        "explanation": "Velocità relativa per direzioni opposte: $v_{rel} = v_1 + v_2 = 20 + 30 = 50 \\text{ m/s}$. Confondere le direzioni è come scambiare input sensoriali in neurologia."
+      },
+      {
+        "text": "Altezza da cui un oggetto cade se impiega $3 \\text{ s}$ per toccare il suolo? (usa $g=10 \\text{ m/s}^2$)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$45 \\text{ m}$",
+        "explanation": "Altezza: $s = \\frac{1}{2} g t^2 = \\frac{1}{2} \\times 10 \\times (3)^2 = \\frac{1}{2} \\times 10 \\times 9 = 45 \\text{ m}$. Errori qui sono inaccettabili, come in anestesiologia."
+      },
+      {
+        "text": "Range di un proiettile lanciato con $v=20 \\text{ m/s}$ ad angolo $45^\\circ$? (usa $g=10 \\text{ m/s}^2$)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$40 \\text{ m}$",
+        "explanation": "Range: $R = \\frac{u^2 \\sin 2\\theta}{g} = \\frac{(20)^2 \\times \\sin 90^\\circ}{10} = \\frac{400 \\times 1}{10} = 40 \\text{ m}$. A $45^\\circ$, $\\sin 90^\\circ = 1$. Se sbagli l'angolo, è come misinterpretare un angolo di incidenza in oftalmologia."
+      },
+      {
+        "text": "Velocità dopo $4 \\text{ s}$ se accelerazione è $3 \\text{ m/s}^2$ e velocità iniziale è $5 \\text{ m/s}$?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$17 \\text{ m/s}$",
+        "explanation": "Velocità: $v = u + a t = 5 + 3 \\times 4 = 5 + 12 = 17 \\text{ m/s$. Calcoli lineari come questo devono essere impeccabili, come in dosaggio di insulina."
+      },
+      {
+        "text": "Distanza percorsa nel primo secondo di moto con accelerazione $4 \\text{ m/s}^2$ da fermo?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$2 \\text{ m}$",
+        "explanation": "Spostamento nel primo secondo: $s = \\frac{1}{2} a t^2 = \\frac{1}{2} \\times 4 \\times (1)^2 = \\frac{1}{2} \\times 4 \\times 1 = 2 \\text{ m}$. Trascurare il $\\frac{1}{2}$ è come omettere un fattore di diluizione in laboratorio."
+      },
+      {
+        "text": "Tempo per fermarsi se decelerazione è $5 \\text{ m/s}^2$ e velocità iniziale è $25 \\text{ m/s}$?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$5 \\text{ s}$",
+        "explanation": "Tempo: $t = \\frac{v}{a} = \\frac{25}{5} = 5 \\text{ s}$ (poiché decelerazione, $a$ è negativo ma il tempo è positivo). In emergenze, calcolare tempi di arresto è vitale."
+      },
+      {
+        "text": "Velocità media su un percorso di andata e ritorno se andata a $60 \\text{ km/h}$ e ritorno a $40 \\text{ km/h}$? (in km/h)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$48 \\text{ km/h}$",
+        "explanation": "Velocità media per distanze uguali: $v_{avg} = \\frac{2 v_1 v_2}{v_1 + v_2} = \\frac{2 \\times 60 \\times 40}{60 + 40} = \\frac{4800}{100} = 48 \\text{ km/h$. Usare la media aritmetica è errato—in epidemiologia, medie sbagliate distorcono i dati."
+      },
+      {
+        "text": "Accelerazione se la posizione è $s(t)=3t^2 + 2t$ (in m)?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$6 \\text{ m/s}^2$",
+        "explanation": "Accelerazione: $a = \\frac{d^2 s}{dt^2} = \\frac{d}{dt}(6t + 2) = 6 \\text{ m/s}^2$ (costante). Se non derivi correttamente, è come non interpretare curve di crescita in pediatria."
+      },
+      {
+        "text": "Altezza massima per un proiettile lanciato con $v=40 \\text{ m/s}$ ad angolo $30^\\circ$? (usa $g=10 \\text{ m/s}^2$)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$20 \\text{ m}$",
+        "explanation": "Altezza massima: $h = \\frac{u^2 \\sin^2 \\theta}{2g} = \\frac{(40)^2 \\times (\\sin 30^\\circ)^2}{2 \\times 10} = \\frac{1600 \\times (0.5)^2}{20} = \\frac{1600 \\times 0.25}{20} = \\frac{400}{20} = 20 \\text{ m}$. Confondere $\\sin$ con $\\cos$ è come scambiare assi in un grafico medico."
+      }
+    ],
+    "timestamp": "2025-11-22T19:42:34.807Z"
+  },
+  {
+    "id": "1763840996052",
+    "topic": "full",
+    "difficulty": "medium",
+    "questions": [
+      {
+        "text": "Un'automobile accelera uniformemente da ferma a $36 \\text{ km/h}$ in $4 \\text{ s}$. Qual è la sua accelerazione?",
+        "type": "multiple_choice",
+        "options": [
+          "$1 \\text{ m/s}^2$",
+          "$2 \\text{ m/s}^2$",
+          "$2.5 \\text{ m/s}^2$",
+          "$3 \\text{ m/s}^2$",
+          "$4 \\text{ m/s}^2$"
+        ],
+        "correctAnswer": "$2.5 \\text{ m/s}^2$",
+        "explanation": "Hai dimenticato di convertire i km/h in m/s? Sarebbe un errore da principiante. La velocità finale è $36 \\text{ km/h} = 10 \\text{ m/s}$, quindi accelerazione $a = \\frac{\\Delta v}{t} = \\frac{10}{4} = 2.5 \\text{ m/s}^2$. In medicina, precisione nelle conversioni salva vite."
+      },
+      {
+        "text": "Una forza di $50 \\text{ N}$ agisce su una massa di $10 \\text{ kg}$. Qual è l'accelerazione?",
+        "type": "multiple_choice",
+        "options": [
+          "$0.5 \\text{ m/s}^2$",
+          "$5 \\text{ m/s}^2$",
+          "$50 \\text{ m/s}^2$",
+          "$500 \\text{ m/s}^2$",
+          "$2 \\text{ m/s}^2$"
+        ],
+        "correctAnswer": "$5 \\text{ m/s}^2$",
+        "explanation": "Legge di Newton: $F = m a$, quindi $a = F/m = 50/10 = 5 \\text{ m/s}^2$. Se hai sbagliato, forse confondi massa e peso. Ricorda: in terapia intensiva, dosaggi errati per errore di calcolo sono fatali."
+      },
+      {
+        "text": "La pressione atmosferica è circa $10^5 \\text{ Pa}$. A quale profondità in acqua la pressione raddoppia? (Densità acqua $1000 \\text{ kg/m}^3$, $g=10 \\text{ m/s}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$5 \\text{ m}$",
+          "$10 \\text{ m}$",
+          "$15 \\text{ m}$",
+          "$20 \\text{ m}$",
+          "$25 \\text{ m}$"
+        ],
+        "correctAnswer": "$10 \\text{ m}$",
+        "explanation": "Pressione totale $P = P_0 + \\rho g h$. Per raddoppiare, $P = 2 P_0$, quindi $\\rho g h = P_0$, $h = P_0 / (\\rho g) = 10^5 / (1000 \\times 10) = 10 \\text{ m}$. Se non hai considerato $P_0$, errore grave. In subacquea, sbagliare la pressione porta a embolia."
+      },
+      {
+        "text": "Un gas ideale compie un lavoro di $100 \\text{ J}$ espandendosi isotermicamente. Se assorbe $150 \\text{ J}$ di calore, qual è la variazione di energia interna?",
+        "type": "multiple_choice",
+        "options": [
+          "$50 \\text{ J}$",
+          "$100 \\text{ J}$",
+          "$150 \\text{ J}$",
+          "$250 \\text{ J}$",
+          "$0 \\text{ J}$"
+        ],
+        "correctAnswer": "$0 \\text{ J}$",
+        "explanation": "Primo principio: $\\Delta U = Q - W$. Per espansione isoterma di gas ideale, $\\Delta U = 0$ perché temperatura costante. Se hai calcolato $150 - 100 = 50$, hai dimenticato che per isotermo $\\Delta U = 0$. In termodinamica medica, errore concettuale."
+      },
+      {
+        "text": "In un campo elettrico uniforme di intensità $100 \\text{ N/C}$, qual è la forza su una carica di $+20 \\mu C$?",
+        "type": "multiple_choice",
+        "options": [
+          "$0.002 \\text{ N}$",
+          "$0.02 \\text{ N}$",
+          "$0.2 \\text{ N}$",
+          "$2 \\text{ N}$",
+          "$20 \\text{ N}$"
+        ],
+        "correctAnswer": "$0.002 \\text{ N}$",
+        "explanation": "Forza in campo elettrico: $F = q E = 20 \\times 10^{-6} \\times 100 = 2 \\times 10^{-3} \\text{ N} = 0.002 \\text{ N}$. Se hai sbagliato le unità, ricorda che $1 \\mu C = 10^{-6} C$. In defibrillazione, forze elettriche precise salvano cuori."
+      },
+      {
+        "text": "Tre resistori da $10 \\Omega$, $20 \\Omega$, e $30 \\Omega$ sono collegati in serie a una batteria da $12 \\text{ V}$. Qual è la corrente totale?",
+        "type": "multiple_choice",
+        "options": [
+          "$0.2 \\text{ A}$",
+          "$0.4 \\text{ A}$",
+          "$0.6 \\text{ A}$",
+          "$0.8 \\text{ A}$",
+          "$1.0 \\text{ A}$"
+        ],
+        "correctAnswer": "$0.2 \\text{ A}$",
+        "explanation": "Resistenze in serie: $R_{tot} = R1 + R2 + R3 = 10 + 20 + 30 = 60 \\Omega$. Legge di Ohm: $I = V / R_{tot} = 12 / 60 = 0.2 \\text{ A}$. Se hai diviso male, ricorda che in serie le resistenze si sommano. In elettrocardiogramma, errori di resistenza alterano i segnali."
+      },
+      {
+        "text": "Un raggio di luce passa dall'aria all'acqua con angolo di incidenza $45^\\circ$. Se l'indice di rifrazione dell'acqua è $1.33$, qual è l'angolo di rifrazione? ($n_{aria} \\approx 1$)",
+        "type": "multiple_choice",
+        "options": [
+          "$30^\\circ$",
+          "$32^\\circ$",
+          "$34^\\circ$",
+          "$36^\\circ$",
+          "$38^\\circ$"
+        ],
+        "correctAnswer": "$32^\\circ$",
+        "explanation": "Legge di Snell: $n_1 \\sin \\theta_1 = n_2 \\sin \\theta_2$. Quindi $\\sin \\theta_2 = \\frac{n_1}{n_2} \\sin \\theta_1 = \\frac{1}{1.33} \\times 0.707 \\approx 0.532$, $\\theta_2 \\approx 32^\\circ$. Se hai usato l'angolo sbagliato, potresti confondere riflessione e rifrazione. In oftalmologia, precisione angolare è vitale."
+      },
+      {
+        "text": "Un oggetto viene lanciato verticalmente verso l'alto con velocità iniziale $20 \\text{ m/s}$. Qual è l'altezza massima raggiunta? ($g=10 \\text{ m/s}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$10 \\text{ m}$",
+          "$20 \\text{ m}$",
+          "$30 \\text{ m}$",
+          "$40 \\text{ m}$",
+          "$50 \\text{ m}$"
+        ],
+        "correctAnswer": "$20 \\text{ m}$",
+        "explanation": "Altezza massima per lancio verticale: $h = \\frac{v_0^2}{2g} = \\frac{400}{20} = 20 \\text{ m}$. Se hai usato $h = v_0 t - \\frac{1}{2} g t^2$ senza trovare il tempo, bene, ma il metodo diretto è più efficiente. In traiettorie di proiettili, errori di calcolo portano a mancate diagnosi."
+      },
+      {
+        "text": "Un blocco di massa $2 \\text{ kg}$ scivola su un piano inclinato di $30^\\circ$ senza attrito. Qual è la sua accelerazione? ($g=10 \\text{ m/s}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$2 \\text{ m/s}^2$",
+          "$5 \\text{ m/s}^2$",
+          "$10 \\text{ m/s}^2$",
+          "$15 \\text{ m/s}^2$",
+          "$20 \\text{ m/s}^2$"
+        ],
+        "correctAnswer": "$5 \\text{ m/s}^2$",
+        "explanation": "Su piano inclinato senza attrito, accelerazione $a = g \\sin \\theta$. Con $\\theta = 30^\\circ$, $\\sin 30 = 0.5$, quindi $a = 10 \\times 0.5 = 5 \\text{ m/s}^2$. Se hai confuso con il coseno, ripassa la scomposizione delle forze. In riabilitazione, calcoli errati di inclinazione causano infortuni."
+      },
+      {
+        "text": "Un oggetto di volume $0.01 \\text{ m}^3$ è completamente immerso in acqua. Qual è la spinta di Archimede? (Densità acqua $1000 \\text{ kg/m}^3$, $g=10 \\text{ m/s}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$10 \\text{ N}$",
+          "$100 \\text{ N}$",
+          "$1000 \\text{ N}$",
+          "$10000 \\text{ N}$",
+          "$0.1 \\text{ N}$"
+        ],
+        "correctAnswer": "$100 \\text{ N}$",
+        "explanation": "Spinta di Archimede: $F_A = \\rho_{fluido} V_{immerso} g = 1000 \\times 0.01 \\times 10 = 100 \\text{ N}$. Se hai dimenticato $g$ o la densità, è un errore elementare. In emodinamica, capire le spinte è fondamentale."
+      },
+      {
+        "text": "Una macchina termica ha un rendimento del 25% e assorbe $400 \\text{ J}$ di calore dalla sorgente calda. Quanto lavoro compie?",
+        "type": "multiple_choice",
+        "options": [
+          "$100 \\text{ J}$",
+          "$200 \\text{ J}$",
+          "$300 \\text{ J}$",
+          "$400 \\text{ J}$",
+          "$500 \\text{ J}$"
+        ],
+        "correctAnswer": "$100 \\text{ J}$",
+        "explanation": "Rendimento $\\eta = \\frac{W}{Q_H}$, quindi $W = \\eta Q_H = 0.25 \\times 400 = 100 \\text{ J}$. Se hai calcolato $Q_H - W$ o altro, confondi i principi. In termoregolazione corporea, efficienza errata porta a ipotermia."
+      },
+      {
+        "text": "Un condensatore da $10 \\mu F$ è caricato a una tensione di $100 \\text{ V}$. Qual è l'energia immagazzinata?",
+        "type": "multiple_choice",
+        "options": [
+          "$0.05 \\text{ J}$",
+          "$0.5 \\text{ J}$",
+          "$5 \\text{ J}$",
+          "$50 \\text{ J}$",
+          "$500 \\text{ J}$"
+        ],
+        "correctAnswer": "$0.05 \\text{ J}$",
+        "explanation": "Energia in condensatore: $U = \\frac{1}{2} C V^2 = \\frac{1}{2} \\times 10 \\times 10^{-6} \\times 10000 = \\frac{1}{2} \\times 0.1 = 0.05 \\text{ J}$. Se hai dimenticato il fattore 1/2 o sbagliato le potenze, è inaccettabile. In pacemaker, energia errata causa malfunzionamenti."
+      },
+      {
+        "text": "Una lente convergente ha distanza focale $0.2 \\text{ m}$. Se un oggetto è posto a $0.3 \\text{ m}$ dalla lente, dove si forma l'immagine?",
+        "type": "multiple_choice",
+        "options": [
+          "$0.1 \\text{ m}$ dalla lente",
+          "$0.2 \\text{ m}$ dalla lente",
+          "$0.3 \\text{ m}$ dalla lente",
+          "$0.4 \\text{ m}$ dalla lente",
+          "$0.6 \\text{ m}$ dalla lente"
+        ],
+        "correctAnswer": "$0.6 \\text{ m}$ dalla lente",
+        "explanation": "Formula lenti: $\\frac{1}{f} = \\frac{1}{p} + \\frac{1}{q}$. Con $f=0.2 \\text{ m}$, $p=0.3 \\text{ m}$, $\\frac{1}{0.2} = 5$, $\\frac{1}{0.3} \\approx 3.333$, quindi $\\frac{1}{q} = 5 - 3.333 = 1.667$, $q \\approx 0.6 \\text{ m}$. Se hai invertito i segni, ripassa le convenzioni. In oftalmologia, distanze focali errate distorto la vista."
+      },
+      {
+        "text": "La lunghezza d'onda della luce rossa è circa $700 \\text{ nm}$. Qual è la sua frequenza? ($c = 3 \\times 10^8 \\text{ m/s}$)",
+        "type": "multiple_choice",
+        "options": [
+          "$3 \\times 10^{14} \\text{ Hz}$",
+          "$4.3 \\times 10^{14} \\text{ Hz}$",
+          "$5 \\times 10^{14} \\text{ Hz}$",
+          "$6 \\times 10^{14} \\text{ Hz}$",
+          "$7 \\times 10^{14} \\text{ Hz}$"
+        ],
+        "correctAnswer": "$4.3 \\times 10^{14} \\text{ Hz}$",
+        "explanation": "Frequenza $f = \\frac{c}{\\lambda} = \\frac{3 \\times 10^8}{700 \\times 10^{-9}} = \\frac{3 \\times 10^8}{7 \\times 10^{-7}} = \\frac{3}{7} \\times 10^{15} \\approx 0.4286 \\times 10^{15} = 4.286 \\times 10^{14} \\text{ Hz}$. Se hai sbagliato le conversioni, è un errore da evitare. In spettroscopia medica, frequenze errate falsano le analisi."
+      },
+      {
+        "text": "Un corpo si muove con accelerazione costante $a = 2 \\text{ m/s}^2$. Se parte da fermo, qual è la sua velocità dopo $5 \\text{ s}$?",
+        "type": "multiple_choice",
+        "options": [
+          "$5 \\text{ m/s}$",
+          "$10 \\text{ m/s}$",
+          "$15 \\text{ m/s}$",
+          "$20 \\text{ m/s}$",
+          "$25 \\text{ m/s}$"
+        ],
+        "correctAnswer": "$10 \\text{ m/s}$",
+        "explanation": "Semplice applicazione di $v = a t = 2 \\times 5 = 10 \\text{ m/s}$. Se non lo hai capito, ripassa la cinematica. In un'emergenza, calcolare tempi e velocità è cruciale."
+      },
+      {
+        "text": "Un treno accelera da $10 \\text{ m/s}$ a $30 \\text{ m/s}$ in $10 \\text{ s}$. Qual è la sua accelerazione in $\\text{m/s}^2$?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$2 \\text{ m/s}^2$",
+        "explanation": "Accelerazione media $a = \\frac{\\Delta v}{\\Delta t} = \\frac{30-10}{10} = \\frac{20}{10} = 2 \\text{ m/s}^2$. Se hai usato la velocità iniziale o finale sbagliata, ripassa la definizione. In emergenze, accelerazioni errate causano incidenti."
+      },
+      {
+        "text": "Un corpo in caduta libera da un'altezza di $80 \\text{ m}$. Quanto tempo impiega a raggiungere il suolo? ($g=10 \\text{ m/s}^2$)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$4 \\text{ s}$",
+        "explanation": "Tempo di caduta: $t = \\sqrt{\\frac{2h}{g}} = \\sqrt{\\frac{2 \\times 80}{10}} = \\sqrt{\\frac{160}{10}} = \\sqrt{16} = 4 \\text{ s}$. Se hai dimenticato la radice, è un errore grave. In traumi, calcoli di tempo salvano vite."
+      },
+      {
+        "text": "La velocità di un'onda sonora nell'aria è $340 \\text{ m/s}$. Se la frequenza è $1700 \\text{ Hz}$, qual è la lunghezza d'onda in metri?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$0.2 \\text{ m}$",
+        "explanation": "Lunghezza d'onda $\\lambda = \\frac{v}{f} = \\frac{340}{1700} = \\frac{34}{170} = \\frac{1}{5} = 0.2 \\text{ m}$. Se hai invertito v e f, confondi le formule. In ecografia, lunghezze d'onda precise sono essenziali."
+      },
+      {
+        "text": "Un oggetto di massa $5 \\text{ kg}$ ha un'energia cinetica di $250 \\text{ J}$. Qual è la sua velocità in $\\text{m/s}$?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$10 \\text{ m/s}$",
+        "explanation": "Energia cinetica $K = \\frac{1}{2} m v^2$, quindi $v = \\sqrt{\\frac{2K}{m}} = \\sqrt{\\frac{2 \\times 250}{5}} = \\sqrt{\\frac{500}{5}} = \\sqrt{100} = 10 \\text{ m/s}$. Se hai dimenticato la radice, l'energia non si conserva. In traumatologia, velocità errate alterano le diagnosi."
+      },
+      {
+        "text": "Una molla con costante elastica $200 \\text{ N/m}$ è compressa di $0.1 \\text{ m}$. Qual è l'energia potenziale elastica in joule?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$1 \\text{ J}$",
+        "explanation": "Energia potenziale elastica $U = \\frac{1}{2} k x^2 = \\frac{1}{2} \\times 200 \\times (0.1)^2 = \\frac{1}{2} \\times 200 \\times 0.01 = \\frac{1}{2} \\times 2 = 1 \\text{ J}$. Se hai omesso il 1/2, è un errore concettuale. In ortopedia, energie di molle mal calcolate causano danni."
+      },
+      {
+        "text": "Un proiettile di massa $0.01 \\text{ kg}$ ha una quantità di moto di $2 \\text{ kg m/s}$. Qual è la sua velocità in $\\text{m/s}$?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$200 \\text{ m/s}$",
+        "explanation": "Quantità di moto $p = m v$, quindi $v = \\frac{p}{m} = \\frac{2}{0.01} = 200 \\text{ m/s}$. Se hai diviso male, ricorda le unità. In balistica, velocità errate falsano le stime."
+      },
+      {
+        "text": "La portata di un tubo è $0.002 \\text{ m}^3/\\text{s}$ e la sezione è $0.001 \\text{ m}^2$. Qual è la velocità del fluido in $\\text{m/s}$?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$2 \\text{ m/s}$",
+        "explanation": "Portata $Q = A v$, quindi $v = \\frac{Q}{A} = \\frac{0.002}{0.001} = 2 \\text{ m/s}$. Se hai confuso con densità, errore. In emodinamica, velocità del sangue errate indicano patologie."
+      },
+      {
+        "text": "Un cubo di lato $0.1 \\text{ m}$ è immerso in acqua. Se la densità del cubo è $500 \\text{ kg/m}^3$, qual è la forza netta verso l'alto in newton? (Densità acqua $1000 \\text{ kg/m}^3$, $g=10 \\text{ m/s}^2$)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$5 \\text{ N}$",
+        "explanation": "Forza netta: spinta di Archimede $F_A = \\rho_{fluido} V g = 1000 \\times 0.001 \\times 10 = 10 \\text{ N}$, peso $P = \\rho_{cubo} V g = 500 \\times 0.001 \\times 10 = 5 \\text{ N}$, quindi $F_{net} = F_A - P = 10 - 5 = 5 \\text{ N}$ verso l'alto. Se hai sommato invece di sottrarre, confondi le forze. In galleggiamento, errori causano annegamenti."
+      },
+      {
+        "text": "Un gas ideale subisce una compressione adiabatica e la sua temperatura aumenta da $300 \\text{ K}$ a $400 \\text{ K}$. Se il lavoro compiuto sul gas è $500 \\text{ J}$, qual è la variazione di energia interna in joule?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$500 \\text{ J}$",
+        "explanation": "Per processo adiabatico, $Q=0$, quindi primo principio: $\\Delta U = -W$, dove $W$ è il lavoro compiuto dal sistema. Se il lavoro compiuto sul gas è $500 \\text{ J}$, allora $W = -500 \\text{ J}$ (lavoro negativo se fatto sul sistema), quindi $\\Delta U = -(-500) = 500 \\text{ J}$. Se hai confuso i segni, ripassa le convenzioni. In termodinamica respiratoria, errori di energia alterano gli scambi gassosi."
+      },
+      {
+        "text": "Il calore specifico dell'acqua è $4186 \\text{ J/kgK}$. Quanto calore è necessario per riscaldare $0.5 \\text{ kg}$ di acqua da $20^\\circ \\text{C}$ a $100^\\circ \\text{C}$? (Risposta in kJ)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$168 \\text{ kJ}$",
+        "explanation": "Calore $Q = m c \\Delta T = 0.5 \\times 4200 \\times 80 = 168000 \\text{ J} = 168 \\text{ kJ}$ (usando $c \\approx 4200 \\text{ J/kgK}$ per stima). Se hai usato gradi Celsius senza convertire in Kelvin, ma per differenza di temperatura, è la stessa. In ipertermia, calcoli di calore salvano pazienti."
+      },
+      {
+        "text": "La differenza di potenziale tra due punti è $50 \\text{ V}$. Se una carica di $0.1 \\text{ C}$ si muove tra di essi, qual è il lavoro compiuto dal campo elettrico in joule?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$5 \\text{ J}$",
+        "explanation": "Lavoro compiuto dal campo elettrico $W = q \\Delta V = 0.1 \\times 50 = 5 \\text{ J}$. Se hai confuso con forza, errore. In defibrillazione, energie precise sono cruciali."
+      },
+      {
+        "text": "Un condensatore da $5 \\mu F$ è collegato a una batteria da $12 \\text{ V}$. Qual è la carica accumulata in microcoulomb?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$60 \\mu C$",
+        "explanation": "Carica su condensatore $Q = C V = 5 \\times 10^{-6} \\times 12 = 60 \\times 10^{-6} \\text{ C} = 60 \\mu C$. Se hai sbagliato le unità, ricorda che $1 \\mu F = 10^{-6} F$. In elettrofisiologia, cariche errate alterano i potenziali."
+      },
+      {
+        "text": "Due resistori da $6 \\Omega$ e $12 \\Omega$ sono collegati in parallelo a una batteria da $24 \\text{ V}$. Qual è la corrente totale in ampere?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$6 \\text{ A}$",
+        "explanation": "Resistenze in parallelo: $\\frac{1}{R_{tot}} = \\frac{1}{R1} + \\frac{1}{R2} = \\frac{1}{6} + \\frac{1}{12} = \\frac{2}{12} + \\frac{1}{12} = \\frac{3}{12} = \\frac{1}{4}$, quindi $R_{tot} = 4 \\Omega$. Legge di Ohm: $I = \\frac{V}{R_{tot}} = \\frac{24}{4} = 6 \\text{ A}$. Se hai sommate le resistenze, errore grave. In monitoraggio cardiaco, correnti errate falsano i segnali."
+      },
+      {
+        "text": "Una batteria da $9 \\text{ V}$ è collegata a un resistore. Se la corrente è $0.3 \\text{ A}$, qual è la resistenza in ohm?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$30 \\Omega$",
+        "explanation": "Legge di Ohm: $R = \\frac{V}{I} = \\frac{9}{0.3} = 30 \\Omega$. Se hai invertito V e I, è un errore da principiante. In dispositivi medici, resistenze errate causano surriscaldamento."
+      },
+      {
+        "text": "L'indice di rifrazione del vetro è $1.5$. Se la velocità della luce nel vuoto è $3 \\times 10^8 \\text{ m/s}$, qual è la velocità della luce nel vetro in m/s?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$2 \\times 10^8 \\text{ m/s}$",
+        "explanation": "Velocità della luce in un mezzo $v = \\frac{c}{n} = \\frac{3 \\times 10^8}{1.5} = 2 \\times 10^8 \\text{ m/s}$. Se hai moltiplicato invece di dividere, confondi la definizione. In endoscopia, velocità della luce errate distorto le immagini."
+      },
+      {
+        "text": "Uno specchio concavo ha raggio di curvatura $0.4 \\text{ m}$. Qual è la sua distanza focale in metri?",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$0.2 \\text{ m}$",
+        "explanation": "Per specchi sferici, distanza focale $f = \\frac{R}{2} = \\frac{0.4}{2} = 0.2 \\text{ m}$. Se hai usato R invece di R/2, errore. In oftalmoscopia, focali errate alterano l'osservazione."
+      }
+    ],
+    "timestamp": "2025-11-22T19:49:56.052Z"
+  }
+]

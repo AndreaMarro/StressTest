@@ -9,8 +9,11 @@ import TypingText from './components/ui/TypingText';
 import { MathText } from './components/ui/MathText';
 import { PaymentModal } from './components/ui/PaymentModal';
 import Forum from './components/Forum';
+import { NeoButton } from './components/ui/NeoButton';
 import { DeepSeekService } from './services/deepseek';
 import type { Question, UserState, Topic } from './types';
+
+// ... existing imports ...
 
 // --- Constants ---
 
@@ -51,6 +54,62 @@ export default function App() {
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const deepSeekRef = useRef<DeepSeekService | null>(null);
+
+  // Temporary Test Component
+  const TestRender = () => {
+    const [testQuestions, setTestQuestions] = useState<any[]>([]);
+
+    useEffect(() => {
+      fetch('http://localhost:3000/api/generate-exam', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: 'full', difficulty: 'medium' })
+      })
+        .then(res => res.json())
+        .then(data => setTestQuestions(data.questions || []))
+        .catch(err => console.error(err));
+    }, []);
+
+    if (testQuestions.length === 0) return <div className="p-8 text-terminal-text">Loading test exam...</div>;
+
+    return (
+      <div className="p-8 space-y-8 max-w-3xl mx-auto">
+        <h1 className="text-2xl text-terminal-accent mb-6">Render Verification</h1>
+        {testQuestions.map((q, i) => (
+          <div key={i} className="border border-terminal-dim p-6 rounded bg-black/50">
+            <div className="mb-4 text-lg">
+              <span className="text-terminal-accent mr-2">[{i + 1}]</span>
+              <MathText content={q.text} />
+            </div>
+            <div className="grid gap-2 pl-6">
+              {q.options?.map((opt: string, j: number) => (
+                <div key={j} className="flex items-center gap-2 text-terminal-dim">
+                  <span className="text-xs">({String.fromCharCode(65 + j)})</span>
+                  <MathText content={opt} />
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 pt-4 border-t border-terminal-dim/30 text-sm text-terminal-text/80">
+              <span className="text-terminal-success mr-2">Correct:</span>
+              <MathText content={q.correctAnswer} />
+              <div className="mt-2 italic text-terminal-dim">
+                <span className="text-terminal-accent mr-1">Explanation:</span>
+                <MathText content={q.explanation} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  if (window.location.pathname === '/test-render') {
+    return (
+      <TerminalLayout>
+        <TestRender />
+      </TerminalLayout>
+    );
+  }
 
   // --- Logic ---
 
