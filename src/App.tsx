@@ -185,7 +185,7 @@ export default function App() {
         <div className="inline-block bg-black text-white px-4 py-1 mb-4 font-mono text-sm font-bold tracking-widest border-2 border-black shadow-neo transform -rotate-1">
           TEST AMMISSIONE MEDICINA 2025
         </div>
-        <h1 className="text-5xl md:text-7xl font-black text-black tracking-tighter mb-6 drop-shadow-[4px_4px_0px_rgba(163,230,53,1)]">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-black tracking-tighter mb-6 drop-shadow-[4px_4px_0px_rgba(163,230,53,1)]">
           StressTest<span className="italic font-serif font-normal text-gray-800">Fisica</span>
         </h1>
         <p className="text-xl md:text-2xl text-gray-800 font-medium max-w-2xl mx-auto border-l-4 border-black pl-6 text-left bg-white p-6 shadow-neo rounded-r-xl">
@@ -270,7 +270,7 @@ export default function App() {
             </div>
 
             <NeoButton onClick={handleStartClick} className="w-full text-lg">
-              <Play size={24} strokeWidth={3} /> AVVIA SIMULAZIONE (€0.49)
+              <Play size={24} strokeWidth={3} /> AVVIA SIMULAZIONE (€0.50)
             </NeoButton>
           </div>
         </div>
@@ -425,7 +425,7 @@ export default function App() {
             </div>
           </div>
 
-          <footer className="bg-white border-t-2 border-black p-6 flex justify-between items-center max-w-full z-20 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+          <footer className="bg-white border-t-2 border-black p-4 md:p-6 flex justify-between items-center max-w-full z-20 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] gap-2">
             <NeoButton
               variant="secondary"
               onClick={() => setUserState(p => ({ ...p, currentQuestionIndex: Math.max(0, p.currentQuestionIndex - 1) }))}
