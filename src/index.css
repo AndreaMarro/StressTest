@@ -6,12 +6,30 @@
 
 @layer base {
   :root {
-    --background: 10 10 10;
-    --foreground: 237 237 237;
+    /* Light Mode (Default) - High Contrast "Paper" Terminal */
+    --terminal-black: 240 240 240;
+    --terminal-dark: 224 224 224;
+    --terminal-text: 26 26 26;
+    --terminal-green: 0 128 0;
+    /* Darker green for light mode readability */
+    --terminal-red: 204 0 0;
+    --terminal-dim: 102 102 102;
+    --terminal-accent: 0 102 0;
+  }
+
+  .dark {
+    /* Dark Mode - Classic CRT */
+    --terminal-black: 10 10 10;
+    --terminal-dark: 17 17 17;
+    --terminal-text: 237 237 237;
+    --terminal-green: 0 255 0;
+    --terminal-red: 255 0 0;
+    --terminal-dim: 136 136 136;
+    --terminal-accent: 51 255 0;
   }
 
   body {
-    @apply bg-terminal-black text-terminal-text font-mono overflow-x-hidden;
+    @apply bg-terminal-black text-terminal-text font-mono overflow-x-hidden transition-colors duration-300;
     background-size: 40px 40px;
     background-image: linear-gradient(to right, #1a1a1a 1px, transparent 1px),
       linear-gradient(to bottom, #1a1a1a 1px, transparent 1px);

@@ -56,6 +56,10 @@ export default function App() {
 
   const handleStartClick = () => {
     if (!examType) return;
+    // Save pending state in case of redirect
+    localStorage.setItem('pendingExamType', examType);
+    localStorage.setItem('pendingTopic', selectedTopic);
+    localStorage.setItem('pendingDifficulty', difficulty);
     setShowPayment(true);
   };
 
@@ -102,6 +106,56 @@ export default function App() {
     localStorage.setItem('stressTestStartTime', Date.now().toString());
     setMode('exam');
   };
+
+  // Check for Stripe Redirect
+  useEffect(() => {
+    const checkPaymentStatus = async () => {
+      const paymentIntentId = new URLSearchParams(window.location.search).get(
+        "payment_intent"
+      );
+
+      if (paymentIntentId) {
+        try {
+          // Verify with backend
+          const res = await fetch(`/api/verify-payment/${paymentIntentId}`);
+          const data = await res.json();
+
+          if (data.status === 'succeeded') {
+            // Restore state from before redirect (if possible) or default to full exam if lost
+            // Since we lost state, we default to 'full' or try to recover from localStorage if we saved intent there.
+            // For now, let's assume 'full' if we can't determine, or ask user?
+            // Better: We just start the generation.
+            // We need to know what they wanted to buy.
+            // Ideally we should have saved 'pendingExamType' in localStorage before redirect.
+
+            const pendingType = localStorage.getItem('pendingExamType') as 'full' | 'topic' | null;
+            const pendingTopic = localStorage.getItem('pendingTopic');
+            const pendingDifficulty = localStorage.getItem('pendingDifficulty') as 'easy' | 'medium' | 'hard' | null;
+
+            if (pendingType) {
+              setExamType(pendingType);
+              if (pendingTopic) setSelectedTopic(pendingTopic);
+              if (pendingDifficulty) setDifficulty(pendingDifficulty);
+            } else {
+              // Fallback
+              setExamType('full');
+            }
+
+            // Clear URL
+            window.history.replaceState({}, '', window.location.pathname);
+
+            // Generate
+            generateQuestions();
+          }
+        } catch (e) {
+          console.error("Payment verification failed", e);
+          setErrorMsg("Errore verifica pagamento. Contatta il supporto.");
+        }
+      }
+    };
+
+    checkPaymentStatus();
+  }, []);
 
   // Persistence Logic
   useEffect(() => {

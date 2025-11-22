@@ -20,7 +20,7 @@ export const MathText = ({ content }: { content: string }) => {
     const parts = content.split(/(\$[^$]+\$)/g);
 
     return (
-        <span className="inline-block leading-relaxed font-medium text-gray-900">
+        <span className="inline-block leading-relaxed font-medium text-terminal-text">
             {parts.map((part, i) => renderSegment(part, i))}
         </span>
     );

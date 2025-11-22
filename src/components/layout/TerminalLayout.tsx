@@ -1,5 +1,5 @@
-import { ReactNode, useState } from 'react';
-import { Shield, Cookie } from 'lucide-react';
+import { ReactNode, useState, useEffect } from 'react';
+import { Shield, Cookie, Sun, Moon } from 'lucide-react';
 import PrivacyPolicy from '../PrivacyPolicy';
 import CookiePolicy from '../CookiePolicy';
 
@@ -10,17 +10,49 @@ interface TerminalLayoutProps {
 export default function TerminalLayout({ children }: TerminalLayoutProps) {
     const [showPrivacy, setShowPrivacy] = useState(false);
     const [showCookies, setShowCookies] = useState(false);
+    const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+    useEffect(() => {
+        // Check system preference or saved theme
+        const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
+        if (savedTheme) {
+            setTheme(savedTheme);
+            document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            setTheme('dark');
+            document.documentElement.classList.add('dark');
+        } else {
+            setTheme('light');
+            document.documentElement.classList.remove('dark');
+        }
+    }, []);
+
+    const toggleTheme = () => {
+        const newTheme = theme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+        document.documentElement.classList.toggle('dark', newTheme === 'dark');
+    };
 
     return (
-        <div className="min-h-screen bg-terminal-black text-terminal-text font-mono selection:bg-terminal-green selection:text-terminal-black relative overflow-hidden flex flex-col">
+        <div className="min-h-screen bg-terminal-black text-terminal-text font-mono selection:bg-terminal-green selection:text-terminal-black relative overflow-hidden flex flex-col transition-colors duration-300">
             {/* Grid Background */}
             <div className="fixed inset-0 grid-pattern opacity-20 pointer-events-none z-0"></div>
 
-            {/* Scanline Effect */}
-            <div className="fixed inset-0 scanline pointer-events-none z-50 opacity-50"></div>
+            {/* Scanline Effect (Only in Dark Mode) */}
+            <div className="fixed inset-0 scanline pointer-events-none z-50 opacity-50 hidden dark:block"></div>
 
             {/* Vignette */}
             <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,transparent_50%,rgba(0,0,0,0.6))] pointer-events-none z-10"></div>
+
+            {/* Theme Toggle (Absolute Top Right) */}
+            <button
+                onClick={toggleTheme}
+                className="fixed top-4 right-4 z-50 p-2 rounded-full border border-terminal-dim text-terminal-dim hover:text-terminal-green hover:border-terminal-green transition-all bg-terminal-black/80 backdrop-blur-sm"
+                aria-label="Toggle Theme"
+            >
+                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
 
             {/* Main Content */}
             <div className="relative z-20 flex-1 p-4 md:p-8 flex flex-col max-w-7xl mx-auto w-full">
@@ -33,7 +65,7 @@ export default function TerminalLayout({ children }: TerminalLayoutProps) {
                     <div>
                         <span className="text-terminal-green font-bold">SYSTEM_STATUS:</span> ONLINE // <span className="animate-pulse">MONITORING_ACTIVE</span>
                     </div>
-                    <div className="flex gap-6">
+                    <div className="flex flex-wrap justify-center gap-4 md:gap-6 mt-2 md:mt-0">
                         <button onClick={() => setShowPrivacy(true)} className="hover:text-terminal-green transition-colors flex items-center gap-1">
                             <Shield size={12} /> PRIVACY_PROTOCOL
                         </button>

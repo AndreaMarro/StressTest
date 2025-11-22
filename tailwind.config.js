@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       boxShadow: {
@@ -13,13 +14,13 @@ export default {
       },
       colors: {
         terminal: {
-          black: '#0a0a0a',
-          dark: '#111111',
-          text: '#ededed',
-          green: '#00ff00',
-          red: '#ff0000',
-          dim: '#888888',
-          accent: '#33ff00',
+          black: 'rgb(var(--terminal-black) / <alpha-value>)',
+          dark: 'rgb(var(--terminal-dark) / <alpha-value>)',
+          text: 'rgb(var(--terminal-text) / <alpha-value>)',
+          green: 'rgb(var(--terminal-green) / <alpha-value>)',
+          red: 'rgb(var(--terminal-red) / <alpha-value>)',
+          dim: 'rgb(var(--terminal-dim) / <alpha-value>)',
+          accent: 'rgb(var(--terminal-accent) / <alpha-value>)',
         }
       },
       fontFamily: {

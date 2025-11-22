@@ -39,8 +39,10 @@ const deepseek = new OpenAI({
 
 // 1. Generate Exam (DeepSeek Proxy)
 app.post('/api/generate-exam', async (req, res) => {
+    console.log('Received /api/generate-exam request');
     try {
         const { topic, difficulty } = req.body;
+        console.log(`Generating exam for topic: ${topic}, difficulty: ${difficulty}`);
 
         if (!topic || !difficulty) {
             return res.status(400).json({ error: 'Topic and difficulty are required' });
@@ -48,52 +50,64 @@ app.post('/api/generate-exam', async (req, res) => {
 
         const isFullExam = topic === 'full';
         const topicPrompt = isFullExam
-            ? "Copri l'intero syllabus del corso (Meccanica, Fluidi, Termo, Elettromagnetismo, Ottica) in modo bilanciato."
+            ? "Copri l'intero syllabus del test di medicina (Cinematica, Dinamica, Fluidi, Termodinamica, Elettrostatica, Circuiti, Ottica) in modo bilanciato."
             : `Focalizzati esclusivamente sull'argomento: ${topic}. Scendi nei dettagli tecnici.`;
 
         const systemPrompt = `
-      Sei un professore universitario sadico del "Semestre Filtro" di Medicina. 
-      Il tuo obiettivo è scremare gli studenti deboli. Odi la mediocrità.
+      Sei un professore universitario d'élite, autore dei test di ammissione a Medicina (TOLC-MED/VET).
+      Il tuo obiettivo è creare una simulazione "Semestre Filtro" estremamente rigorosa e selettiva.
       
-      REGOLE FONDAMENTALI:
+      REGOLE DI QUALITÀ:
+      1. Le domande devono essere di livello "Test di Ammissione Medicina" o superiore. Niente banalità.
+      2. I calcoli devono essere fattibili senza calcolatrice (ma non banali), basati su ragionamento e stima.
+      3. SARCASMO EDUCATIVO: Nelle spiegazioni ("explanation"), sii brutalmente onesto ma estremamente preciso. 
+         Esempio: "Hai dimenticato di convertire le unità? Grave. In corsia questo uccide i pazienti. La risposta corretta deriva da..."
+      
+      FORMATTAZIONE MATEMATICA (CRUCIALE):
+      1. Usa SEMPRE e SOLO LaTeX per qualsiasi formula, numero con unità o variabile.
+      2. Racchiudi il LaTeX tra dollari singoli: $E = mc^2$.
+      3. NON usare mai doppi dollari ($$) o parentesi quadre ([\\]).
+      4. Esempio corretto: "La velocità è $v = 10 \\text{ m/s}$."
+      
+      STRUTTURA OUTPUT:
       1. Genera ESATTAMENTE 31 domande.
-      2. STRUTTURA RIGIDA:
-         - Domande 1-15: 'multiple_choice' con 5 opzioni (A, B, C, D, E). Una sola corretta.
-         - Domande 16-31: 'fill_in_the_blank'. La risposta deve essere un numero o una parola/breve frase concisa.
-      3. Usa il formato LaTeX standard per le formule, racchiuso tra dollari singoli (es. $E = mc^2$). NON usare doppio dollaro o parentesi quadre.
-      4. Difficoltà: ${difficulty}. Se 'hard', falli pentire di essersi iscritti a Medicina.
+      2. Domande 1-15: 'multiple_choice' (5 opzioni, 1 corretta).
+      3. Domande 16-31: 'fill_in_the_blank' (Risposta secca: numero o parola).
+      4. Difficoltà: ${difficulty}.
       5. ${topicPrompt}
-      6. TONO: Usa un tono estremamente sarcastico e scoraggiante nelle spiegazioni ("explanation"). 
-         Esempio: "Se hai sbagliato questo, forse Scienze delle Merendine è più adatta a te." oppure "Benvenuto al Semestre Filtro, dove i sogni muoiono."
-      7. Rispondi SOLO con un JSON valido che rispetta questo schema:
+      
+      Rispondi SOLO con un JSON valido:
       {
         "questions": [
           {
-            "text": "Testo della domanda...",
+            "text": "Testo della domanda con formule in LaTeX $...$...",
             "type": "multiple_choice" | "fill_in_the_blank",
-            "options": ["A...", "B...", "C...", "D...", "E..."], // Solo per multiple_choice
-            "correctAnswer": "Risposta esatta",
-            "explanation": "Spiegazione dettagliata (con sarcasmo pesante)..."
+            "options": ["$A...$", "$B...$", "$C...$", "$D...$", "$E...$"],
+            "correctAnswer": "Risposta esatta (es. $10 \\text{ J}$)",
+            "explanation": "Spiegazione dettagliata, sarcastica e rigorosa con formule in LaTeX $...$..."
           }
         ]
       }
     `;
 
+        console.log('Calling DeepSeek API...');
         const completion = await deepseek.chat.completions.create({
             messages: [
                 { role: "system", content: systemPrompt },
-                { role: "user", content: "Genera l'esame ora. Fai selezione naturale." }
+                { role: "user", content: "Genera l'esame. Non avere pietà, ma sii didatticamente ineccepibile." }
             ],
             model: "deepseek-reasoner",
-            temperature: 0.85,
+            temperature: 0.7, // Lower temperature for more precision/rigor
             response_format: { type: "json_object" }
         });
+        console.log('DeepSeek API response received');
 
         const content = completion.choices[0].message.content;
         // Clean up potential markdown code blocks
         const jsonStr = content.replace(/```json\n?|\n?```/g, '');
         const parsed = JSON.parse(jsonStr);
 
+        console.log('Sending response to client');
         res.json(parsed);
 
     } catch (error) {
@@ -109,13 +123,15 @@ app.post('/api/generate-study-plan', async (req, res) => {
 
         const wrongText = wrongAnswers.map(q => `- ${q.text} (Risposta corretta: ${q.correctAnswer})`).join('\n');
         const prompt = `
-      Analizza questi errori fatti da uno studente del Semestre Filtro di Medicina:
+      Analizza questi errori di un aspirante medico nel "Semestre Filtro":
       ${wrongText}
       
-      Sei il professore più temuto del corso. 
-      Massacra lo studente per la sua incompetenza. Dagli del fallito.
-      Poi, con riluttanza, fornisci 3 consigli per sopravvivere al filtro, se proprio deve insistere.
-      Formatta usando markdown standard.
+      Sei il Primario del reparto.
+      1. Umilia lo studente per gli errori concettuali gravi (es. unità di misura, principi base).
+      2. Fornisci 3 consigli di studio estremamente pratici e mirati per colmare le lacune.
+      3. Usa LaTeX ($...$) per le formule anche qui.
+      
+      Formatta in markdown.
     `;
 
         const completion = await deepseek.chat.completions.create({
@@ -151,6 +167,21 @@ app.post('/api/create-payment-intent', async (req, res) => {
     } catch (error) {
         console.error('Stripe Error:', error);
         res.status(500).json({ error: error.message });
+    }
+});
+
+// 3.1 Verify Payment Intent
+app.get('/api/verify-payment/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const paymentIntent = await stripe.paymentIntents.retrieve(id);
+
+        res.json({
+            status: paymentIntent.status,
+        });
+    } catch (error) {
+        console.error('Stripe Verification Error:', error);
+        res.status(500).json({ error: 'Failed to verify payment' });
     }
 });
 
