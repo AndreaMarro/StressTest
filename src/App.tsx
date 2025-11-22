@@ -97,8 +97,51 @@ export default function App() {
       isExamFinished: false,
       score: 0
     });
+    localStorage.setItem('stressTestStartTime', Date.now().toString());
     setMode('exam');
   };
+
+  // Persistence Logic
+  useEffect(() => {
+    const savedSession = localStorage.getItem('stressTestSession');
+    if (savedSession) {
+      try {
+        const parsed = JSON.parse(savedSession);
+        const elapsed = Math.floor((Date.now() - parsed.startTime) / 1000);
+        const totalDuration = 45 * 60;
+
+        if (elapsed < totalDuration || parsed.isExamFinished) {
+          // Restore session if within 45 mins OR if exam is already finished (to see results)
+          setQuestions(parsed.questions);
+          setUserState(prev => ({
+            ...parsed.userState,
+            timeRemaining: parsed.isExamFinished ? 0 : Math.max(0, totalDuration - elapsed)
+          }));
+          setMode(parsed.isExamFinished ? 'results' : 'exam');
+          if (parsed.aiStudyPlan) setAiStudyPlan(parsed.aiStudyPlan);
+        } else {
+          // Session expired
+          localStorage.removeItem('stressTestSession');
+        }
+      } catch (e) {
+        console.error("Failed to restore session", e);
+        localStorage.removeItem('stressTestSession');
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mode === 'exam' || mode === 'results') {
+      const sessionData = {
+        questions,
+        userState,
+        startTime: localStorage.getItem('stressTestStartTime') ? parseInt(localStorage.getItem('stressTestStartTime')!) : Date.now(),
+        isExamFinished: mode === 'results',
+        aiStudyPlan
+      };
+      localStorage.setItem('stressTestSession', JSON.stringify(sessionData));
+    }
+  }, [userState, questions, mode, aiStudyPlan]);
 
   useEffect(() => {
     if (userState.isExamActive && !userState.isExamFinished) {
@@ -183,7 +226,7 @@ export default function App() {
     <div className="max-w-5xl mx-auto px-4 py-12 font-sans">
       <header className="text-center mb-16 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="inline-block bg-black text-white px-4 py-1 mb-4 font-mono text-sm font-bold tracking-widest border-2 border-black shadow-neo transform -rotate-1">
-          TEST AMMISSIONE MEDICINA 2025
+          DM418/2025 - TEST MEDICINA
         </div>
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-black tracking-tighter mb-6 drop-shadow-[4px_4px_0px_rgba(163,230,53,1)]">
           StressTest<span className="italic font-serif font-normal text-gray-800">Fisica</span>
@@ -192,7 +235,7 @@ export default function App() {
           La simulazione definitiva per aspiranti medici.
           <br />
           <span className="text-base font-normal text-gray-600 mt-2 block">
-            Algoritmi DeepSeek Reasoner per domande di livello universitario.
+            Simulazione conforme al decreto DM418/2025. Accesso garantito per 45 minuti.
           </span>
         </p>
       </header>
@@ -248,40 +291,44 @@ export default function App() {
         </NeoCard>
       </div>
 
-      {examType && (
-        <div className="max-w-md mx-auto animate-in fade-in zoom-in duration-300">
-          <div className="bg-neo-red/10 p-6 border-2 border-black shadow-neo-lg rounded-xl">
-            <label className="block text-sm font-black text-black mb-3 uppercase tracking-wider">Livello di Difficoltà</label>
-            <div className="flex gap-2 mb-6">
-              {(['easy', 'medium', 'hard'] as const).map((level) => (
-                <button
-                  key={level}
-                  onClick={() => setDifficulty(level)}
-                  className={`
+      {
+        examType && (
+          <div className="max-w-md mx-auto animate-in fade-in zoom-in duration-300">
+            <div className="bg-neo-red/10 p-6 border-2 border-black shadow-neo-lg rounded-xl">
+              <label className="block text-sm font-black text-black mb-3 uppercase tracking-wider">Livello di Difficoltà</label>
+              <div className="flex gap-2 mb-6">
+                {(['easy', 'medium', 'hard'] as const).map((level) => (
+                  <button
+                    key={level}
+                    onClick={() => setDifficulty(level)}
+                    className={`
                     flex-1 py-2 text-sm font-bold border-2 border-black rounded-lg transition-all uppercase
                     ${difficulty === level
-                      ? 'bg-black text-white shadow-neo-sm translate-x-[1px] translate-y-[1px]'
-                      : 'bg-white text-black hover:bg-gray-100 shadow-neo'}
+                        ? 'bg-black text-white shadow-neo-sm translate-x-[1px] translate-y-[1px]'
+                        : 'bg-white text-black hover:bg-gray-100 shadow-neo'}
                   `}
-                >
-                  {level === 'easy' ? 'Base' : level === 'medium' ? 'Std' : 'Pro'}
-                </button>
-              ))}
+                  >
+                    {level === 'easy' ? 'Base' : level === 'medium' ? 'Std' : 'Pro'}
+                  </button>
+                ))}
+              </div>
+
+              <NeoButton onClick={handleStartClick} className="w-full text-lg">
+                <Play size={24} strokeWidth={3} /> AVVIA SIMULAZIONE (€0.50)
+              </NeoButton>
             </div>
-
-            <NeoButton onClick={handleStartClick} className="w-full text-lg">
-              <Play size={24} strokeWidth={3} /> AVVIA SIMULAZIONE (€0.50)
-            </NeoButton>
           </div>
-        </div>
-      )}
+        )
+      }
 
-      {errorMsg && (
-        <div className="mt-8 p-4 bg-neo-red text-black border-2 border-black shadow-neo rounded-lg flex items-center justify-center gap-2 font-bold">
-          <AlertCircle size={24} /> {errorMsg}
-        </div>
-      )}
-    </div>
+      {
+        errorMsg && (
+          <div className="mt-8 p-4 bg-neo-red text-black border-2 border-black shadow-neo rounded-lg flex items-center justify-center gap-2 font-bold">
+            <AlertCircle size={24} /> {errorMsg}
+          </div>
+        )
+      }
+    </div >
   );
 
   const LoadingView = () => (
@@ -292,7 +339,7 @@ export default function App() {
       </div>
       <h2 className="text-4xl font-black text-black uppercase tracking-tight">Generazione in Corso</h2>
       <p className="text-xl font-mono text-gray-600 mt-4 bg-gray-100 px-4 py-1 border-2 border-black shadow-neo">
-        DeepSeek sta preparando il test...
+        L'AI sta preparando il test...
       </p>
     </div>
   );
