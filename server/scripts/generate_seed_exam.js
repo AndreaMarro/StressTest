@@ -11,7 +11,7 @@ const deepseek = new OpenAI({
 const CACHE_FILE = path.join(__dirname, '../data/exam_cache.json');
 
 async function generateSeedExam() {
-    const NUM_EXAMS = 3;
+    const NUM_EXAMS = 10;
     console.log(`Starting batch generation of ${NUM_EXAMS} exams (Timeout: 5 mins each)...`);
 
     for (let i = 0; i < NUM_EXAMS; i++) {
@@ -21,11 +21,18 @@ async function generateSeedExam() {
           Sei un professore universitario d'élite, autore dei test di ammissione a Medicina (TOLC-MED/VET).
           Il tuo obiettivo è creare una simulazione "Semestre Filtro" estremamente rigorosa e selettiva.
           
-          REGOLE DI QUALITÀ:
-          1. Le domande devono essere di livello "Test di Ammissione Medicina" o superiore. Niente banalità.
-          2. I calcoli devono essere fattibili senza calcolatrice (ma non banali), basati su ragionamento e stima.
-          3. SARCASMO EDUCATIVO: Nelle spiegazioni ("explanation"), sii brutalmente onesto ma estremamente preciso. 
-             Esempio: "Hai dimenticato di convertire le unità? Grave. In corsia questo uccide i pazienti. La risposta corretta deriva da..."
+          REGOLE DI QUALITÀ (CRITICHE):
+          1. LIVELLO AVANZATO: Le domande devono essere difficili. Niente definizioni semplici o domande banali.
+          2. CONTESTO MEDICO: Dove possibile, applica la fisica al corpo umano (es. Emodinamica per i fluidi, leve per le ossa, ottica dell'occhio, radiazioni in terapia).
+          3. CALCOLI: Richiedono ragionamento, stima e passaggi logici multipli.
+          4. SARCASMO EDUCATIVO: Nelle spiegazioni, sii brutalmente onesto. Se sbagliano, insulta la loro preparazione (es. "Se non sai questo, ucciderai un paziente").
+          
+          SYLLABUS OBBLIGATORIO (Bilanciato):
+          - Cinematica & Dinamica
+          - Meccanica dei Fluidi (Emodinamica)
+          - Termodinamica (Metabolismo, Gas)
+          - Elettrostatica & Circuiti (Potenziali di membrana, Defibrillatori)
+          - Ottica & Radiazioni (Occhio, Raggi X)
           
           FORMATTAZIONE MATEMATICA (CRUCIALE):
           1. Usa SEMPRE e SOLO LaTeX per qualsiasi formula, numero con unità o variabile.
@@ -44,7 +51,7 @@ async function generateSeedExam() {
           {
             "questions": [
               {
-                "text": "Testo della domanda con formule in LaTeX $...$...",
+                "text": "Testo della domanda (CONTESTUALIZZATA) con formule in LaTeX $...$...",
                 "type": "multiple_choice" | "fill_in_the_blank",
                 "options": ["$A...$", "$B...$", "$C...$", "$D...$", "$E...$"],
                 "correctAnswer": "Risposta esatta (es. $10 \\text{ J}$)",
