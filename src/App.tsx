@@ -290,7 +290,7 @@ export default function App() {
       if (paymentIntentId) {
         try {
           // Verify with backend
-          const res = await fetch(`/api/verify-payment/${paymentIntentId}`);
+          const res = await fetch(`${API_URL}/api/verify-payment/${paymentIntentId}`);
           const data = await res.json();
 
           if (data.status === 'succeeded') {
