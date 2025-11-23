@@ -60,6 +60,8 @@ async function generateExam(topic, difficulty, apiKey) {
          - Oppure usa calcolo letterale (es. "v = sqrt(2gh)").
          - VIETATO usare numeri complessi (es. 3.14, 1.6x10^-19) se non si semplificano immediatamente.
       4. SARCASMO EDUCATIVO: Sii brutalmente onesto nelle spiegazioni.
+      5. CONCISIONE MOBILE: Le spiegazioni devono essere BREVI (max 3 frasi). Non sprecare pixel. Vai dritto al punto.
+      6. TONO: "Sei qui per soffrire, ma imparerai". Usa un tono da sergente istruttore di fisica.
       
       SYLLABUS OBBLIGATORIO COMPLETO (DM418/2025) - DISTRIBUZIONE CFU:
       

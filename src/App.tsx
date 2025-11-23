@@ -537,16 +537,15 @@ export default function App() {
 
   const StartView = () => (
     <div className="max-w-4xl mx-auto">
-      <header className="mb-12 border-l-2 border-terminal-green pl-6 py-2 flex justify-between items-start">
+      <header className="mb-6 md:mb-12 border-l-2 border-terminal-green pl-4 md:pl-6 py-1 md:py-2 flex justify-between items-start">
         <div>
-          <div className="text-xs font-bold text-terminal-dim mb-2">SYSTEM_BOOT_SEQUENCE_INIT...</div>
-          <h1 className="text-3xl md:text-6xl font-bold mb-4 tracking-tighter">
+          <div className="text-[10px] md:text-xs font-bold text-terminal-dim mb-1 md:mb-2">SYSTEM_BOOT_SEQUENCE_INIT...</div>
+          <h1 className="text-2xl md:text-6xl font-bold mb-2 md:mb-4 tracking-tighter">
             <TypingText text="SEMESTRE_FILTRO" speed={50} animate={isTitleAnimating} />
           </h1>
-          <p className="text-terminal-dim text-lg max-w-2xl">
+          <p className="text-terminal-dim text-sm md:text-lg max-w-2xl leading-tight">
             Simulazione conforme al protocollo <span className="text-terminal-green">DM418/2025</span>.
-            <br />
-            Sopravvivi al filtro o cambia facoltà.
+            <br className="hidden md:block" /> Sopravvivi al filtro o cambia facoltà.
           </p>
         </div>
         <div className="flex flex-col gap-4">
@@ -574,7 +573,9 @@ export default function App() {
         </div>
       </header>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-12">
+      </header>
+
+      <div className="grid md:grid-cols-2 gap-3 md:gap-6 mb-24 md:mb-12">
         <div
           onClick={() => setExamType('full')}
           className={`terminal-box cursor-pointer transition-all hover:border-terminal-green group
@@ -622,58 +623,77 @@ export default function App() {
         </div>
       </div>
 
-      {examType && (
-        <div className="terminal-box animate-in fade-in duration-300 border-terminal-green">
-          <div className="flex items-center gap-2 mb-4 text-terminal-green">
-            <Terminal size={16} />
-            <span className="text-sm font-bold">CONFIGURE_DIFFICULTY_LEVEL</span>
-          </div>
+      {
+    examType && (
+      <div className="terminal-box animate-in fade-in duration-300 border-terminal-green">
+        <div className="flex items-center gap-2 mb-4 text-terminal-green">
+          <Terminal size={16} />
+          <span className="text-sm font-bold">CONFIGURE_DIFFICULTY_LEVEL</span>
+        </div>
 
-          <div className="flex gap-2 mb-6">
-            {(['easy', 'medium', 'hard'] as const).map((level) => (
-              <button
-                key={level}
-                onClick={() => setDifficulty(level)}
-                className={`
+        <div className="flex gap-2 mb-6">
+          {(['easy', 'medium', 'hard'] as const).map((level) => (
+            <button
+              key={level}
+              onClick={() => setDifficulty(level)}
+              className={`
                   flex-1 py-2 text-xs font-bold border transition-all uppercase tracking-wider
                   ${difficulty === level
-                    ? 'bg-terminal-green text-terminal-black border-terminal-green'
-                    : 'bg-transparent text-terminal-dim border-terminal-dim hover:border-terminal-green hover:text-terminal-green'}
+                  ? 'bg-terminal-green text-terminal-black border-terminal-green'
+                  : 'bg-transparent text-terminal-dim border-terminal-dim hover:border-terminal-green hover:text-terminal-green'}
                 `}
-              >
-                {level === 'easy' ? 'L1_BASIC' : level === 'medium' ? 'L2_STD' : 'L3_NIGHTMARE'}
-              </button>
-            ))}
-          </div>
-
-          <button onClick={handleStartClick} className="terminal-button w-full flex items-center justify-center gap-2">
-            <Play size={16} /> INITIATE_SEQUENCE (€0.50)
-          </button>
+            >
+              {level === 'easy' ? 'L1_BASIC' : level === 'medium' ? 'L2_STD' : 'L3_NIGHTMARE'}
+            </button>
+          ))}
         </div>
-      )}
 
-      {errorMsg && (
-        <div className="mt-8 p-4 border border-terminal-red text-terminal-red flex items-center justify-center gap-2 font-bold bg-terminal-red/10">
-          <AlertCircle size={20} /> ERROR: {errorMsg}
-        </div>
-      )}
-
-      {/* Mobile Buttons - Adjusted for better touch targets and visibility */}
-      <div className="md:hidden fixed bottom-6 right-4 flex flex-col gap-3 z-50">
-        <a
-          href="mailto:ermagician@gmail.com?subject=BUG_REPORT_SEMESTRE_FILTRO&body=DESCRIBE_THE_GLITCH_HERE..."
-          className="bg-terminal-black border border-terminal-dim text-terminal-dim p-3 rounded-full shadow-[0_0_15px_rgba(136,136,136,0.3)] active:scale-95 transition-transform"
-        >
-          <AlertCircle size={24} />
-        </a>
-        <button
-          onClick={() => setShowForum(true)}
-          className="bg-terminal-black border border-terminal-red text-terminal-red p-3 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)] animate-pulse active:scale-95 transition-transform"
-        >
-          <MessageSquare size={24} />
+        <button onClick={handleStartClick} className="terminal-button w-full flex items-center justify-center gap-2">
+          <Play size={16} /> INITIATE_SEQUENCE (€0.50)
         </button>
       </div>
-    </div>
+    )
+  }
+
+  {
+    errorMsg && (
+      <div className="mt-8 p-4 border border-terminal-red text-terminal-red flex items-center justify-center gap-2 font-bold bg-terminal-red/10">
+        <AlertCircle size={20} /> ERROR: {errorMsg}
+      </div>
+    )
+  }
+
+  {/* Mobile Bottom Dock - Fixed App-like Bar */ }
+  <div className="md:hidden fixed bottom-0 left-0 right-0 bg-terminal-black border-t border-terminal-dim p-2 flex justify-around items-center z-50 pb-safe">
+    <a
+      href="mailto:ermagician@gmail.com?subject=BUG_REPORT_SEMESTRE_FILTRO&body=DESCRIBE_THE_GLITCH_HERE..."
+      className="flex flex-col items-center gap-1 text-terminal-dim active:text-terminal-green"
+    >
+      <AlertCircle size={20} />
+      <span className="text-[10px] font-bold uppercase">Report</span>
+    </a>
+
+    <div className="w-px h-8 bg-terminal-dim/30"></div>
+
+    <button
+      onClick={() => setShowForum(true)}
+      className="flex flex-col items-center gap-1 text-terminal-red animate-pulse active:scale-95 transition-transform"
+    >
+      <MessageSquare size={24} />
+      <span className="text-[10px] font-bold uppercase">Panic Room</span>
+    </button>
+
+    <div className="w-px h-8 bg-terminal-dim/30"></div>
+
+    <button
+      onClick={() => setShowHistory(true)}
+      className="flex flex-col items-center gap-1 text-terminal-green active:scale-95 transition-transform"
+    >
+      <Trophy size={20} />
+      <span className="text-[10px] font-bold uppercase">Storico</span>
+    </button>
+  </div>
+    </div >
   );
 
   const LoadingView = () => (
@@ -781,7 +801,7 @@ export default function App() {
             </div>
 
             <div className="mt-6 mb-8">
-              <h2 className="text-xl md:text-2xl font-bold leading-relaxed">
+              <h2 className="text-lg md:text-2xl font-bold leading-relaxed">
                 <MathText content={currentQ.text} />
               </h2>
             </div>
@@ -792,7 +812,8 @@ export default function App() {
                   <button
                     key={i}
                     onClick={() => handleAnswer(opt)}
-                    className={`w-full p-4 text-left border transition-all flex items-center gap-4 group
+                    onClick={() => handleAnswer(opt)}
+                    className={`w-full p-3 md:p-4 text-left border transition-all flex items-center gap-3 md:gap-4 group
                        ${userState.answers[currentQ.id] === opt
                         ? 'bg-terminal-green/10 border-terminal-green text-terminal-green'
                         : 'border-terminal-dim hover:border-terminal-green hover:text-terminal-green'}
