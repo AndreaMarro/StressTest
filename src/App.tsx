@@ -2,20 +2,22 @@ import { useState, useEffect, useRef } from 'react';
 import {
   BookOpen, Clock, CheckCircle, XCircle, AlertCircle, Play, RotateCcw,
   Brain, ChevronRight, ChevronLeft, Flag, Menu, X, GraduationCap,
-  Zap, Thermometer, Droplets, Waves, Activity, Terminal, MessageSquare
+  Zap, Thermometer, Droplets, Waves, Activity, Terminal, MessageSquare, Trophy
 } from 'lucide-react';
 import TerminalLayout from './components/layout/TerminalLayout';
 import TypingText from './components/ui/TypingText';
 import { MathText } from './components/ui/MathText';
 import { PaymentModal } from './components/ui/PaymentModal';
+import { HistoryView } from './components/HistoryView';
 import Forum from './components/Forum';
-import { NeoButton } from './components/ui/NeoButton';
-import { DeepSeekService } from './services/deepseek';
+import { exportExamPDF } from './utils/pdfExport';
 import type { Question, UserState, Topic } from './types';
 
 // ... existing imports ...
 
 // --- Constants ---
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 const TOPICS: Topic[] = [
   { id: 'intro', name: "Introduzione e Metodi", icon: <BookOpen className="w-4 h-4" /> },
@@ -47,69 +49,34 @@ export default function App() {
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [aiStudyPlan, setAiStudyPlan] = useState<string | null>(null);
-  const [loadingPlan, setLoadingPlan] = useState(false);
+  const [isTitleAnimating, setIsTitleAnimating] = useState(true);
   const [showPayment, setShowPayment] = useState(false);
   const [showForum, setShowForum] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [history, setHistory] = useState<any[]>(() => {
+    const saved = localStorage.getItem('examHistory');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Session access control (45-min window)
+  const [accessExpiresAt, setAccessExpiresAt] = useState<string | null>(() => {
+    return localStorage.getItem('accessExpiresAt');
+  });
+  const [accessTimeLeft, setAccessTimeLeft] = useState<number | null>(null);
+
+  // Track seen exams to ensure uniqueness
+  const [seenExamIds, setSeenExamIds] = useState<string[]>(() => {
+    const saved = localStorage.getItem('seenExamIds');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const deepSeekRef = useRef<DeepSeekService | null>(null);
 
-  // Temporary Test Component
-  const TestRender = () => {
-    const [testQuestions, setTestQuestions] = useState<any[]>([]);
-
-    useEffect(() => {
-      fetch('http://localhost:3000/api/generate-exam', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic: 'full', difficulty: 'medium' })
-      })
-        .then(res => res.json())
-        .then(data => setTestQuestions(data.questions || []))
-        .catch(err => console.error(err));
-    }, []);
-
-    if (testQuestions.length === 0) return <div className="p-8 text-terminal-text">Loading test exam...</div>;
-
-    return (
-      <div className="p-8 space-y-8 max-w-3xl mx-auto">
-        <h1 className="text-2xl text-terminal-accent mb-6">Render Verification</h1>
-        {testQuestions.map((q, i) => (
-          <div key={i} className="border border-terminal-dim p-6 rounded bg-black/50">
-            <div className="mb-4 text-lg">
-              <span className="text-terminal-accent mr-2">[{i + 1}]</span>
-              <MathText content={q.text} />
-            </div>
-            <div className="grid gap-2 pl-6">
-              {q.options?.map((opt: string, j: number) => (
-                <div key={j} className="flex items-center gap-2 text-terminal-dim">
-                  <span className="text-xs">({String.fromCharCode(65 + j)})</span>
-                  <MathText content={opt} />
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 pt-4 border-t border-terminal-dim/30 text-sm text-terminal-text/80">
-              <span className="text-terminal-success mr-2">Correct:</span>
-              <MathText content={q.correctAnswer} />
-              <div className="mt-2 italic text-terminal-dim">
-                <span className="text-terminal-accent mr-1">Explanation:</span>
-                <MathText content={q.explanation} />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  if (window.location.pathname === '/test-render') {
-    return (
-      <TerminalLayout>
-        <TestRender />
-      </TerminalLayout>
-    );
-  }
+  // Save seen exams to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('seenExamIds', JSON.stringify(seenExamIds));
+  }, [seenExamIds]);
 
   // --- Logic ---
 
@@ -124,33 +91,182 @@ export default function App() {
 
   const handlePaymentSuccess = () => {
     setShowPayment(false);
-    generateQuestions();
+    handleStartExam(); // Call the new exam generation logic
   };
 
-  const generateQuestions = async () => {
+  const handleStartExam = async () => {
     setMode('loading');
     setErrorMsg(null);
 
-    // Use backend service
-    if (!deepSeekRef.current) {
-      deepSeekRef.current = new DeepSeekService();
-    }
-
     try {
-      const topicName = examType === 'full' ? 'full' : selectedTopic;
-      const generatedQuestions = await deepSeekRef.current.generateExam(topicName, difficulty);
+      const topicToUse = examType === 'full' ? 'full' : selectedTopic;
 
-      if (!generatedQuestions || generatedQuestions.length === 0) throw new Error("Nessuna domanda generata");
+      console.log('Requesting exam with excludeIds:', seenExamIds);
 
-      setQuestions(generatedQuestions);
+      const response = await fetch(`${API_URL}/api/generate-exam`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: topicToUse,
+          difficulty,
+          excludeIds: seenExamIds
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch exam');
+
+      const data = await response.json();
+
+      if (!data.questions || data.questions.length === 0) {
+        throw new Error('No questions received');
+      }
+
+      // Save session token and access info
+      if (data.sessionToken) {
+        localStorage.setItem('sessionToken', data.sessionToken);
+      }
+      if (data.expiresAt) {
+        setAccessExpiresAt(data.expiresAt);
+        localStorage.setItem('accessExpiresAt', data.expiresAt);
+      }
+      if (data.id) {
+        localStorage.setItem('currentExamId', data.id);
+      }
+
+      // Track this exam ID
+      if (data.id) {
+        setSeenExamIds(prev => [...prev, data.id]);
+      }
+
+      setQuestions(data.questions);
       startExam();
-
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setErrorMsg(err.message || "Errore durante la generazione. Riprova.");
+      const message = err instanceof Error ? err.message : "Errore sconosciuto";
+      setErrorMsg(message || "Errore nel caricamento del test. Riprova.");
       setMode('start');
     }
   };
+
+  // Debug: log exam when it changes
+  useEffect(() => {
+    if (questions.length > 0) {
+      console.log('[App] Exam loaded with', questions.length, 'questions');
+    }
+  }, [questions]);
+
+  // Stop title animation after 6 seconds (not panic button)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsTitleAnimating(false);
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Check for saved session on mount (auto-resume if within 45 min)
+  useEffect(() => {
+    const checkSavedAccess = async () => {
+      const savedExamId = localStorage.getItem('currentExamId');
+      const savedToken = localStorage.getItem('sessionToken');
+
+      if (!savedExamId || !savedToken) return;
+
+      console.log('[App] Checking session access for exam:', savedExamId);
+
+      try {
+        const res = await fetch(`${API_URL}/api/verify-access`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            examId: savedExamId,
+            sessionToken: savedToken
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.hasAccess && data.exam) {
+          console.log('[App] Access granted, loading saved exam');
+
+          // Restore access expiration
+          if (data.expiresAt) {
+            setAccessExpiresAt(data.expiresAt);
+            localStorage.setItem('accessExpiresAt', data.expiresAt);
+          }
+
+          // Restore questions
+          setQuestions(data.exam.questions);
+
+          // Restore user answers if saved
+          const savedAnswers = localStorage.getItem(`answers_${savedExamId}`);
+          if (savedAnswers) {
+            const parsedAnswers = JSON.parse(savedAnswers);
+            setUserState(prev => ({
+              ...prev,
+              answers: parsedAnswers
+            }));
+          }
+
+          startExam();
+        } else if (data.expired) {
+          console.log('[App] Access expired, clearing session');
+          localStorage.removeItem('currentExamId');
+          localStorage.removeItem('sessionToken');
+          localStorage.removeItem('accessExpiresAt');
+          setAccessExpiresAt(null);
+        }
+      } catch (err) {
+        console.error('[App] Failed to check access:', err);
+      }
+    };
+
+    checkSavedAccess();
+  }, []);
+
+  // Countdown timer for 45-min access window
+  useEffect(() => {
+    if (!accessExpiresAt) {
+      setAccessTimeLeft(null);
+      return;
+    }
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const expiry = new Date(accessExpiresAt).getTime();
+      const diff = Math.max(0, Math.floor((expiry - now) / 1000));
+
+      setAccessTimeLeft(diff);
+
+      if (diff === 0 && mode === 'exam') {
+        // Access expired during exam
+        console.log('[App] Access window expired');
+        finishExam();
+
+        // Clear session
+        localStorage.removeItem('currentExamId');
+        localStorage.removeItem('sessionToken');
+        localStorage.removeItem('accessExpiresAt');
+        setAccessExpiresAt(null);
+      }
+    };
+
+    // Update immediately
+    updateCountdown();
+
+    // Then update every second
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessExpiresAt, mode]);
+
+  // Save user answers periodically for recovery
+  useEffect(() => {
+    const examId = localStorage.getItem('currentExamId');
+    if (examId && Object.keys(userState.answers).length > 0) {
+      localStorage.setItem(`answers_${examId}`, JSON.stringify(userState.answers));
+    }
+  }, [userState.answers]);
 
   const startExam = () => {
     setUserState({
@@ -180,13 +296,7 @@ export default function App() {
           const data = await res.json();
 
           if (data.status === 'succeeded') {
-            // Restore state from before redirect (if possible) or default to full exam if lost
-            // Since we lost state, we default to 'full' or try to recover from localStorage if we saved intent there.
-            // For now, let's assume 'full' if we can't determine, or ask user?
-            // Better: We just start the generation.
-            // We need to know what they wanted to buy.
-            // Ideally we should have saved 'pendingExamType' in localStorage before redirect.
-
+            // Restore state from before redirect
             const pendingType = localStorage.getItem('pendingExamType') as 'full' | 'topic' | null;
             const pendingTopic = localStorage.getItem('pendingTopic');
             const pendingDifficulty = localStorage.getItem('pendingDifficulty') as 'easy' | 'medium' | 'hard' | null;
@@ -196,15 +306,31 @@ export default function App() {
               if (pendingTopic) setSelectedTopic(pendingTopic);
               if (pendingDifficulty) setDifficulty(pendingDifficulty);
             } else {
-              // Fallback
               setExamType('full');
             }
 
             // Clear URL
             window.history.replaceState({}, '', window.location.pathname);
 
-            // Generate
-            generateQuestions();
+            // Generate Exam using the new handler
+            // We need to wait for state to update? No, we can just call it, but it uses state.
+            // Actually, handleStartExam uses 'examType' from state.
+            // React state updates are async. We should pass params to handleStartExam or wait.
+            // Better: Pass params to handleStartExam or just use the local variables.
+
+            // For simplicity, let's just call it. If state isn't ready, we might default to 'full'.
+            // To be safe, let's manually trigger the fetch here with the restored values.
+
+            // Actually, let's just call handleStartExam() and hope the state update from above is fast enough? 
+            // No, it won't be.
+            // Let's refactor handleStartExam to accept optional params.
+
+            // Refactored call below:
+            triggerExamGeneration(
+              pendingType || 'full',
+              pendingTopic || 'Introduzione e Metodi',
+              pendingDifficulty || 'medium'
+            );
           }
         } catch (e) {
           console.error("Payment verification failed", e);
@@ -214,7 +340,52 @@ export default function App() {
     };
 
     checkPaymentStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Helper to trigger generation with explicit params (bypassing async state issues)
+  const triggerExamGeneration = async (type: string, topic: string, diff: string) => {
+    setMode('loading');
+    setErrorMsg(null);
+
+    try {
+      const topicToUse = type === 'full' ? 'full' : topic;
+
+      const response = await fetch(`${API_URL}/api/generate-exam`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: topicToUse,
+          difficulty: diff,
+          excludeIds: seenExamIds
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch exam');
+
+      const data = await response.json();
+
+      if (!data.questions || data.questions.length === 0) {
+        throw new Error('No questions received');
+      }
+
+      if (data.id) {
+        localStorage.setItem('currentExamId', data.id);
+        localStorage.setItem('examExpiresAt', data.expiresAt || '');
+        const newSeenIds = [...seenExamIds, data.id];
+        setSeenExamIds(newSeenIds);
+        localStorage.setItem('seenExamIds', JSON.stringify(newSeenIds));
+      }
+
+      setQuestions(data.questions);
+      startExam();
+    } catch (err: unknown) {
+      console.error(err);
+      const message = err instanceof Error ? err.message : "Errore sconosciuto";
+      setErrorMsg(message || "Errore nel caricamento del test. Riprova.");
+      setMode('start');
+    }
+  };
 
   // Persistence Logic
   useEffect(() => {
@@ -233,7 +404,6 @@ export default function App() {
             timeRemaining: parsed.isExamFinished ? 0 : Math.max(0, totalDuration - elapsed)
           }));
           setMode(parsed.isExamFinished ? 'results' : 'exam');
-          if (parsed.aiStudyPlan) setAiStudyPlan(parsed.aiStudyPlan);
         } else {
           // Session expired
           localStorage.removeItem('stressTestSession');
@@ -251,12 +421,11 @@ export default function App() {
         questions,
         userState,
         startTime: localStorage.getItem('stressTestStartTime') ? parseInt(localStorage.getItem('stressTestStartTime')!) : Date.now(),
-        isExamFinished: mode === 'results',
-        aiStudyPlan
+        isExamFinished: mode === 'results'
       };
       localStorage.setItem('stressTestSession', JSON.stringify(sessionData));
     }
-  }, [userState, questions, mode, aiStudyPlan]);
+  }, [userState, questions, mode]);
 
   useEffect(() => {
     if (userState.isExamActive && !userState.isExamFinished) {
@@ -271,6 +440,7 @@ export default function App() {
       }, 1000);
     }
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userState.isExamActive, userState.isExamFinished]);
 
   const finishExam = () => {
@@ -284,18 +454,59 @@ export default function App() {
       }
     });
 
-    setUserState(prev => ({ ...prev, isExamActive: false, isExamFinished: true, score }));
+    const finalScore = score; // Use the calculated score
+    setUserState(prev => ({ ...prev, isExamActive: false, isExamFinished: true, score: finalScore }));
     setMode('results');
+
+    // Save to history
+    const newHistoryItem = {
+      id: localStorage.getItem('currentExamId') || Date.now().toString(),
+      date: new Date().toISOString(),
+      score: finalScore,
+      totalQuestions: questions.length,
+      difficulty,
+      topic: examType === 'full' ? 'Simulazione Completa' : selectedTopic
+    };
+
+    const updatedHistory = [newHistoryItem, ...history];
+    setHistory(updatedHistory);
+    localStorage.setItem('examHistory', JSON.stringify(updatedHistory));
+
+    // Clear session
+    localStorage.removeItem('currentExamId');
+    localStorage.removeItem('sessionToken');
+    localStorage.removeItem('accessExpiresAt');
+    setAccessExpiresAt(null);
   };
 
   const compareAnswers = (user: string, correct: string, type: string) => {
     if (!user) return false;
+
     if (type === 'multiple_choice') {
-      return user.trim() === correct.trim() || user.startsWith(correct) || correct.startsWith(user);
+      // Exact match o match prima lettera (A-E)
+      const userTrim = user.trim();
+      const correctTrim = correct.trim();
+      return userTrim === correctTrim ||
+        (userTrim.length > 0 && correctTrim.length > 0 && userTrim.charAt(0) === correctTrim.charAt(0));
     } else {
+      // Fill in the blank - numerical answers
       const cleanUser = user.toLowerCase().replace(/\s+/g, '').replace(',', '.');
       const cleanCorrect = correct.toLowerCase().replace(/\s+/g, '').replace(',', '.');
-      return cleanUser === cleanCorrect || cleanUser.includes(cleanCorrect) || cleanCorrect.includes(cleanUser);
+
+      // Exact match first
+      if (cleanUser === cleanCorrect) return true;
+
+      // Try numerical comparison with ±5% tolerance
+      const userNum = parseFloat(cleanUser);
+      const correctNum = parseFloat(cleanCorrect);
+
+      if (!isNaN(userNum) && !isNaN(correctNum)) {
+        const tolerance = Math.abs(correctNum * 0.05);
+        return Math.abs(userNum - correctNum) <= tolerance;
+      }
+
+      // For non-numerical answers, require exact match (no dangerous fuzzy matching)
+      return false;
     }
   };
 
@@ -320,20 +531,7 @@ export default function App() {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  const generateStudyPlan = async () => {
-    if (!deepSeekRef.current) return;
-    setLoadingPlan(true);
-    const wrongAnswers = questions.filter(q => !compareAnswers(userState.answers[q.id], q.correctAnswer, q.type));
 
-    try {
-      const plan = await deepSeekRef.current.generateStudyPlan(wrongAnswers);
-      setAiStudyPlan(plan);
-    } catch (e) {
-      setAiStudyPlan("Impossibile generare il piano al momento.");
-    } finally {
-      setLoadingPlan(false);
-    }
-  };
 
   // --- Views ---
 
@@ -342,8 +540,8 @@ export default function App() {
       <header className="mb-12 border-l-2 border-terminal-green pl-6 py-2 flex justify-between items-start">
         <div>
           <div className="text-xs font-bold text-terminal-dim mb-2">SYSTEM_BOOT_SEQUENCE_INIT...</div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tighter">
-            <TypingText text="SEMESTRE_FILTRO" speed={50} />
+          <h1 className="text-3xl md:text-6xl font-bold mb-4 tracking-tighter">
+            <TypingText text="SEMESTRE_FILTRO" speed={50} animate={isTitleAnimating} />
           </h1>
           <p className="text-terminal-dim text-lg max-w-2xl">
             Simulazione conforme al protocollo <span className="text-terminal-green">DM418/2025</span>.
@@ -358,6 +556,13 @@ export default function App() {
           >
             <MessageSquare size={32} />
             <span className="text-[10px] font-bold tracking-widest">PANIC_ROOM</span>
+          </button>
+          <button
+            onClick={() => setShowHistory(true)}
+            className="hidden md:flex flex-col items-center gap-1 text-terminal-green hover:text-green-400 transition-colors"
+          >
+            <Trophy size={24} />
+            <span className="text-[10px] font-bold tracking-widest">STORICO</span>
           </button>
           <a
             href="mailto:ermagician@gmail.com?subject=BUG_REPORT_SEMESTRE_FILTRO&body=DESCRIBE_THE_GLITCH_HERE..."
@@ -453,17 +658,17 @@ export default function App() {
         </div>
       )}
 
-      {/* Mobile Buttons */}
-      <div className="md:hidden fixed bottom-4 right-4 flex flex-col gap-2 z-50">
+      {/* Mobile Buttons - Adjusted for better touch targets and visibility */}
+      <div className="md:hidden fixed bottom-6 right-4 flex flex-col gap-3 z-50">
         <a
           href="mailto:ermagician@gmail.com?subject=BUG_REPORT_SEMESTRE_FILTRO&body=DESCRIBE_THE_GLITCH_HERE..."
-          className="bg-terminal-black border border-terminal-dim text-terminal-dim p-3 rounded-full shadow-[0_0_15px_rgba(136,136,136,0.3)]"
+          className="bg-terminal-black border border-terminal-dim text-terminal-dim p-3 rounded-full shadow-[0_0_15px_rgba(136,136,136,0.3)] active:scale-95 transition-transform"
         >
           <AlertCircle size={24} />
         </a>
         <button
           onClick={() => setShowForum(true)}
-          className="bg-terminal-black border border-terminal-red text-terminal-red p-3 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)] animate-pulse"
+          className="bg-terminal-black border border-terminal-red text-terminal-red p-3 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)] animate-pulse active:scale-95 transition-transform"
         >
           <MessageSquare size={24} />
         </button>
@@ -495,7 +700,7 @@ export default function App() {
       <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-200px)]">
         {/* Sidebar */}
         <aside className={`
-          fixed md:relative z-30 w-64 bg-terminal-black border-r border-terminal-dim h-full transform transition-transform duration-300
+          fixed md:relative z-40 w-72 md:w-64 bg-terminal-black border-r border-terminal-dim h-full transform transition-transform duration-300 shadow-2xl md:shadow-none
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
           top-0 left-0 p-4 md:p-0 md:bg-transparent md:border-r-0
         `}>
@@ -503,7 +708,7 @@ export default function App() {
             <button onClick={() => setSidebarOpen(false)}><X className="text-terminal-green" /></button>
           </div>
 
-          <div className="terminal-box h-full overflow-y-auto">
+          <div className="terminal-box h-full overflow-y-auto stable-layout scrollbar-thin scrollbar-smooth">
             <h3 className="text-xs font-bold text-terminal-dim mb-4 uppercase tracking-widest border-b border-terminal-dim pb-2">
               Question_Matrix
             </h3>
@@ -547,6 +752,17 @@ export default function App() {
                 <Clock size={16} />
                 <span>{formatTime(userState.timeRemaining)}</span>
               </div>
+
+              {/* 45-min Access Window Countdown */}
+              {accessTimeLeft !== null && (
+                <div className={`flex items-center gap-2 px-3 py-1 border text-xs font-mono ${accessTimeLeft < 600 // Less than 10 min
+                  ? 'border-terminal-red text-terminal-red animate-pulse'
+                  : 'border-terminal-dim text-terminal-dim'
+                  }`}>
+                  <AlertCircle size={14} />
+                  <span>Accesso: {formatTime(accessTimeLeft)}</span>
+                </div>
+              )}
 
               <button
                 onClick={toggleFlag}
@@ -657,27 +873,17 @@ export default function App() {
             <span className="text-sm text-terminal-dim block mt-2">SCORE: {userState.score}/{questions.length}</span>
           </p>
 
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-4 flex-wrap">
             <button onClick={() => setMode('start')} className="terminal-button border-terminal-dim text-terminal-dim hover:border-terminal-text hover:text-terminal-text">
               <RotateCcw size={16} className="inline mr-2" /> REBOOT
             </button>
             <button
-              onClick={generateStudyPlan}
-              disabled={loadingPlan || aiStudyPlan !== null}
-              className="terminal-button"
+              onClick={() => exportExamPDF(questions, userState, examType || 'topic', selectedTopic, difficulty)}
+              className="terminal-button border-terminal-accent text-terminal-accent hover:bg-terminal-accent/10"
             >
-              {loadingPlan ? 'PROCESSING...' : 'GENERATE_AI_ANALYSIS'} <Zap size={16} className="inline ml-2" />
+              DOWNLOAD_REPORT.PDF <GraduationCap size={16} className="inline ml-2" />
             </button>
           </div>
-
-          {aiStudyPlan && (
-            <div className="mt-8 text-left border-t border-terminal-dim pt-8 animate-in fade-in duration-500">
-              <h3 className="text-terminal-green font-bold mb-4 flex items-center gap-2"><Brain size={16} /> NEURAL_ANALYSIS_LOG</h3>
-              <div className="prose prose-invert max-w-none text-sm font-mono text-terminal-text">
-                <MathText content={aiStudyPlan} />
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="space-y-4">
@@ -697,12 +903,12 @@ export default function App() {
                 <div className="grid md:grid-cols-2 gap-4 text-sm mb-4">
                   <div className={`p-3 border ${isCorrect ? 'border-terminal-green/50 text-terminal-green' : 'border-terminal-red/50 text-terminal-red'}`}>
                     <span className="block text-[10px] uppercase opacity-70 mb-1">User_Input</span>
-                    {userAns || "NULL"}
+                    <MathText content={userAns || "NULL"} />
                   </div>
                   {!isCorrect && (
                     <div className="p-3 border border-terminal-green/50 text-terminal-green">
                       <span className="block text-[10px] uppercase opacity-70 mb-1">Expected_Output</span>
-                      {q.correctAnswer}
+                      <MathText content={q.correctAnswer} />
                     </div>
                   )}
                 </div>
@@ -728,6 +934,13 @@ export default function App() {
       />
 
       {showForum && <Forum onClose={() => setShowForum(false)} />}
+
+      {showHistory && (
+        <HistoryView
+          history={history}
+          onClose={() => setShowHistory(false)}
+        />
+      )}
 
       {mode === 'start' && <StartView />}
       {mode === 'loading' && <LoadingView />}
