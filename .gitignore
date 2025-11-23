@@ -69,9 +69,20 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
+# dotenv environment# local env files
+.env*.local
 .env
-.env.test
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+forum.db
+
+# Data files (cache, tokens, forum JSON)
+server/data/*.json
+server/data/access_tokens.json
+server/data/forum.json.test
 .env.production
 .env.local
 
