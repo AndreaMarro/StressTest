@@ -39,8 +39,8 @@ export default function Forum({ onClose }: ForumProps) {
             if (!res.ok) throw new Error('Failed to fetch posts');
             const data = await res.json();
             setPosts(data);
-        } catch (err) {
-            console.error(err);
+        } catch {
+            console.error("Failed to load posts");
             // Don't show error on polling failure to avoid annoyance
         }
     };
@@ -67,7 +67,7 @@ export default function Forum({ onClose }: ForumProps) {
 
             setNewPost('');
             fetchPosts();
-        } catch (err) {
+        } catch {
             setError('Transmission failed. System jammed.');
         } finally {
             setLoading(false);
@@ -86,16 +86,16 @@ export default function Forum({ onClose }: ForumProps) {
     }
 
     return (
-        <div className="fixed inset-0 z-50 bg-terminal-black/95 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="w-full max-w-4xl h-[80vh] terminal-box flex flex-col relative border-terminal-red shadow-[0_0_30px_rgba(220,38,38,0.2)]">
+        <div className="fixed inset-0 z-[200] bg-terminal-black/95 flex items-center justify-center p-0 md:p-4 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="w-full md:max-w-4xl h-full md:h-[80vh] terminal-box border-x-0 md:border-x border-y-0 md:border-y border-terminal-red shadow-none md:shadow-[0_0_30px_rgba(220,38,38,0.2)] flex flex-col relative bg-terminal-black">
 
                 {/* Header */}
-                <div className="flex justify-between items-center border-b border-terminal-red/50 pb-4 mb-4">
+                <div className="flex justify-between items-center border-b border-terminal-red/50 p-4 md:pb-4 md:mb-4 bg-terminal-black z-10">
                     <div className="flex items-center gap-3 text-terminal-red">
                         <AlertTriangle className="animate-pulse" />
-                        <h2 className="text-2xl font-bold tracking-widest">PANIC_ROOM_V.1.0</h2>
+                        <h2 className="text-xl md:text-2xl font-bold tracking-widest">PANIC_ROOM</h2>
                     </div>
-                    <button onClick={onClose} className="text-terminal-dim hover:text-terminal-red transition-colors">
+                    <button onClick={onClose} className="text-terminal-dim hover:text-terminal-red transition-colors p-2">
                         <X size={24} />
                     </button>
                 </div>
@@ -132,7 +132,7 @@ export default function Forum({ onClose }: ForumProps) {
                 </div>
 
                 {/* Input Area */}
-                <form onSubmit={handleSubmit} className="border-t border-terminal-red/30 pt-4">
+                <form onSubmit={handleSubmit} className="border-t border-terminal-red/30 p-4 pb-safe md:pb-4 bg-terminal-black z-10">
                     {error && <div className="text-terminal-red text-xs mb-2 font-bold">ERROR: {error}</div>}
 
                     <div className="flex gap-2 mb-2">
@@ -141,13 +141,13 @@ export default function Forum({ onClose }: ForumProps) {
                             placeholder="CODENAME"
                             value={authorName}
                             onChange={e => setAuthorName(e.target.value)}
-                            className="bg-terminal-black border border-terminal-dim text-terminal-green px-3 py-1 text-xs w-32 outline-none focus:border-terminal-red placeholder-terminal-dim/50"
+                            className="bg-terminal-black border border-terminal-dim text-terminal-green px-3 py-2 text-xs w-32 outline-none focus:border-terminal-red placeholder-terminal-dim/50 rounded-none"
                             maxLength={15}
                         />
                         <select
                             value={selectedTag}
                             onChange={e => setSelectedTag(e.target.value)}
-                            className="bg-terminal-black border border-terminal-dim text-terminal-green px-3 py-1 text-xs outline-none focus:border-terminal-red"
+                            className="bg-terminal-black border border-terminal-dim text-terminal-green px-3 py-2 text-xs outline-none focus:border-terminal-red rounded-none"
                         >
                             {tags.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
@@ -159,15 +159,14 @@ export default function Forum({ onClose }: ForumProps) {
                             value={newPost}
                             onChange={e => setNewPost(e.target.value)}
                             placeholder="TRANSMIT MESSAGE..."
-                            className="flex-1 bg-terminal-black border border-terminal-dim text-terminal-text p-3 outline-none focus:border-terminal-red font-mono placeholder-terminal-dim/50"
-                            autoFocus
+                            className="flex-1 bg-terminal-black border border-terminal-dim text-terminal-text p-3 outline-none focus:border-terminal-red font-mono placeholder-terminal-dim/50 rounded-none"
                         />
                         <button
                             type="submit"
                             disabled={loading || !newPost.trim() || !authorName.trim()}
-                            className="bg-terminal-red/10 border border-terminal-red text-terminal-red px-6 hover:bg-terminal-red hover:text-terminal-black transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold flex items-center gap-2"
+                            className="bg-terminal-red/10 border border-terminal-red text-terminal-red px-6 hover:bg-terminal-red hover:text-terminal-black transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold flex items-center gap-2 rounded-none"
                         >
-                            {loading ? 'SENDING...' : <Send size={16} />}
+                            {loading ? '...' : <Send size={16} />}
                         </button>
                     </div>
                 </form>
