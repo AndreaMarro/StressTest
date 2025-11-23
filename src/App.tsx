@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
   BookOpen, Clock, CheckCircle, XCircle, AlertCircle, Play, RotateCcw,
   Brain, ChevronRight, ChevronLeft, Flag, Menu, X, GraduationCap,
-  Zap, Thermometer, Droplets, Waves, Activity, Terminal, MessageSquare, Trophy
+  Zap, Thermometer, Droplets, Waves, Activity, Terminal, Trophy
 } from 'lucide-react';
 import TerminalLayout from './components/layout/TerminalLayout';
 import TypingText from './components/ui/TypingText';
@@ -564,7 +564,7 @@ export default function App() {
         </div>
       </header>
 
-      </header>
+
 
       <div className="grid md:grid-cols-2 gap-3 md:gap-6 mb-32 md:mb-12">
         <div
@@ -615,65 +615,65 @@ export default function App() {
       </div>
 
       {
-    examType && (
-      <div className="terminal-box animate-in fade-in duration-300 border-terminal-green">
-        <div className="flex items-center gap-2 mb-4 text-terminal-green">
-          <Terminal size={16} />
-          <span className="text-sm font-bold">CONFIGURE_DIFFICULTY_LEVEL</span>
-        </div>
+        examType && (
+          <div className="terminal-box animate-in fade-in duration-300 border-terminal-green">
+            <div className="flex items-center gap-2 mb-4 text-terminal-green">
+              <Terminal size={16} />
+              <span className="text-sm font-bold">CONFIGURE_DIFFICULTY_LEVEL</span>
+            </div>
 
-        <div className="flex gap-2 mb-6">
-          {(['easy', 'medium', 'hard'] as const).map((level) => (
-            <button
-              key={level}
-              onClick={() => setDifficulty(level)}
-              className={`
+            <div className="flex gap-2 mb-6">
+              {(['easy', 'medium', 'hard'] as const).map((level) => (
+                <button
+                  key={level}
+                  onClick={() => setDifficulty(level)}
+                  className={`
                   flex-1 py-2 text-xs font-bold border transition-all uppercase tracking-wider
                   ${difficulty === level
-                  ? 'bg-terminal-green text-terminal-black border-terminal-green'
-                  : 'bg-transparent text-terminal-dim border-terminal-dim hover:border-terminal-green hover:text-terminal-green'}
+                      ? 'bg-terminal-green text-terminal-black border-terminal-green'
+                      : 'bg-transparent text-terminal-dim border-terminal-dim hover:border-terminal-green hover:text-terminal-green'}
                 `}
-            >
-              {level === 'easy' ? 'L1_BASIC' : level === 'medium' ? 'L2_STD' : 'L3_NIGHTMARE'}
-            </button>
-          ))}
-        </div>
+                >
+                  {level === 'easy' ? 'L1_BASIC' : level === 'medium' ? 'L2_STD' : 'L3_NIGHTMARE'}
+                </button>
+              ))}
+            </div>
 
-        <button onClick={handleStartClick} className="terminal-button w-full flex items-center justify-center gap-2">
-          <Play size={16} /> INITIATE_SEQUENCE (€0.50)
+            <button onClick={handleStartClick} className="terminal-button w-full flex items-center justify-center gap-2">
+              <Play size={16} /> INITIATE_SEQUENCE (€0.50)
+            </button>
+          </div>
+        )
+      }
+
+      {
+        errorMsg && (
+          <div className="mt-8 p-4 border border-terminal-red text-terminal-red flex items-center justify-center gap-2 font-bold bg-terminal-red/10">
+            <AlertCircle size={20} /> ERROR: {errorMsg}
+          </div>
+        )
+      }
+
+      {/* Mobile Bottom Dock - Fixed App-like Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-terminal-black border-t border-terminal-dim p-2 flex justify-around items-center z-[100] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+        <a
+          href="mailto:ermagician@gmail.com?subject=BUG_REPORT_SEMESTRE_FILTRO&body=DESCRIBE_THE_GLITCH_HERE..."
+          className="flex flex-col items-center gap-1 text-terminal-dim active:text-terminal-green p-2"
+        >
+          <AlertCircle size={20} />
+          <span className="text-[10px] font-bold uppercase">Report</span>
+        </a>
+
+        <div className="w-px h-8 bg-terminal-dim/30"></div>
+
+        <button
+          onClick={() => setShowHistory(true)}
+          className="flex flex-col items-center gap-1 text-terminal-green active:scale-95 transition-transform p-2"
+        >
+          <Trophy size={20} />
+          <span className="text-[10px] font-bold uppercase">Storico</span>
         </button>
       </div>
-    )
-  }
-
-  {
-    errorMsg && (
-      <div className="mt-8 p-4 border border-terminal-red text-terminal-red flex items-center justify-center gap-2 font-bold bg-terminal-red/10">
-        <AlertCircle size={20} /> ERROR: {errorMsg}
-      </div>
-    )
-  }
-
-  {/* Mobile Bottom Dock - Fixed App-like Bar */ }
-  <div className="md:hidden fixed bottom-0 left-0 right-0 bg-terminal-black border-t border-terminal-dim p-2 flex justify-around items-center z-[100] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
-    <a
-      href="mailto:ermagician@gmail.com?subject=BUG_REPORT_SEMESTRE_FILTRO&body=DESCRIBE_THE_GLITCH_HERE..."
-      className="flex flex-col items-center gap-1 text-terminal-dim active:text-terminal-green p-2"
-    >
-      <AlertCircle size={20} />
-      <span className="text-[10px] font-bold uppercase">Report</span>
-    </a>
-
-    <div className="w-px h-8 bg-terminal-dim/30"></div>
-
-    <button
-      onClick={() => setShowHistory(true)}
-      className="flex flex-col items-center gap-1 text-terminal-green active:scale-95 transition-transform p-2"
-    >
-      <Trophy size={20} />
-      <span className="text-[10px] font-bold uppercase">Storico</span>
-    </button>
-  </div>
     </div >
   );
 
@@ -792,7 +792,6 @@ export default function App() {
                 currentQ.options?.map((opt, i) => (
                   <button
                     key={i}
-                    onClick={() => handleAnswer(opt)}
                     onClick={() => handleAnswer(opt)}
                     className={`w-full p-3 md:p-4 text-left border transition-all flex items-center gap-3 md:gap-4 group
                        ${userState.answers[currentQ.id] === opt

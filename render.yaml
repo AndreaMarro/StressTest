@@ -19,4 +19,4 @@ services:
       - key: DEEPSEEK_API_KEY
         sync: false
       - key: CLIENT_URL
-        value: https://stresstest-fisica.onrender.com
+        value: https://stresstest-fisica.vercel.app

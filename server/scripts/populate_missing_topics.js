@@ -25,11 +25,11 @@ const saveCache = (cache) => {
 };
 
 // Targeted population for missing topics
-const MISSING_TOPICS = [
-    { topic: 'Termodinamica', count: 5 },
-    { topic: 'Elettromagnetismo', count: 5 },
-    { topic: 'Radiazioni', count: 5 }
-];
+const TARGET_COUNTS = {
+    'Termodinamica': 5,
+    'Elettromagnetismo': 5,
+    'Radiazioni': 5
+};
 
 const DIFFICULTIES = ['easy', 'medium', 'hard'];
 
@@ -45,18 +45,34 @@ async function run() {
     const cache = getCache();
     console.log(`📦 Current cache size: ${cache.length} exams\n`);
 
+    // Calculate current counts
+    const currentCounts = {};
+    cache.forEach(e => {
+        currentCounts[e.topic] = (currentCounts[e.topic] || 0) + 1;
+    });
+
     let totalSuccess = 0;
     let totalFail = 0;
 
-    for (const { topic, count } of MISSING_TOPICS) {
-        console.log(`\n📚 Generating ${count} exams for: ${topic}`);
+    for (const [topic, targetCount] of Object.entries(TARGET_COUNTS)) {
+        const current = currentCounts[topic] || 0;
+        const needed = Math.max(0, targetCount - current);
+
+        if (needed === 0) {
+            console.log(`✅ ${topic}: Already has ${current}/${targetCount}. Skipping.`);
+            continue;
+        }
+
+        console.log(`\n📚 Generating ${needed} exams for: ${topic} (Current: ${current}/${targetCount})`);
         console.log('─'.repeat(50));
 
-        for (let i = 0; i < count; i++) {
-            // Distribute difficulties: 2 medium, 2 hard, 1 easy
-            const difficulty = i < 2 ? 'medium' : i < 4 ? 'hard' : 'easy';
+        for (let i = 0; i < needed; i++) {
+            // Distribute difficulties: try to balance based on total index
+            // If we are adding the 5th one (index 4), it should be hard or easy depending on what we have.
+            // For simplicity, let's rotate: medium, hard, easy, medium, hard
+            const difficulty = ['medium', 'hard', 'easy'][i % 3];
 
-            console.log(`[${i + 1}/${count}] ${topic} (${difficulty})...`);
+            console.log(`[${i + 1}/${needed}] ${topic} (${difficulty})...`);
 
             try {
                 const startTime = Date.now();
@@ -78,7 +94,7 @@ async function run() {
                 totalSuccess++;
 
                 // Delay between requests (API courtesy)
-                if (i < count - 1) {
+                if (i < needed - 1) {
                     const delay = 5000 + Math.random() * 3000;
                     console.log(`⏳ Waiting ${Math.round(delay / 1000)}s...`);
                     await new Promise(resolve => setTimeout(resolve, delay));
