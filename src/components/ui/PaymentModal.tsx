@@ -19,6 +19,7 @@ const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
     const elements = useElements();
     const [message, setMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [email, setEmail] = useState("");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,8 +31,13 @@ const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
         const { error, paymentIntent } = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                // Return URL is not strictly needed for redirect: 'if_required' but good practice
                 return_url: window.location.origin,
+                payment_method_data: {
+                    billing_details: {
+                        email: email || undefined,
+                    },
+                },
+                receipt_email: email || undefined,
             },
             redirect: 'if_required',
         });
@@ -49,6 +55,17 @@ const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-500 uppercase">Email per ricevuta (opzionale)</label>
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="tu@email.com"
+                    className="w-full p-2 border border-gray-300 rounded focus:border-black outline-none transition-colors"
+                />
+            </div>
+
             <PaymentElement id="payment-element" options={{ layout: 'tabs' }} />
 
             {message && (
@@ -122,18 +139,6 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess }: PaymentModalProps) 
                     <div className="py-12 text-center">
                         <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto"></div>
                         <p className="mt-4 font-bold text-gray-500">Caricamento Stripe...</p>
-                    </div>
-                )}
-
-                {/* DEV BYPASS BUTTON */}
-                {import.meta.env.DEV && (
-                    <div className="mt-4 pt-4 border-t-2 border-dashed border-gray-300">
-                        <button
-                            onClick={onSuccess}
-                            className="w-full py-2 bg-yellow-400 text-black font-bold rounded border-2 border-black hover:bg-yellow-500 transition-colors text-xs uppercase tracking-widest"
-                        >
-                            ⚠️ DEV_MODE: BYPASS PAYMENT
-                        </button>
                     </div>
                 )}
             </NeoCard>

@@ -9,7 +9,6 @@ import TypingText from './components/ui/TypingText';
 import { MathText } from './components/ui/MathText';
 import { PaymentModal } from './components/ui/PaymentModal';
 import { HistoryView } from './components/HistoryView';
-import Forum from './components/Forum';
 import { exportExamPDF } from './utils/pdfExport';
 import type { Question, UserState, Topic } from './types';
 
@@ -51,7 +50,6 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isTitleAnimating, setIsTitleAnimating] = useState(true);
   const [showPayment, setShowPayment] = useState(false);
-  const [showForum, setShowForum] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [history, setHistory] = useState<any[]>(() => {
@@ -550,13 +548,6 @@ export default function App() {
         </div>
         <div className="flex flex-col gap-4">
           <button
-            onClick={() => setShowForum(true)}
-            className="hidden md:flex flex-col items-center gap-1 text-terminal-red hover:text-red-400 transition-colors animate-pulse"
-          >
-            <MessageSquare size={32} />
-            <span className="text-[10px] font-bold tracking-widest">PANIC_ROOM</span>
-          </button>
-          <button
             onClick={() => setShowHistory(true)}
             className="hidden md:flex flex-col items-center gap-1 text-terminal-green hover:text-green-400 transition-colors"
           >
@@ -672,16 +663,6 @@ export default function App() {
       <AlertCircle size={20} />
       <span className="text-[10px] font-bold uppercase">Report</span>
     </a>
-
-    <div className="w-px h-8 bg-terminal-dim/30"></div>
-
-    <button
-      onClick={() => setShowForum(true)}
-      className="flex flex-col items-center gap-1 text-terminal-red animate-pulse active:scale-95 transition-transform p-2"
-    >
-      <MessageSquare size={24} />
-      <span className="text-[10px] font-bold uppercase">Panic Room</span>
-    </button>
 
     <div className="w-px h-8 bg-terminal-dim/30"></div>
 
@@ -953,8 +934,6 @@ export default function App() {
         onClose={() => setShowPayment(false)}
         onSuccess={handlePaymentSuccess}
       />
-
-      {showForum && <Forum onClose={() => setShowForum(false)} />}
 
       {showHistory && (
         <HistoryView

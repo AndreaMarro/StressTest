@@ -55,12 +55,7 @@ const aiLimiter = rateLimit({
     // Using default keyGenerator which handles IPv6 correctly
 });
 
-// Rate Limiting for Forum to prevent spam
-const forumLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 30, // Max 30 posts/likes per 15 min
-    message: { error: 'Too many requests. Please slow down.' }
-});
+
 
 // Rate Limiting for Payment endpoints
 const paymentLimiter = rateLimit({
@@ -80,7 +75,6 @@ const deepseek = new OpenAI({
 
 // --- Data & Caching Helpers ---
 
-const FORUM_FILE = path.join(__dirname, 'data', 'forum.json');
 const CACHE_FILE = path.join(__dirname, 'data', 'exam_cache.json');
 
 // Ensure data dir exists
@@ -108,24 +102,7 @@ const saveCache = (cache) => {
     }
 };
 
-const getPosts = () => {
-    try {
-        if (!fs.existsSync(FORUM_FILE)) return [];
-        const data = fs.readFileSync(FORUM_FILE, 'utf8');
-        return JSON.parse(data);
-    } catch (e) {
-        console.error("Error reading forum data:", e);
-        return [];
-    }
-};
 
-const savePosts = (posts) => {
-    try {
-        fs.writeFileSync(FORUM_FILE, JSON.stringify(posts, null, 2));
-    } catch (e) {
-        console.error("Error saving forum data:", e);
-    }
-};
 
 // --- Access Token System (IP-based 45-min access) ---
 
@@ -505,109 +482,7 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
     res.json({ received: true });
 });
 
-// --- SQLite Database Setup ---
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./forum.db', (err) => {
-    if (err) console.error('SQLite connection error:', err);
-    else console.log('Connected to SQLite database.');
-});
 
-// Initialize DB and Migrate if needed
-db.serialize(() => {
-    // Enable WAL mode for better concurrency
-    db.run("PRAGMA journal_mode = WAL", (err) => {
-        if (err) console.error('Failed to enable WAL mode:', err);
-        else console.log('SQLite WAL mode enabled for better concurrency');
-    });
-
-    db.run(`CREATE TABLE IF NOT EXISTS posts (
-        id TEXT PRIMARY KEY,
-        author TEXT,
-        content TEXT,
-        tag TEXT,
-        timestamp TEXT,
-        likes INTEGER DEFAULT 0
-    )`);
-
-    // Check if migration needed
-    db.get("SELECT count(*) as count FROM posts", [], (err, row) => {
-        if (!err && row.count === 0 && fs.existsSync(FORUM_FILE)) {
-            console.log('Migrating forum data from JSON to SQLite...');
-            const jsonPosts = getPosts();
-            const stmt = db.prepare("INSERT INTO posts VALUES (?, ?, ?, ?, ?, ?)");
-            jsonPosts.forEach(post => {
-                stmt.run(post.id, post.author, post.content, post.tag, post.timestamp, post.likes || 0);
-            });
-            stmt.finalize();
-            console.log('Migration completed.');
-        }
-    });
-});
-
-// 4. Forum Endpoints (SQLite)
-app.get('/api/forum/posts', (req, res) => {
-    db.all("SELECT * FROM posts ORDER BY timestamp DESC LIMIT 50", [], (err, rows) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Database error' });
-        }
-        res.json(rows);
-    });
-});
-
-app.post('/api/forum/posts', forumLimiter, (req, res) => {
-    const { author, content, tag } = req.body;
-
-    // Input validation
-    if (!content || !author) {
-        return res.status(400).json({ error: 'Content and author are required' });
-    }
-    if (content.length > 1000) {
-        return res.status(400).json({ error: 'Content too long (max 1000 characters)' });
-    }
-    if (author.length > 100) {
-        return res.status(400).json({ error: 'Author name too long (max 100 characters)' });
-    }
-
-    // Basic XSS protection: strip HTML tags
-    const sanitizeInput = (str) => str.replace(/<[^>]*>/g, '').trim();
-
-    const newPost = {
-        id: Date.now().toString(),
-        author: sanitizeInput(author),
-        content: sanitizeInput(content),
-        tag: tag || 'GENERAL',
-        timestamp: new Date().toISOString(),
-        likes: 0
-    };
-
-    const stmt = db.prepare("INSERT INTO posts VALUES (?, ?, ?, ?, ?, ?)");
-    stmt.run(newPost.id, newPost.author, newPost.content, newPost.tag, newPost.timestamp, newPost.likes, (err) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Failed to save post' });
-        }
-        res.json(newPost);
-    });
-    stmt.finalize();
-});
-
-app.post('/api/forum/posts/:id/like', forumLimiter, (req, res) => {
-    const { id } = req.params;
-
-    db.run("UPDATE posts SET likes = likes + 1 WHERE id = ?", [id], function (err) {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Database error' });
-        }
-        if (this.changes === 0) return res.status(404).json({ error: 'Post not found' });
-
-        db.get("SELECT * FROM posts WHERE id = ?", [id], (err, row) => {
-            if (err) return res.status(500).json({ error: 'Database error' });
-            res.json(row);
-        });
-    });
-});
 
 // Health Check Endpoint (for Render, monitoring, etc.)
 app.get('/health', (req, res) => {
@@ -616,27 +491,16 @@ app.get('/health', (req, res) => {
         const accessTokens = getAccessTokens().length;
 
         // Quick DB health check
-        db.get("SELECT COUNT(*) as count FROM posts", [], (err, row) => {
-            if (err) {
-                return res.status(500).json({
-                    status: 'unhealthy',
-                    error: 'Database connection failed',
-                    timestamp: new Date().toISOString()
-                });
-            }
-
-            res.json({
-                status: 'healthy',
-                timestamp: new Date().toISOString(),
-                cache: {
-                    examsAvailable: cacheSize
-                },
-                database: {
-                    postsCount: row.count,
-                    accessTokens: accessTokens
-                },
-                uptime: process.uptime()
-            });
+        res.json({
+            status: 'healthy',
+            timestamp: new Date().toISOString(),
+            cache: {
+                examsAvailable: cacheSize
+            },
+            database: {
+                accessTokens: accessTokens
+            },
+            uptime: process.uptime()
         });
     } catch (error) {
         res.status(500).json({

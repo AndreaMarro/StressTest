@@ -31,9 +31,11 @@
   body {
     @apply bg-terminal-black text-terminal-text font-mono overflow-x-hidden transition-colors duration-300;
     background-size: 40px 40px;
-    background-image: linear-gradient(to right, #1a1a1a 1px, transparent 1px),
-      linear-gradient(to bottom, #1a1a1a 1px, transparent 1px);
+    /* Use rgba for grid lines to adapt to background color */
+    background-image: linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
     background-attachment: fixed;
+    scroll-behavior: smooth;
   }
 
   /* Custom Scrollbar */
@@ -52,11 +54,11 @@
 
 @layer components {
   .terminal-box {
-    @apply border border-terminal-dim bg-terminal-black/90 p-4 shadow-lg;
+    @apply border border-terminal-dim bg-terminal-black/90 p-4 shadow-lg backdrop-blur-sm;
   }
 
   .terminal-button {
-    @apply border border-terminal-green text-terminal-green px-6 py-2 hover:bg-terminal-green hover:text-terminal-black transition-all duration-200 uppercase tracking-wider text-sm font-bold shadow-md;
+    @apply border border-terminal-green text-terminal-green px-6 py-2 hover:bg-terminal-green hover:text-terminal-black transition-all duration-200 uppercase tracking-wider text-sm font-bold shadow-md active:scale-95;
   }
 
   .scanline {
@@ -64,11 +66,11 @@
     background: linear-gradient(to bottom,
         rgba(255, 255, 255, 0),
         rgba(255, 255, 255, 0) 50%,
-        rgba(0, 0, 0, 0.2) 50%,
-        rgba(0, 0, 0, 0.2));
+        rgba(0, 0, 0, 0.1) 50%,
+        rgba(0, 0, 0, 0.1));
     background-size: 100% 4px;
-    animation: scanline 8s linear infinite;
-    opacity: 0.05;
+    animation: scanline 10s linear infinite;
+    opacity: 0.03;
     pointer-events: none;
   }
 
@@ -86,4 +88,22 @@
 /* Utility to prevent layout shifts */
 .stable-layout {
   scrollbar-gutter: stable;
+}
+
+/* Smooth scrolling utility */
+.scrollbar-smooth {
+  scroll-behavior: smooth;
+}
+
+/* Thin scrollbar for sidebars and compact areas */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  @apply bg-terminal-dim/50 hover:bg-terminal-green/70 rounded-full;
 }

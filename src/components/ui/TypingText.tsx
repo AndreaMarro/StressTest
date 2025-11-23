@@ -4,10 +4,11 @@ interface TypingTextProps {
     text: string;
     speed?: number;
     className?: string;
+    animate?: boolean;
     onComplete?: () => void;
 }
 
-const TypingText: React.FC<TypingTextProps> = ({ text, speed = 30, className = '', onComplete }) => {
+const TypingText: React.FC<TypingTextProps> = ({ text, speed = 30, className = '', animate = true, onComplete }) => {
     const [displayedText, setDisplayedText] = useState('');
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -25,7 +26,7 @@ const TypingText: React.FC<TypingTextProps> = ({ text, speed = 30, className = '
     }, [currentIndex, text, speed, onComplete]);
 
     return (
-        <span className={`${className} border-r-2 border-terminal-green animate-blink`}>
+        <span className={`${className} border-r-2 border-terminal-green ${animate ? 'animate-blink' : ''}`}>
             {displayedText}
         </span>
     );

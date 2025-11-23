@@ -23,6 +23,7 @@ export class DeepSeekService {
 
             if (!data.questions) throw new Error("Invalid response format");
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return data.questions.map((q: any, index: number) => ({
                 ...q,
                 id: index + 1,
@@ -47,8 +48,8 @@ export class DeepSeekService {
 
             const data = await response.json();
             return data.plan || "Impossibile generare il piano di studio.";
-        } catch (error) {
-            return "Impossibile generare il piano di studio al momento.";
+        } catch {
+            return "Impossibile generare il piano di studio al momento. Riprova più tardi.";
         }
     }
 }

@@ -1,73 +1,62 @@
-# React + TypeScript + Vite
+# Deploying **StressTest FISICA**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+The project consists of a **frontend** built with Vite/React (TypeScript) and a **backend** (Express) that serves the API and, in production, the static files.
 
-Currently, two official plugins are available:
+## 1️⃣ Deploy the **backend** on **Render**
+1. Push the repository to GitHub (or any Git provider).
+2. In Render, create a **Web Service** and **import the repository**.
+3. Render will automatically detect the `render.yaml` file we added:
+   ```yaml
+   services:
+     - type: web
+       name: stresstest-fisica
+       env: node
+       plan: free
+       buildCommand: npm install && npm run build && cd server && npm install
+       startCommand: cd server && node index.js
+       envVars:
+         - key: NODE_VERSION
+           value: 20.11.0
+         - key: STRIPE_SECRET_KEY
+           sync: false
+         - key: DEEPSEEK_API_KEY
+           sync: false
+         - key: CLIENT_URL
+           value: https://<your‑vercel‑project>.vercel.app
+   ```
+4. After the first deploy Render will set a **PORT** environment variable automatically. The server reads it (`process.env.PORT`).
+5. Add the **secret** environment variables (`STRIPE_SECRET_KEY`, `DEEPSEEK_API_KEY`) in the Render dashboard.
+6. Once the service is up, note the URL (e.g. `https://stresstest-fisica.onrender.com`). This will be the API endpoint.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 2️⃣ Deploy the **frontend** on **Vercel**
+1. In the same repository, Vercel will detect the `vercel.json` we added:
+   ```json
+   {
+     "rewrites": [
+       { "source": "/api/(.*)", "destination": "https://stresstest-fisica.onrender.com/api/$1" },
+       { "source": "/(.*)", "destination": "/index.html" }
+     ]
+   }
+   ```
+   *The first rule proxies all `/api/*` calls to the Render backend.*
+2. Create a new Vercel project and **link it to the repository**.
+3. Vercel will run `npm install` and `npm run build` automatically (our `build` script compiles the frontend into the `dist` folder).
+4. No extra environment variables are required for the frontend, but you may set `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` if you want to expose the Stripe key.
+5. After the deployment, Vercel will serve the static files from `dist/`. The rewrite rule ensures the SPA works and API calls go to Render.
 
-## React Compiler
+## 3️⃣ Verify the deployment
+- Open the Vercel URL (e.g. `https://<your‑vercel‑project>.vercel.app`).
+- The app should load, and any API request (exam generation, payment, forum) will be forwarded to the Render backend.
+- Check the console/network tab for any 404/500 errors.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 4️⃣ Optional – Continuous Deployment
+Both Render and Vercel watch the same Git repository. Every push to `main` (or the branch you configure) will trigger a new build on both platforms, keeping the frontend and backend in sync.
 
-## Expanding the ESLint configuration
+---
+### Files you may want to keep handy
+- **`render.yaml`** – Render service definition (already in the repo).
+- **`vercel.json`** – Vercel rewrite configuration (already in the repo).
+- **`build_deploy.sh`** – Local build script you can run on a VPS if you prefer a manual deploy.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Feel free to ask if you need help linking the repo, setting secrets, or customizing the domain names! 🚀

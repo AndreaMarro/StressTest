@@ -11,11 +11,57 @@ const deepseek = new OpenAI({
 const CACHE_FILE = path.join(__dirname, '../data/exam_cache.json');
 
 async function generateSeedExam() {
-    const NUM_EXAMS = 10;
-    console.log(`Starting batch generation of ${NUM_EXAMS} exams (Timeout: 5 mins each)...`);
+    const TOPICS = [
+        'full',
+        'Introduzione e Metodi',
+        'Meccanica',
+        'Meccanica dei Fluidi',
+        'Onde Meccaniche',
+        'Termodinamica',
+        'Elettricità e Magnetismo',
+        'Radiazioni e Ottica'
+    ];
+    const DIFFICULTIES = ['easy', 'medium', 'hard'];
 
-    for (let i = 0; i < NUM_EXAMS; i++) {
-        console.log(`\n--- Generating Exam ${i + 1}/${NUM_EXAMS} ---`);
+    console.log(`Starting comprehensive seed generation...`);
+
+    // We want at least one for each combination.
+    // To save time, we will prioritize 'full' exams and then do one of each topic.
+    // Total combinations: 8 topics * 3 difficulties = 24 exams.
+    // We will do a randomized subset or sequential if we have time.
+    // Let's do:
+    // 1. Full (Easy, Medium, Hard)
+    // 2. Then loop through topics with random difficulties or just Medium for now to ensure coverage.
+
+    // Actually, user asked for "at least one test for each topic and difficulty".
+    // That is 24 exams. DeepSeek will take time.
+    // We will implement the loop but maybe add a check to skip if cache already has it?
+    // No, we want to populate.
+
+    const queue = [];
+    for (const topic of TOPICS) {
+        for (const diff of DIFFICULTIES) {
+            queue.push({ topic, diff });
+        }
+    }
+
+    console.log(`Queue size: ${queue.length} exams.`);
+
+    for (let i = 0; i < queue.length; i++) {
+        const { topic, diff } = queue[i];
+        console.log(`\n--- Generating Exam ${i + 1}/${queue.length}: ${topic} [${diff}] ---`);
+
+        let topicPrompt = "";
+        if (topic === 'full') {
+            topicPrompt = "Copri l'intero syllabus del test di medicina (Cinematica, Dinamica, Fluidi, Termodinamica, Elettrostatica, Circuiti, Ottica) in modo bilanciato.";
+        } else {
+            topicPrompt = `Focalizzati ESCLUSIVAMENTE sull'argomento: ${topic}. Copri tutti i sotto-argomenti pertinenti.`;
+        }
+
+        let diffPrompt = "";
+        if (diff === 'easy') diffPrompt = "Livello: BASE. Domande concettuali, calcoli immediati.";
+        if (diff === 'medium') diffPrompt = "Livello: INTERMEDIO. Richiede ragionamento e calcoli a mente non banali.";
+        if (diff === 'hard') diffPrompt = "Livello: AVANZATO/COMPLESSO. Domande trabocchetto, calcoli a più step, concetti profondi.";
 
         const systemPrompt = `
           Sei un professore universitario d'élite, autore dei test di ammissione a Medicina (TOLC-MED/VET).
@@ -28,14 +74,15 @@ async function generateSeedExam() {
              - Usa SOLO numeri semplici (1, 2, 5, 10) o potenze di 10.
              - Oppure usa calcolo letterale (es. "v = sqrt(2gh)").
              - VIETATO usare numeri complessi (es. 3.14, 1.6x10^-19) se non si semplificano immediatamente.
-          4. SARCASMO EDUCATIVO: Sii brutalmente onesto.
+          4. SARCASMO EDUCATIVO E DETTAGLIO:
+             - Sii brutalmente onesto e cinico (stile Dr. House).
+             - LE SPIEGAZIONI DEVONO ESSERE DETTAGLIATE E ISTRUTTIVE.
+             - Non limitarti a dare la formula. Spiega il *perché* fisico, il ragionamento passo-passo, e perché le alternative errate sono trappole.
+             - Includi i passaggi algebrici intermedi.
+             - Concludi sempre con un commento sarcastico sulla competenza dello studente.
           
-          SYLLABUS OBBLIGATORIO (Bilanciato):
-          - Cinematica & Dinamica
-          - Meccanica dei Fluidi (Emodinamica)
-          - Termodinamica (Metabolismo, Gas)
-          - Elettrostatica & Circuiti (Potenziali di membrana, Defibrillatori)
-          - Ottica & Radiazioni (Occhio, Raggi X)
+          SYLLABUS OBBLIGATORIO:
+          ${topicPrompt}
           
           FORMATTAZIONE MATEMATICA (CRUCIALE):
           1. Usa SEMPRE e SOLO LaTeX per qualsiasi formula, numero con unità o variabile.
@@ -47,8 +94,8 @@ async function generateSeedExam() {
           1. Genera ESATTAMENTE 31 domande.
           2. Domande 1-15: 'multiple_choice' (5 opzioni, 1 corretta).
           3. Domande 16-31: 'fill_in_the_blank' (Risposta secca: numero o parola).
-          4. Difficoltà: medium.
-          5. Copri l'intero syllabus del test di medicina (Cinematica, Dinamica, Fluidi, Termodinamica, Elettrostatica, Circuiti, Ottica) in modo bilanciato.
+          4. Difficoltà: ${diff}.
+          5. ${diffPrompt}
           
           Rispondi SOLO con un JSON valido:
           {
@@ -95,22 +142,32 @@ async function generateSeedExam() {
             // Add new exam
             cache.push({
                 id: Date.now().toString(),
-                topic: 'full',
-                difficulty: 'medium',
+                topic: topic === 'full' ? 'full' : topic, // Ensure consistency
+                difficulty: diff,
                 questions: parsed.questions,
                 timestamp: new Date().toISOString()
             });
 
             fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
-            console.log(`✅ Exam ${i + 1} generated and cached successfully!`);
+            console.log(`✅ Exam ${i + 1} generated and cached successfully! (${topic} - ${diff})`);
 
         } catch (error) {
-            console.error(`❌ Generation failed for Exam ${i + 1}:`, error);
+            console.error(`❌ Generation failed for Exam ${i + 1} (${topic} - ${diff}):`, error);
         }
 
         // Small delay between requests
         await new Promise(resolve => setTimeout(resolve, 2000));
     }
+
+    console.log(`\n🎉 Completed full cycle of ${queue.length} exams. Restarting generation...\n`);
 }
 
-generateSeedExam();
+// Run infinitely
+(async () => {
+    console.log('🔁 Starting INFINITE exam generation loop...\n');
+    while (true) {
+        await generateSeedExam();
+        // Small delay before restarting the cycle
+        await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+})();

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Shield, Cookie, Sun, Moon } from 'lucide-react';
 import PrivacyPolicy from '../PrivacyPolicy';
@@ -11,22 +11,22 @@ interface TerminalLayoutProps {
 export default function TerminalLayout({ children }: TerminalLayoutProps) {
     const [showPrivacy, setShowPrivacy] = useState(false);
     const [showCookies, setShowCookies] = useState(false);
-    const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
-    useEffect(() => {
-        // Check system preference or saved theme
-        const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
-        if (savedTheme) {
-            setTheme(savedTheme);
-            document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            setTheme('dark');
-            document.documentElement.classList.add('dark');
-        } else {
-            setTheme('light');
-            document.documentElement.classList.remove('dark');
+    const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+        // Check system preference or saved theme on init
+        if (typeof window !== 'undefined') {
+            const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
+            if (savedTheme) {
+                document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+                return savedTheme;
+            }
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+                return 'dark';
+            }
         }
-    }, []);
+        return 'dark'; // Default
+    });
 
     const toggleTheme = () => {
         const newTheme = theme === 'dark' ? 'light' : 'dark';
@@ -81,6 +81,11 @@ export default function TerminalLayout({ children }: TerminalLayoutProps) {
             {/* Modals */}
             {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
             {showCookies && <CookiePolicy onClose={() => setShowCookies(false)} />}
+
+            {/* Watermark */}
+            <div className="fixed bottom-1 right-1 text-[10px] text-terminal-dim/20 font-mono pointer-events-none z-[100] select-none">
+                ANDREA_MARRO
+            </div>
         </div>
     );
 }
