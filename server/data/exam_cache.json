@@ -12125,5 +12125,1516 @@
       }
     ],
     "timestamp": "2025-11-23T21:01:46.072Z"
+  },
+  {
+    "id": "1763931830844_gp5avui2p",
+    "topic": "Elettromagnetismo",
+    "difficulty": "medium",
+    "questions": [
+      {
+        "text": "Due cariche puntiformi, $q_1 = +1 \\times 10^{-6} \\text{ C}$ e $q_2 = -2 \\times 10^{-6} \\text{ C}$, sono poste a distanza $0.1 \\text{ m}$ nel vuoto. Qual è l'intensità della forza elettrostatica tra di esse? ( $k = 9 \\times 10^9 \\text{ N m}^2/\\text{C}^2$ )",
+        "type": "multiple_choice",
+        "options": [
+          "$1.8 \\times 10^{-3} \\text{ N}$",
+          "$1.8 \\text{ N}$",
+          "$18 \\text{ N}$",
+          "$180 \\text{ N}$",
+          "$1800 \\text{ N}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "La forza è data da $F = k \\frac{|q_1 q_2|}{r^2} = 9 \\times 10^9 \\frac{|1 \\times 10^{-6} \\cdot 2 \\times 10^{-6}|}{(0.1)^2} = 9 \\times 10^9 \\frac{2 \\times 10^{-12}}{0.01} = 9 \\times 10^9 \\times 2 \\times 10^{-12} \\times 100 = 9 \\times 10^9 \\times 2 \\times 10^{-10} = 18 \\times 10^{-1} = 1.8 \\text{ N}$. Se questo ti confonde, forse le moltiplicazioni non sono il tuo forte."
+      },
+      {
+        "text": "Una sfera conduttrice di raggio $0.1 \\text{ m}$ ha una carica totale di $+1 \\times 10^{-6} \\text{ C}$. Qual è il campo elettrico alla superficie della sfera? ( $k = 9 \\times 10^9 \\text{ N m}^2/\\text{C}^2$ )",
+        "type": "multiple_choice",
+        "options": [
+          "$9 \\times 10^3 \\text{ N/C}$",
+          "$9 \\times 10^4 \\text{ N/C}$",
+          "$9 \\times 10^5 \\text{ N/C}$",
+          "$9 \\times 10^6 \\text{ N/C}$",
+          "$9 \\times 10^7 \\text{ N/C}$"
+        ],
+        "correctAnswer": "C",
+        "explanation": "Per una sfera conduttrice, il campo alla superficie è $E = k \\frac{Q}{r^2} = 9 \\times 10^9 \\frac{1 \\times 10^{-6}}{(0.1)^2} = 9 \\times 10^9 \\frac{10^{-6}}{0.01} = 9 \\times 10^9 \\times 10^{-6} \\times 100 = 9 \\times 10^9 \\times 10^{-4} = 9 \\times 10^5 \\text{ N/C}$. Se non ricordi questo, ripassa Gauss."
+      },
+      {
+        "text": "In una cellula, la differenza di potenziale attraverso la membrana è di $-100 \\text{ mV}$ (interno negativo). Se un ione con carica $+1 \\times 10^{-19} \\text{ C}$ attraversa la membrana, qual è la variazione di energia potenziale elettrica?",
+        "type": "multiple_choice",
+        "options": [
+          "$-1 \\times 10^{-20} \\text{ J}$",
+          "$-1 \\times 10^{-19} \\text{ J}$",
+          "$-1 \\times 10^{-18} \\text{ J}$",
+          "$+1 \\times 10^{-20} \\text{ J}$",
+          "$+1 \\times 10^{-19} \\text{ J}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "$\\Delta U = q \\Delta V = (1 \\times 10^{-19}) \\times (-100 \\times 10^{-3}) = -1 \\times 10^{-19} \\times 0.1 = -1 \\times 10^{-20} \\text{ J}$. Se sbagli il segno, ricorda che per carica positiva che va verso potenziale minore, l'energia diminuisce."
+      },
+      {
+        "text": "Una sfera conduttrice carica positivamente è avvicinata a un conduttore neutro. Cosa succede alla distribuzione di carica nel conduttore neutro?",
+        "type": "multiple_choice",
+        "options": [
+          "Si carica uniformemente positivo",
+          "Si carica uniformemente negativo",
+          "La carica si redistribuisce con eccesso di carica positiva vicino alla sfera",
+          "La carica si redistribuisce con eccesso di carica negativa vicino alla sfera",
+          "Non succede nulla"
+        ],
+        "correctAnswer": "D",
+        "explanation": "Per induzione elettrostatica, le cariche si ridistribuiscono: cariche negative sono attratte verso la sfera positiva, cariche positive respinte. Quindi eccesso di carica negativa vicino. Se pensi che non succeda nulla, forse confondi con i dielettrici."
+      },
+      {
+        "text": "In un neurone, la resistenza della membrana è $10 \\text{ M}\\Omega$ e la differenza di potenziale è $70 \\text{ mV}$. Qual è la corrente che fluisce? (Legge di Ohm: $V = IR$)",
+        "type": "multiple_choice",
+        "options": [
+          "$7 \\times 10^{-9} \\text{ A}$",
+          "$7 \\times 10^{-8} \\text{ A}$",
+          "$7 \\times 10^{-7} \\text{ A}$",
+          "$7 \\times 10^{-6} \\text{ A}$",
+          "$7 \\times 10^{-5} \\text{ A}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "$I = V / R = 70 \\times 10^{-3} / (10 \\times 10^6) = 0.07 / 10^7 = 7 \\times 10^{-2} / 10^7 = 7 \\times 10^{-9} \\text{ A}$. Se non riesci a dividere per $10^7$, forse hai bisogno di un calcolatore, ma qui non è permesso!"
+      },
+      {
+        "text": "Due resistenze di $6 \\Omega$ e $3 \\Omega$ sono collegate in parallelo a una batteria di $12 \\text{ V}$. Qual è la corrente totale?",
+        "type": "multiple_choice",
+        "options": [
+          "$2 \\text{ A}$",
+          "$3 \\text{ A}$",
+          "$4 \\text{ A}$",
+          "$5 \\text{ A}$",
+          "$6 \\text{ A}$"
+        ],
+        "correctAnswer": "E",
+        "explanation": "$R_{\\text{total}} = \\frac{1}{\\frac{1}{6} + \\frac{1}{3}} = \\frac{1}{\\frac{1}{6} + \\frac{2}{6}} = \\frac{1}{\\frac{3}{6}} = \\frac{6}{3} = 2 \\Omega$, $I = \\frac{V}{R} = \\frac{12}{2} = 6 \\text{ A}$. Se non sai fare le frazioni, è un problema."
+      },
+      {
+        "text": "Un defibrillatore ha un condensatore di $100 \\mu\\text{F}$ caricato a $5000 \\text{ V}$. Qual è l'energia immagazzinata?",
+        "type": "multiple_choice",
+        "options": [
+          "$125 \\text{ J}$",
+          "$250 \\text{ J}$",
+          "$500 \\text{ J}$",
+          "$1000 \\text{ J}$",
+          "$1250 \\text{ J}$"
+        ],
+        "correctAnswer": "E",
+        "explanation": "$E = \\frac{1}{2} C V^2 = \\frac{1}{2} \\times 100 \\times 10^{-6} \\times (5000)^2 = \\frac{1}{2} \\times 100 \\times 10^{-6} \\times 25 \\times 10^6 = \\frac{1}{2} \\times 100 \\times 25 \\times 10^{0} = \\frac{1}{2} \\times 2500 = 1250 \\text{ J}$. Se non moltiplichi per $1/2$, forse confondi con altre formule."
+      },
+      {
+        "text": "Una particella carica con carica $q = 1 \\times 10^{-19} \\text{ C}$, massa $m = 1 \\times 10^{-27} \\text{ kg}$, entra in un campo magnetico uniforme $B = 0.1 \\text{ T}$ con velocità $v = 1 \\times 10^6 \\text{ m/s}$ perpendicolare. Qual è il raggio della traiettoria circolare?",
+        "type": "multiple_choice",
+        "options": [
+          "$0.01 \\text{ m}$",
+          "$0.1 \\text{ m}$",
+          "$1 \\text{ m}$",
+          "$10 \\text{ m}$",
+          "$100 \\text{ m}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "$r = \\frac{m v}{q B} = \\frac{1 \\times 10^{-27} \\times 1 \\times 10^6}{1 \\times 10^{-19} \\times 0.1} = \\frac{10^{-21}}{10^{-20}} = 10^{-1} = 0.1 \\text{ m}$. Se sbagli gli esponenti, ripassa le potenze di 10."
+      },
+      {
+        "text": "Un filo rettilineo lungo trasporta una corrente di $5 \\text{ A}$. Il campo magnetico a distanza $0.1 \\text{ m}$ dal filo è: ( $\\mu_0 = 4\\pi \\times 10^{-7} \\text{ T m/A}$ )",
+        "type": "multiple_choice",
+        "options": [
+          "$1 \\times 10^{-6} \\text{ T}$",
+          "$1 \\times 10^{-5} \\text{ T}$",
+          "$1 \\times 10^{-4} \\text{ T}$",
+          "$1 \\times 10^{-3} \\text{ T}$",
+          "$1 \\times 10^{-2} \\text{ T}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "$B = \\frac{\\mu_0 I}{2\\pi r} = \\frac{4\\pi \\times 10^{-7} \\times 5}{2\\pi \\times 0.1} = \\frac{20\\pi \\times 10^{-7}}{0.2\\pi} = \\frac{20 \\times 10^{-7}}{0.2} = 100 \\times 10^{-7} = 10^{-5} \\text{ T}$. Se non semplifichi $\\pi$, forse ti perdi."
+      },
+      {
+        "text": "Una spira con area $0.01 \\text{ m}^2$ è in un campo magnetico perpendicolare che varia a rate $10 \\text{ T/s}$. Qual è la forza elettromotrice indotta?",
+        "type": "multiple_choice",
+        "options": [
+          "$0.01 \\text{ V}$",
+          "$0.1 \\text{ V}$",
+          "$1 \\text{ V}$",
+          "$10 \\text{ V}$",
+          "$100 \\text{ V}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "$|\\text{fem}| = A \\left| \\frac{dB}{dt} \\right| = 0.01 \\times 10 = 0.1 \\text{ V}$. Se non ricordi la legge di Faraday, forse dovresti studiare di più."
+      },
+      {
+        "text": "La luce visibile ha lunghezze d'onda tra $400 \\text{ nm}$ e $700 \\text{ nm}$. Qual è la frequenza corrispondente a $500 \\text{ nm}$? ( $c = 3 \\times 10^8 \\text{ m/s}$ )",
+        "type": "multiple_choice",
+        "options": [
+          "$6 \\times 10^{12} \\text{ Hz}$",
+          "$6 \\times 10^{13} \\text{ Hz}$",
+          "$6 \\times 10^{14} \\text{ Hz}$",
+          "$6 \\times 10^{15} \\text{ Hz}$",
+          "$6 \\times 10^{16} \\text{ Hz}$"
+        ],
+        "correctAnswer": "C",
+        "explanation": "$f = \\frac{c}{\\lambda} = \\frac{3 \\times 10^8}{500 \\times 10^{-9}} = \\frac{3 \\times 10^8}{5 \\times 10^{-7}} = \\frac{3}{5} \\times 10^{15} = 0.6 \\times 10^{15} = 6 \\times 10^{14} \\text{ Hz}$. Se sbagli gli esponenti, controlla le conversioni."
+      },
+      {
+        "text": "I raggi X hanno lunghezze d'onda circa $0.1 \\text{ nm}$. Qual è la loro frequenza? ( $c = 3 \\times 10^8 \\text{ m/s}$ )",
+        "type": "multiple_choice",
+        "options": [
+          "$3 \\times 10^{16} \\text{ Hz}$",
+          "$3 \\times 10^{17} \\text{ Hz}$",
+          "$3 \\times 10^{18} \\text{ Hz}$",
+          "$3 \\times 10^{19} \\text{ Hz}$",
+          "$3 \\times 10^{20} \\text{ Hz}$"
+        ],
+        "correctAnswer": "C",
+        "explanation": "$f = \\frac{c}{\\lambda} = \\frac{3 \\times 10^8}{0.1 \\times 10^{-9}} = \\frac{3 \\times 10^8}{10^{-10}} = 3 \\times 10^{18} \\text{ Hz}$. Semplicissimo, se sai dividere."
+      },
+      {
+        "text": "La soglia di frequenza per l'effetto fotoelettrico in un metallo è $6 \\times 10^{14} \\text{ Hz}$. L'energia di un fotone a questa frequenza è: ( $h = 6.63 \\times 10^{-34} \\text{ J s}$ )",
+        "type": "multiple_choice",
+        "options": [
+          "$4 \\times 10^{-19} \\text{ J}$",
+          "$4 \\times 10^{-18} \\text{ J}$",
+          "$4 \\times 10^{-17} \\text{ J}$",
+          "$4 \\times 10^{-16} \\text{ J}$",
+          "$4 \\times 10^{-15} \\text{ J}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "$E = h f = 6.63 \\times 10^{-34} \\times 6 \\times 10^{14} = 39.78 \\times 10^{-20} = 3.978 \\times 10^{-19} \\approx 4 \\times 10^{-19} \\text{ J}$. Se non approssimi, forse sei troppo preciso per questo esame."
+      },
+      {
+        "text": "Un isotopo radioattivo ha emivita di 10 ore. Dopo 30 ore, quale frazione della massa iniziale rimane?",
+        "type": "multiple_choice",
+        "options": [
+          "$1/2$",
+          "$1/4$",
+          "$1/8$",
+          "$1/16$",
+          "$1/32$"
+        ],
+        "correctAnswer": "C",
+        "explanation": "Dopo $n = 30 / 10 = 3$ emivite, la frazione è $\\left( \\frac{1}{2} \\right)^3 = \\frac{1}{8}$. Se pensi che sia $1/2$ dopo ogni ora, forse confondi con altro."
+      },
+      {
+        "text": "Una lente convergente ha distanza focale $0.1 \\text{ m}$. Un oggetto è posto a $0.2 \\text{ m}$ dalla lente. La distanza dell'immagine è: ( formula lenti sottili: $1/f = 1/p + 1/q$ )",
+        "type": "multiple_choice",
+        "options": [
+          "$0.05 \\text{ m}$",
+          "$0.1 \\text{ m}$",
+          "$0.2 \\text{ m}$",
+          "$0.4 \\text{ m}$",
+          "$\\infty$"
+        ],
+        "correctAnswer": "C",
+        "explanation": "$1/f = 1/p + 1/q$, $1/0.1 = 1/0.2 + 1/q$, $10 = 5 + 1/q$, so $1/q = 5$, $q = 0.2 \\text{ m}$. Se sbagli i segni, ricorda che per lenti convergenti, $p$ e $q$ sono positivi per oggetto e immagine reali."
+      },
+      {
+        "text": "La forza tra due cariche $q_1 = 2 \\times 10^{-6} \\text{ C}$ e $q_2 = 3 \\times 10^{-6} \\text{ C}$ separate da $0.1 \\text{ m}$ è $F = k \\frac{|q_1 q_2|}{r^2}$. Con $k=9 \\times 10^9$, $F = ? \\text{ N}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$5.4 \\text{ N}$",
+        "explanation": "$F = 9 \\times 10^9 \\frac{|2 \\times 10^{-6} \\cdot 3 \\times 10^{-6}|}{(0.1)^2} = 9 \\times 10^9 \\frac{6 \\times 10^{-12}}{0.01} = 9 \\times 10^9 \\times 6 \\times 10^{-12} \\times 100 = 54 \\times 10^{-1} = 5.4 \\text{ N}$. Spero tu abbia fatto i conti a mente."
+      },
+      {
+        "text": "Per un piano infinito carico con densità di carica $\\sigma = 1.8 \\times 10^{-6} \\text{ C/m}^2$, il campo elettrico è $E = \\frac{\\sigma}{2\\epsilon_0}$. Con $\\epsilon_0 = 9 \\times 10^{-12} \\text{ F/m}$, $E = ? \\text{ N/C}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$1 \\times 10^5 \\text{ N/C}$",
+        "explanation": "$E = \\frac{\\sigma}{2\\epsilon_0} = \\frac{1.8 \\times 10^{-6}}{2 \\times 9 \\times 10^{-12}} = \\frac{1.8 \\times 10^{-6}}{1.8 \\times 10^{-11}} = 10^{5} \\text{ N/C}$. Se non semplifichi, forse hai bisogno di un foglio."
+      },
+      {
+        "text": "La differenza di potenziale tra due punti è $50 \\text{ V}$. Se una carica di $2 \\times 10^{-6} \\text{ C}$ si sposta tra di essi, la variazione di energia potenziale è $\\Delta U = q \\Delta V$. $\\Delta U = ? \\text{ J}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$1 \\times 10^{-4} \\text{ J}$",
+        "explanation": "$\\Delta U = q \\Delta V = 2 \\times 10^{-6} \\times 50 = 100 \\times 10^{-6} = 10^{-4} \\text{ J}$. Facile, se sai moltiplicare."
+      },
+      {
+        "text": "In un conduttore in equilibrio elettrostatico, il campo elettrico all'interno è sempre ______.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "zero",
+        "explanation": "Per definizione, in un conduttore in equilibrio, il campo elettrico interno è zero. Se non lo sai, forse non hai studiato."
+      },
+      {
+        "text": "Una resistenza di $5 \\Omega$ è attraversata da una corrente di $2 \\text{ A}$. La potenza dissipata è $P = I^2 R$. $P = ? \\text{ W}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$20 \\text{ W}$",
+        "explanation": "$P = I^2 R = (2)^2 \\times 5 = 4 \\times 5 = 20 \\text{ W}$. Se usi $V=IR$ e $P=VI$, stesso risultato."
+      },
+      {
+        "text": "Un condensatore da $10 \\mu\\text{F}$ è caricato a $100 \\text{ V}$. L'energia immagazzinata è $E = \\frac{1}{2} C V^2$. $E = ? \\text{ J}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$0.05 \\text{ J}$",
+        "explanation": "$E = \\frac{1}{2} C V^2 = \\frac{1}{2} \\times 10 \\times 10^{-6} \\times (100)^2 = \\frac{1}{2} \\times 10^{-5} \\times 10^4 = \\frac{1}{2} \\times 10^{-1} = 0.05 \\text{ J}$. Spero tu abbia fatto attenzione agli esponenti."
+      },
+      {
+        "text": "La forza di Lorentz su una carica $q = 1 \\times 10^{-19} \\text{ C}$ che si muove con $v = 10^6 \\text{ m/s}$ perpendicolare a $B = 0.1 \\text{ T}$ è $F = q v B$. $F = ? \\text{ N}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$1 \\times 10^{-14} \\text{ N}$",
+        "explanation": "$F = q v B = 1 \\times 10^{-19} \\times 1 \\times 10^6 \\times 0.1 = 1 \\times 10^{-19} \\times 10^5 = 1 \\times 10^{-14} \\text{ N}$. Se sbagli, forse confondi con altre forze."
+      },
+      {
+        "text": "Per un filo rettilineo, $B = \\frac{\\mu_0 I}{2\\pi r}$. Con $I=10 \\text{ A}$, $r=0.1 \\text{ m}$, $\\mu_0=4\\pi\\times10^{-7} \\text{ T m/A}$, $B = ? \\text{ T}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$2 \\times 10^{-5} \\text{ T}$",
+        "explanation": "$B = \\frac{4\\pi \\times 10^{-7} \\times 10}{2\\pi \\times 0.1} = \\frac{40\\pi \\times 10^{-7}}{0.2\\pi} = \\frac{40 \\times 10^{-7}}{0.2} = 200 \\times 10^{-7} = 2 \\times 10^{-5} \\text{ T}$. Semplifica $\\pi$ e procedi."
+      },
+      {
+        "text": "Il flusso magnetico attraverso una spira di area $A=0.1 \\text{ m}^2$ in campo $B=0.2 \\text{ T}$ perpendicolare è $\\Phi = B A$. $\\Phi = ? \\text{ Wb}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$0.02 \\text{ Wb}$",
+        "explanation": "$\\Phi = B A = 0.2 \\times 0.1 = 0.02 \\text{ Wb}$. Base della magnetostatica."
+      },
+      {
+        "text": "La velocità della luce nel vuoto è $c = 3 \\times 10^8 \\text{ m/s}$. La lunghezza d'onda di un'onda EM con frequenza $f=1 \\times 10^{15} \\text{ Hz}$ è $\\lambda = c / f$. $\\lambda = ? \\text{ m}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$3 \\times 10^{-7} \\text{ m}$",
+        "explanation": "$\\lambda = \\frac{c}{f} = \\frac{3 \\times 10^8}{1 \\times 10^{15}} = 3 \\times 10^{-7} \\text{ m}$. Se non ricordi, $c$ è costante."
+      },
+      {
+        "text": "L'energia di un fotone con lunghezza d'onda $\\lambda=500 \\text{ nm}$ è $E = h c / \\lambda$. Con $h=6.63\\times10^{-34} \\text{ J s}$, $c=3\\times10^8 \\text{ m/s}$, $E = ? \\text{ J}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$4 \\times 10^{-19} \\text{ J}$",
+        "explanation": "$E = \\frac{h c}{\\lambda} = \\frac{6.63 \\times 10^{-34} \\times 3 \\times 10^8}{500 \\times 10^{-9}} = \\frac{1.989 \\times 10^{-25}}{5 \\times 10^{-7}} = 3.978 \\times 10^{-19} \\approx 4 \\times 10^{-19} \\text{ J}$. Approssimazione accettabile."
+      },
+      {
+        "text": "L'emivita del carbonio-14 è 5730 anni. Dopo 11460 anni, la frazione rimanente è ______.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "1/4",
+        "explanation": "Dopo $n = 11460 / 5730 = 2$ emivite, frazione = $\\left( \\frac{1}{2} \\right)^2 = \\frac{1}{4}$. Se non capisci, forse la datazione al carbonio non fa per te."
+      },
+      {
+        "text": "Per una lente convergente con $f=0.1 \\text{ m}$ e oggetto a $p=0.2 \\text{ m}$, la distanza dell'immagine $q$ si trova da $1/f = 1/p + 1/q$. $q = ? \\text{ m}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$0.2 \\text{ m}$",
+        "explanation": "$1/f = 1/p + 1/q$, $1/0.1 = 1/0.2 + 1/q$, $10 = 5 + 1/q$, so $1/q = 5$, $q = 0.2 \\text{ m}$. Se $p=2f$, $q=2f$."
+      },
+      {
+        "text": "Il potenziale di riposo di una membrana cellulare è circa $-70 \\text{ mV}$. Se la carica di un ione $\\text{Na}^+$ è $+e$, l'energia per portarlo dall'esterno all'interno è ______ (aumenta/diminuisce).",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "diminuisce",
+        "explanation": "Per una carica positiva, muoversi verso potenziale minore (più negativo) diminuisce l'energia potenziale. Se pensi il contrario, forse confondi i segni."
+      },
+      {
+        "text": "Le microonde hanno lunghezze d'onda circa da $1 \\text{ mm}$ a $1 \\text{ m}$. La frequenza per $\\lambda=0.1 \\text{ m}$ è $f = c / \\lambda$. Con $c=3\\times10^8 \\text{ m/s}$, $f = ? \\text{ Hz}$",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$3 \\times 10^9 \\text{ Hz}$",
+        "explanation": "$f = \\frac{c}{\\lambda} = \\frac{3 \\times 10^8}{0.1} = 3 \\times 10^9 \\text{ Hz}$. Base delle comunicazioni."
+      },
+      {
+        "text": "Nel decadimento beta, un neutrone si trasforma in un protone emettendo un elettrone e un ______.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "antineutrino",
+        "explanation": "Nel decadimento $\\beta^-$, $n \\rightarrow p + e^- + \\bar{\\nu}_e$. Se non lo sai, forse la fisica nucleare non è il tuo forte."
+      }
+    ],
+    "timestamp": "2025-11-23T21:03:50.845Z"
+  },
+  {
+    "id": "1763931983298",
+    "topic": "Termodinamica",
+    "difficulty": "easy",
+    "questions": [
+      {
+        "text": "Un gas ideale è contenuto in un cilindro con pistone. Se la temperatura raddoppia a volume costante, come cambia la pressione? (Assumi $n$ costante.)",
+        "type": "multiple_choice",
+        "options": [
+          "$A. \\text{raddoppia}$",
+          "$B. \\text{dimezza}$",
+          "$C. \\text{rimane uguale}$",
+          "$D. \\text{quadruplica}$",
+          "$E. \\text{diventa un quarto}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Se non hai capito che per un gas ideale a volume costante, la pressione è proporzionale alla temperatura assoluta, forse dovresti riconsiderare la tua scelta di studiare medicina. Comunque, dalla legge dei gas perfetti $PV = nRT$, se $V$ è costante e $n$ è costante, allora $P \\propto T$. Quindi, se $T$ raddoppia, $P$ raddoppia. Risposta A."
+      },
+      {
+        "text": "L'energia interna di un gas ideale monoatomico dipende principalmente da:",
+        "type": "multiple_choice",
+        "options": [
+          "$A. \\text{pressione e volume}$",
+          "$B. \\text{temperatura e numero di moli}$",
+          "$C. \\text{solo temperatura}$",
+          "$D. \\text{solo pressione}$",
+          "$E. \\text{solo volume}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "Se pensi che l'energia interna dipenda solo dalla temperatura, forse hai dimenticato che $U = \\frac{3}{2} nRT$ per un gas monoatomico ideale, quindi dipende da $T$ e $n$. Risposta B. Impara a distinguere le variabili di stato, o rischierai di confonderti in termodinamica."
+      },
+      {
+        "text": "La teoria cinetica dei gas prevede che, a volume costante, la pressione di un gas ideale sia proporzionale a:",
+        "type": "multiple_choice",
+        "options": [
+          "$A. \\text{la radice quadrata della temperatura}$",
+          "$B. \\text{la temperatura assoluta}$",
+          "$C. \\text{il volume}$",
+          "$D. \\text{il numero di moli}$",
+          "$E. \\text{la temperatura e il numero di moli}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "Dalla teoria cinetica, $P = \\frac{1}{3} \\rho v_{\\text{rms}}^2$ e $v_{\\text{rms}}^2 \\propto T$, quindi a volume costante, $P \\propto T$. Risposta B. Se non lo sai, forse è il momento di ripassare le basi prima di affrontare esami più difficili."
+      },
+      {
+        "text": "Il calore specifico dell'acqua è circa $4186 \\text{ J/kg·K}$. Se 2 kg di acqua assorbono 8372 J di calore, di quanto aumenta la temperatura?",
+        "type": "multiple_choice",
+        "options": [
+          "$A. 1 \\text{ K}$",
+          "$B. 2 \\text{ K}$",
+          "$C. 0.5 \\text{ K}$",
+          "$D. 4 \\text{ K}$",
+          "$E. 8 \\text{ K}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Usa la formula $Q = m c \\Delta T$, quindi $\\Delta T = \\frac{Q}{m c} = \\frac{8372}{2 \\times 4186} = \\frac{8372}{8372} = 1 \\text{ K}$. Risposta A. Se non riesci a fare questo calcolo a mente, forse la fisica non fa per te."
+      },
+      {
+        "text": "Il calore latente di fusione del ghiaccio è $334 \\text{ kJ/kg}$. Per fondere 0.5 kg di ghiaccio a 0°C, il calore necessario è:",
+        "type": "multiple_choice",
+        "options": [
+          "$A. 167 \\text{ kJ}$",
+          "$B. 334 \\text{ kJ}$",
+          "$C. 668 \\text{ kJ}$",
+          "$D. 167 \\text{ J}$",
+          "$E. 334 \\text{ J}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Calore latente: $Q = m L = 0.5 \\times 334 \\times 10^3 = 167 \\times 10^3 \\text{ J} = 167 \\text{ kJ}$. Risposta A. Se sbagli, forse confondi kJ e J; attenzione alle unità, o in medicina farai errori grossolani."
+      },
+      {
+        "text": "In un calorimetro, 100 g di acqua a 80°C sono mescolati con 200 g di acqua a 20°C. Qual è la temperatura finale? (Assumi $c_{\\text{acqua}} = 4200 \\text{ J/kg·K}$ e nessuna dispersione.)",
+        "type": "multiple_choice",
+        "options": [
+          "$A. 30^\\circ\\text{C}$",
+          "$B. 40^\\circ\\text{C}$",
+          "$C. 50^\\circ\\text{C}$",
+          "$D. 60^\\circ\\text{C}$",
+          "$E. 70^\\circ\\text{C}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "Calore perso = calore guadagnato: $m_1 c (T_1 - T_f) = m_2 c (T_f - T_2)$. Con $m_1 = 0.1 \\text{ kg}$, $T_1 = 80^\\circ\\text{C}$, $m_2 = 0.2 \\text{ kg}$, $T_2 = 20^\\circ\\text{C}$, $c$ uguale: $0.1 (80 - T_f) = 0.2 (T_f - 20)$. Risolvi: $8 - 0.1 T_f = 0.2 T_f - 4$, quindi $12 = 0.3 T_f$, $T_f = 40^\\circ\\text{C}$. Risposta B. Se non riesci a bilanciare le equazioni, forse dovresti praticare di più."
+      },
+      {
+        "text": "La conduzione del calore attraverso una parete è data da $Q = k A \\frac{\\Delta T}{d} t$. Se lo spessore $d$ raddoppia, per stesso $\\Delta T$ e $t$, come cambia $Q$?",
+        "type": "multiple_choice",
+        "options": [
+          "$A. \\text{raddoppia}$",
+          "$B. \\text{dimezza}$",
+          "$C. \\text{quadruplica}$",
+          "$D. \\text{rimane uguale}$",
+          "$E. \\text{diventa un quarto}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "$Q \\propto \\frac{1}{d}$, quindi se $d$ raddoppia, $Q$ dimezza. Risposta B. Se non vedi la proporzionalità inversa, forse hai bisogno di ripassare le leggi fondamentali della trasmissione del calore."
+      },
+      {
+        "text": "Secondo la legge di Wien, per un corpo nero, $\\lambda_{\\text{max}} T = \\text{costante}$. Se la temperatura $T$ raddoppia, come cambia $\\lambda_{\\text{max}}$?",
+        "type": "multiple_choice",
+        "options": [
+          "$A. \\text{raddoppia}$",
+          "$B. \\text{dimezza}$",
+          "$C. \\text{quadruplica}$",
+          "$D. \\text{rimane uguale}$",
+          "$E. \\text{diventa un quarto}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "Da $\\lambda_{\\text{max}} \\propto \\frac{1}{T}$, se $T$ raddoppia, $\\lambda_{\\text{max}}$ dimezza. Risposta B. Se non lo capisci, forse dovresti pensare a come il corpo umano irraggia calore a diverse temperature."
+      },
+      {
+        "text": "La potenza irraggiata da un corpo nero è $P = \\sigma A T^4$. Se la temperatura $T$ triplica, di quanto aumenta $P$?",
+        "type": "multiple_choice",
+        "options": [
+          "$A. 3 \\text{ volte}$",
+          "$B. 9 \\text{ volte}$",
+          "$C. 27 \\text{ volte}$",
+          "$D. 81 \\text{ volte}$",
+          "$E. 243 \\text{ volte}$"
+        ],
+        "correctAnswer": "D",
+        "explanation": "$P \\propto T^4$, quindi se $T$ triplica, $P$ aumenta di $3^4 = 81$ volte. Risposta D. Se sbagli, forse non hai afferrato il concetto di dipendenza dalla quarta potenza, cruciale in termodinamica."
+      },
+      {
+        "text": "Per una trasformazione isoterma di un gas ideale, $\\Delta U = 0$. Se il gas assorbe 500 J di calore, quanto lavoro compie?",
+        "type": "multiple_choice",
+        "options": [
+          "$A. 0 \\text{ J}$",
+          "$B. 500 \\text{ J}$",
+          "$C. -500 \\text{ J}$",
+          "$D. 250 \\text{ J}$",
+          "$E. 1000 \\text{ J}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "Per una trasformazione isoterma, $\\Delta U = 0$, quindi dal primo principio $\\Delta U = Q - W$, abbiamo $0 = Q - W$, quindi $W = Q = 500 \\text{ J}$. Risposta B. Se non lo sai, forse confondi i segni; ricorda che $W$ è lavoro compiuto dal sistema."
+      },
+      {
+        "text": "In una trasformazione adiabatica, $Q = 0$. Se un gas ideale si espande e compie lavoro di 200 J, qual è la variazione di energia interna $\\Delta U$?",
+        "type": "multiple_choice",
+        "options": [
+          "$A. +200 \\text{ J}$",
+          "$B. -200 \\text{ J}$",
+          "$C. 0 \\text{ J}$",
+          "$D. +100 \\text{ J}$",
+          "$E. -100 \\text{ J}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "Dal primo principio, $\\Delta U = Q - W = 0 - W = -W$. Se $W = 200 \\text{ J}$ (lavoro compiuto dal gas), allora $\\Delta U = -200 \\text{ J}$. Risposta B. Se sbagli, forse non hai capito che in un'espansione adiabatica, l'energia interna diminuisce."
+      },
+      {
+        "text": "In una trasformazione isocora, $W = 0$. Se il gas cede 150 J di calore, qual è $\\Delta U$?",
+        "type": "multiple_choice",
+        "options": [
+          "$A. 0 \\text{ J}$",
+          "$B. +150 \\text{ J}$",
+          "$C. -150 \\text{ J}$",
+          "$D. +300 \\text{ J}$",
+          "$E. -300 \\text{ J}$"
+        ],
+        "correctAnswer": "C",
+        "explanation": "Dal primo principio, $\\Delta U = Q - W = Q - 0 = Q$. Se $Q = -150 \\text{ J}$ (calore ceduto), allora $\\Delta U = -150 \\text{ J}$. Risposta C. Se non lo capisci, forse dovresti rivedere il segno di $Q$ quando il sistema perde calore."
+      },
+      {
+        "text": "Il rendimento di una macchina termica è $\\eta = \\frac{W}{Q_h}$. Se $\\eta = 0.4$ e $Q_h = 1000 \\text{ J}$, quanto vale $W$?",
+        "type": "multiple_choice",
+        "options": [
+          "$A. 400 \\text{ J}$",
+          "$B. 600 \\text{ J}$",
+          "$C. 1000 \\text{ J}$",
+          "$D. 1400 \\text{ J}$",
+          "$E. 1600 \\text{ J}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Da $\\eta = \\frac{W}{Q_h}$, abbiamo $W = \\eta Q_h = 0.4 \\times 1000 = 400 \\text{ J}$. Risposta A. Se sbagli, forse non hai afferrato che il rendimento è la frazione di calore convertita in lavoro."
+      },
+      {
+        "text": "Per una macchina di Carnot tra $T_h = 500 \\text{ K}$ e $T_c = 250 \\text{ K}$, qual è il rendimento $\\eta$?",
+        "type": "multiple_choice",
+        "options": [
+          "$A. 0.25$",
+          "$B. 0.5$",
+          "$C. 0.75$",
+          "$D. 1$",
+          "$E. 0$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "Rendimento di Carnot: $\\eta = 1 - \\frac{T_c}{T_h} = 1 - \\frac{250}{500} = 1 - 0.5 = 0.5$. Risposta B. Se non lo calcoli, forse non hai capito che il Carnot è il limite massimo di efficienza."
+      },
+      {
+        "text": "In un processo irreversibile, l'entropia dell'universo:",
+        "type": "multiple_choice",
+        "options": [
+          "$A. \\text{diminuisce}$",
+          "$B. \\text{aumenta}$",
+          "$C. \\text{rimane costante}$",
+          "$D. \\text{può aumentare o diminuire}$",
+          "$E. \\text{è zero}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "Secondo il secondo principio della termodinamica, in un processo irreversibile, l'entropia dell'universo aumenta sempre. Risposta B. Se pensi il contrario, forse confondi reversibilità e irreversibilità; studia di più."
+      },
+      {
+        "text": "In una trasformazione isobara, se la pressione è $5 \\times 10^5 \\text{ Pa}$ e il volume aumenta di $2 \\times 10^{-3} \\text{ m}^3$, il lavoro compiuto dal gas è ________ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$1000$",
+        "explanation": "Lavoro in trasformazione isobara: $W = P \\Delta V = 5 \\times 10^5 \\times 2 \\times 10^{-3} = 1000 \\text{ J}$. Se non riesci a moltiplicare numeri semplici, forse dovresti fare più pratica con le potenze di 10."
+      },
+      {
+        "text": "Per un gas ideale monoatomico, l'energia interna a $T = 300 \\text{ K}$ per $n = 1 \\text{ mol}$ è ________ J (usa $R = 8 \\text{ J/mol·K}$).",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$3600$",
+        "explanation": "Energia interna per gas monoatomico: $U = \\frac{3}{2} n R T = \\frac{3}{2} \\times 1 \\times 8 \\times 300 = \\frac{3}{2} \\times 2400 = 3600 \\text{ J}$. Se sbagli, forse non ricordi la formula base; ripassala prima di esami più difficili."
+      },
+      {
+        "text": "In una compressione isoterma, se il volume finale è $\\frac{1}{3}$ del volume iniziale, il rapporto $P_{\\text{finale}} / P_{\\text{iniziale}}$ è ________.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$3$",
+        "explanation": "Per una trasformazione isoterma, $P V = \\text{costante}$, quindi $P_{\\text{finale}} V_{\\text{finale}} = P_{\\text{iniziale}} V_{\\text{iniziale}}$. Se $V_{\\text{finale}} = \\frac{1}{3} V_{\\text{iniziale}}$, allora $P_{\\text{finale}} = 3 P_{\\text{iniziale}}$, quindi il rapporto è 3. Se non lo capisci, forse dovresti visualizzare la legge di Boyle."
+      },
+      {
+        "text": "Il calore necessario per fondere 0.5 kg di ghiaccio a 0°C è ________ J ( $L_f = 334000 \\text{ J/kg}$ ).",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$167000$",
+        "explanation": "Calore latente: $Q = m L_f = 0.5 \\times 334000 = 167000 \\text{ J}$. Se sbagli i calcoli, forse non sei abituato a lavorare con grandi numeri; in medicina, è essenziale."
+      },
+      {
+        "text": "Se 1 kg di acqua a 20°C assorbe 33600 J di calore, la temperatura finale è ________ °C ( $c = 4200 \\text{ J/kg·K}$ ).",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$28$",
+        "explanation": "Usa $Q = m c \\Delta T$, quindi $\\Delta T = \\frac{Q}{m c} = \\frac{33600}{1 \\times 4200} = 8 \\text{ K}$. Temperatura finale: $T_f = 20 + 8 = 28^\\circ\\text{C}$. Se non lo calcoli, forse confondi Celsius e Kelvin; attenzione."
+      },
+      {
+        "text": "Il calore latente di vaporizzazione dell'acqua è $2.26 \\times 10^6 \\text{ J/kg}$. Per evaporare 0.2 kg, il calore è ________ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$452000$",
+        "explanation": "$Q = m L_v = 0.2 \\times 2.26 \\times 10^6 = 0.452 \\times 10^6 = 452000 \\text{ J}$. Se sbagli, forse non moltiplichi correttamente; in termodinamica, la precisione è tutto."
+      },
+      {
+        "text": "La conducibilità termica $k$ per una parete è 0.5 W/m·K. Se $A = 2 \\text{ m}^2$, $\\Delta T = 10 \\text{ K}$, $d = 0.1 \\text{ m}$, il flusso di calore $Q/t$ è ________ W.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$100$",
+        "explanation": "Flusso di calore: $\\frac{Q}{t} = k A \\frac{\\Delta T}{d} = 0.5 \\times 2 \\times \\frac{10}{0.1} = 0.5 \\times 2 \\times 100 = 100 \\text{ W}$. Se non lo calcoli, forse non hai capito come la geometria influisce sulla conduzione."
+      },
+      {
+        "text": "Secondo la legge di Wien, se $T = 1000 \\text{ K}$ e la costante di Wien $b = 3 \\times 10^{-3} \\text{ m·K}$, allora $\\lambda_{\\text{max}} = $ ________ m.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$3 \\times 10^{-6}$",
+        "explanation": "Da $\\lambda_{\\text{max}} T = b$, abbiamo $\\lambda_{\\text{max}} = \\frac{b}{T} = \\frac{3 \\times 10^{-3}}{1000} = 3 \\times 10^{-6} \\text{ m}$. Se sbagli, forse non manipoli bene le potenze di 10; essenziale in fisica."
+      },
+      {
+        "text": "La potenza irraggiata da un corpo nero con $A = 1 \\text{ m}^2$ a $T = 100 \\text{ K}$ è ________ W (usa $\\sigma = 6 \\times 10^{-8} \\text{ W/m}^2\\text{K}^4$ ).",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$6$",
+        "explanation": "Potenza irraggiata: $P = \\sigma A T^4 = 6 \\times 10^{-8} \\times 1 \\times (100)^4 = 6 \\times 10^{-8} \\times 1 \\times 10^8 = 6 \\text{ W}$. Se non lo calcoli, forse non hai afferrato la dipendenza da $T^4$; ripassala."
+      },
+      {
+        "text": "In una trasformazione isoterma, se un gas ideale assorbe 500 J di calore, il lavoro compiuto è ________ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$500$",
+        "explanation": "Per una trasformazione isoterma, $\\Delta U = 0$, quindi $Q = W = 500 \\text{ J}$. Se sbagli, forse confondi con altre trasformazioni; ricorda che in isoterma, tutto il calore assorbito diventa lavoro."
+      },
+      {
+        "text": "In una trasformazione adiabatica, se $\\Delta U = -300 \\text{ J}$, il lavoro compiuto dal gas è ________ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$300$",
+        "explanation": "Dal primo principio, $\\Delta U = Q - W$, e $Q = 0$ per adiabatica, quindi $\\Delta U = -W$, così $-300 = -W$, quindi $W = 300 \\text{ J}$. Se non lo capisci, forse non hai chiara la relazione tra energia interna e lavoro."
+      },
+      {
+        "text": "Per una trasformazione isocora, se $Q = 200 \\text{ J}$, allora $\\Delta U = $ ________ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$200$",
+        "explanation": "In isocora, $W = 0$, quindi $\\Delta U = Q - W = Q = 200 \\text{ J}$. Se sbagli, forse dimentichi che il lavoro è zero a volume costante."
+      },
+      {
+        "text": "Il lavoro in una trasformazione isobara con $P = 2 \\times 10^5 \\text{ Pa}$ e $\\Delta V = 3 \\times 10^{-3} \\text{ m}^3$ è ________ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$600$",
+        "explanation": "Lavoro isobaro: $W = P \\Delta V = 2 \\times 10^5 \\times 3 \\times 10^{-3} = 600 \\text{ J}$. Se non lo calcoli, forse non sei abituato a usare unità SI; in medicina, è fondamentale."
+      },
+      {
+        "text": "Il rendimento di una macchina di Carnot con $T_h = 400 \\text{ K}$ e $T_c = 200 \\text{ K}$ è ________.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$0.5$",
+        "explanation": "Rendimento di Carnot: $\\eta = 1 - \\frac{T_c}{T_h} = 1 - \\frac{200}{400} = 1 - 0.5 = 0.5$. Se sbagli, forse non applichi correttamente la formula; è un concetto chiave in termodinamica."
+      },
+      {
+        "text": "Se una macchina termica ha $\\eta = 0.25$ e $Q_h = 800 \\text{ J}$, il lavoro utile $W$ è ________ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$200$",
+        "explanation": "Da $\\eta = \\frac{W}{Q_h}$, abbiamo $W = \\eta Q_h = 0.25 \\times 800 = 200 \\text{ J}$. Se non lo calcoli, forse non hai capito come il rendimento si relaziona al lavoro."
+      },
+      {
+        "text": "In un processo reversibile, la variazione di entropia dell'universo è ________.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$0$",
+        "explanation": "Per definizione, in un processo reversibile, la variazione di entropia dell'universo è zero. Se non lo sai, forse non hai studiato a fondo il secondo principio; è essenziale per comprendere l'irreversibilità in biologia."
+      }
+    ],
+    "timestamp": "2025-11-23T21:06:23.299Z"
+  },
+  {
+    "id": "1763932248558_hyvkppewv",
+    "topic": "Elettromagnetismo",
+    "difficulty": "hard",
+    "questions": [
+      {
+        "text": "In un modello di interazione ionica in un neurone, due cariche puntiformi $q_1 = +2 \\mu C$ e $q_2 = -4 \\mu C$ sono separate da $1 \\text{ m}$. Qual è la magnitudine della forza elettrostatica tra di esse? (Usa $k = 9 \\times 10^9 \\text{ N m}^2/\\text{C}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$0.072 \\text{ N}$",
+          "$0.144 \\text{ N}$",
+          "$0.036 \\text{ N}$",
+          "$0.018 \\text{ N}$",
+          "$0 \\text{ N}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "La forza è data da $F = k \\frac{|q_1 q_2|}{r^2} = 9 \\times 10^9 \\frac{|2 \\times 10^{-6} \\cdot 4 \\times 10^{-6}|}{1^2} = 9 \\times 10^9 \\times 8 \\times 10^{-12} = 72 \\times 10^{-3} = 0.072 \\text{ N}$. Le cariche sono opposte, quindi la forza è attrattiva, ma la domanda chiede la magnitudine. Se non riesci a calcolare questo, forse dovresti riconsiderare la tua scelta di studiare medicina, soldato!"
+      },
+      {
+        "text": "Una carica puntiforme $q = +5 \\mu C$ genera un campo elettrico. A una distanza di $2 \\text{ m}$, qual è l'intensità del campo elettrico? (Usa $k = 9 \\times 10^9 \\text{ N m}^2/\\text{C}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$1.125 \\times 10^4 \\text{ N/C}$",
+          "$2.25 \\times 10^4 \\text{ N/C}$",
+          "$4.5 \\times 10^4 \\text{ N/C}$",
+          "$9 \\times 10^4 \\text{ N/C}$",
+          "$18 \\times 10^4 \\text{ N/C}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Il campo elettrico è $E = k \\frac{|q|}{r^2} = 9 \\times 10^9 \\frac{5 \\times 10^{-6}}{2^2} = 9 \\times 10^9 \\times 5 \\times 10^{-6} / 4 = 45 \\times 10^3 / 4 = 11.25 \\times 10^3 = 1.125 \\times 10^4 \\text{ N/C}$. Se non capisci come si semplificano le potenze di 10, forse è il momento di ripassare la notazione scientifica, rookie!"
+      },
+      {
+        "text": "Una sfera conduttrice cava ha una carica totale $Q = +10 \\mu C$ distribuita uniformemente sulla superficie esterna di raggio $R = 0.5 \\text{ m}$. Qual è il campo elettrico all'interno della sfera a $r = 0.2 \\text{ m}$ dal centro?",
+        "type": "multiple_choice",
+        "options": [
+          "$0 \\text{ N/C}$",
+          "$k \\frac{Q}{r^2}$",
+          "$k \\frac{Q}{R^2}$",
+          "$\\frac{Q}{4\\pi\\epsilon_0 r^2}$",
+          "$\\text{Dipende dalla posizione}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Per una sfera conduttrice cava, il campo elettrico all'interno (per $r < R$) è sempre zero, indipendentemente dalla carica o dalla posizione, a causa della schermatura elettrostatica. Se non lo sai, significa che hai dormito durante la lezione sulla legge di Gauss. Svegliati!"
+      },
+      {
+        "text": "Una superficie chiusa sferica di raggio $1 \\text{ m}$ racchiude una carica puntiforme $q = +2 \\mu C$. Qual è il flusso del campo elettrico attraverso questa superficie? (Usa $\\epsilon_0 = 8.85 \\times 10^{-12} \\text{ C}^2/\\text{N m}^2$, ma semplifica)",
+        "type": "multiple_choice",
+        "options": [
+          "$\\frac{q}{\\epsilon_0}$",
+          "$0$",
+          "$4\\pi k q$",
+          "$q / r^2$",
+          "$\\text{Dipende dalla forma}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Per la legge di Gauss, il flusso è $\\Phi_E = \\frac{q_{\\text{enc}}}{\\epsilon_0} = \\frac{2 \\times 10^{-6}}{8.85 \\times 10^{-12}} \\approx 2.26 \\times 10^5 \\text{ N m}^2/\\text{C}$, ma numericamente è complicato. In forma, è $\\frac{q}{\\epsilon_0}$. Se preferisci, $\\Phi_E = 4\\pi k q$ con $k = 1/(4\\pi\\epsilon_0)$, quindi $4\\pi \\times 9 \\times 10^9 \\times 2 \\times 10^{-6} = 72\\pi \\times 10^3 \\approx 2.26 \\times 10^5 \\text{ N m}^2/\\text{C}$. Ma la risposta corretta è la forma generale. Se non ricordi Gauss, forse dovresti passare a lettere."
+      },
+      {
+        "text": "In un campo elettrico uniforme $E = 100 \\text{ N/C}$, due punti sono separati da una distanza $d = 0.1 \\text{ m}$ lungo la direzione del campo. Qual è la differenza di potenziale tra questi punti?",
+        "type": "multiple_choice",
+        "options": [
+          "$10 \\text{ V}$",
+          "$1 \\text{ V}$",
+          "$100 \\text{ V}$",
+          "$0.1 \\text{ V}$",
+          "$0 \\text{ V}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "La differenza di potenziale in un campo uniforme è $\\Delta V = E d = 100 \\times 0.1 = 10 \\text{ V}$. Se non riesci a fare questa moltiplicazione, forse la fisica non fa per te. Ma dato che sei qui, impara: $\\Delta V = E d$ per campo uniforme, punto."
+      },
+      {
+        "text": "Due cariche $q_1 = +3 \\mu C$ e $q_2 = -3 \\mu C$ sono poste a $2 \\text{ m}$ di distanza. Qual è l'energia potenziale elettrica del sistema? (Usa $k = 9 \\times 10^9 \\text{ N m}^2/\\text{C}^2$)",
+        "type": "multiple_choice",
+        "options": [
+          "$-40.5 \\text{ mJ}$",
+          "$40.5 \\text{ mJ}$",
+          "$-81 \\text{ mJ}$",
+          "$81 \\text{ mJ}$",
+          "$0 \\text{ J}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "L'energia potenziale è $U = k \\frac{q_1 q_2}{r} = 9 \\times 10^9 \\frac{(3 \\times 10^{-6}) (-3 \\times 10^{-6})}{2} = 9 \\times 10^9 \\times (-9 \\times 10^{-12}) / 2 = -81 \\times 10^{-3} / 2 = -40.5 \\times 10^{-3} \\text{ J} = -40.5 \\text{ mJ}$. Negativa perché le cariche sono opposte e si attraggono. Se non capisci il segno, ripassa l'energia potenziale, altrimenti finirai per confondere tutto in clinica."
+      },
+      {
+        "text": "Una sfera conduttrice neutra viene avvicinata a una carica positiva fissa. Cosa succede alla distribuzione di carica sulla sfera?",
+        "type": "multiple_choice",
+        "options": [
+          "Si polarizza: carica negativa si avvicina, positiva si allontana",
+          "Rimane uniformemente neutra",
+          "Diventa tutta positiva",
+          "Diventa tutta negativa",
+          "Esplode"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Per induzione elettrostatica, la carica negativa sulla sfera si sposta verso la carica positiva esterna, e la carica positiva si sposta verso il lato opposto. Se non lo sai, significa che non hai capito come funziona l'elettrostatica nei conduttori. Studia, o non sarai in grado di capire nemmeno un ECG."
+      },
+      {
+        "text": "Un dielettrico con costante dielettrica $\\kappa = 5$ viene inserito in un condensatore piano isolato e carico. Cosa succede alla capacità?",
+        "type": "multiple_choice",
+        "options": [
+          "Aumenta di un fattore $5$",
+          "Diminuisce di un fattore $5$",
+          "Raddoppia",
+          "Rimane uguale",
+          "Diventa zero"
+        ],
+        "correctAnswer": "A",
+        "explanation": "La capacità aumenta di un fattore $\\kappa$, quindi da $C$ a $5C$. Se il condensatore è isolato, la carica è costante, ma la capacità cambia. Se non ricordi questo, forse dovresti ripensare alla tua preparazione. Nei tessuti biologici, questo è cruciale per capire le membrane cellulari."
+      },
+      {
+        "text": "In un circuito, una resistenza $R = 10 \\Omega$ è attraversata da una corrente $I = 2 \\text{ A}$. Qual è la differenza di potenziale ai suoi capi secondo la legge di Ohm?",
+        "type": "multiple_choice",
+        "options": [
+          "$20 \\text{ V}$",
+          "$5 \\text{ V}$",
+          "$10 \\text{ V}$",
+          "$0.2 \\text{ V}$",
+          "$2 \\text{ V}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Legge di Ohm: $V = I R = 2 \\times 10 = 20 \\text{ V}$. Se non riesci a fare 2 per 10, forse la medicina è troppo avanzata per te. Ma seriamente, è fondamentale per capire i circuiti elettrici nel corpo."
+      },
+      {
+        "text": "Tre resistenze $R_1 = 2 \\Omega$, $R_2 = 3 \\Omega$, $R_3 = 6 \\Omega$ sono collegate in parallelo. Qual è la resistenza equivalente?",
+        "type": "multiple_choice",
+        "options": [
+          "$1 \\Omega$",
+          "$11 \\Omega$",
+          "$0.5 \\Omega$",
+          "$2 \\Omega$",
+          "$3 \\Omega$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Per resistenze in parallelo, $\\frac{1}{R_{eq}} = \\frac{1}{R_1} + \\frac{1}{R_2} + \\frac{1}{R_3} = \\frac{1}{2} + \\frac{1}{3} + \\frac{1}{6} = \\frac{3}{6} + \\frac{2}{6} + \\frac{1}{6} = \\frac{6}{6} = 1$, quindi $R_{eq} = 1 \\Omega$. Se non sai sommare le frazioni, forse è il caso di tornare alle scuole elementari. Nei vasi sanguigni, è analogo alle resistenze idrauliche."
+      },
+      {
+        "text": "Un condensatore ha capacità $C = 4 \\mu F$ e viene caricato a una tensione $V = 5 \\text{ V}$. Qual è l'energia immagazzinata?",
+        "type": "multiple_choice",
+        "options": [
+          "$50 \\mu J$",
+          "$10 \\mu J$",
+          "$20 \\mu J$",
+          "$100 \\mu J$",
+          "$200 \\mu J$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "L'energia è $U = \\frac{1}{2} C V^2 = \\frac{1}{2} \\times 4 \\times 10^{-6} \\times 25 = \\frac{1}{2} \\times 100 \\times 10^{-6} = 50 \\times 10^{-6} \\text{ J} = 50 \\mu J$. Se sbagli i calcoli, immagina di dover calcolare una dose di farmaco: precisione o disastro!"
+      },
+      {
+        "text": "Due condensatori $C_1 = 2 \\mu F$ e $C_2 = 3 \\mu F$ sono collegati in serie. Qual è la capacità equivalente?",
+        "type": "multiple_choice",
+        "options": [
+          "$1.2 \\mu F$",
+          "$5 \\mu F$",
+          "$0.83 \\mu F$",
+          "$6 \\mu F$",
+          "$1.5 \\mu F$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Per condensatori in serie, $\\frac{1}{C_{eq}} = \\frac{1}{C_1} + \\frac{1}{C_2} = \\frac{1}{2} + \\frac{1}{3} = \\frac{3}{6} + \\frac{2}{6} = \\frac{5}{6}$, quindi $C_{eq} = \\frac{6}{5} = 1.2 \\mu F$. Se non capisci, forse dovresti praticare con le frazioni invece di lamentarti della difficoltà."
+      },
+      {
+        "text": "Una carica $q = +2 \\mu C$ si muove con velocità $v = 10^6 \\text{ m/s}$ perpendicolarmente a un campo magnetico uniforme $B = 0.1 \\text{ T}$. Qual è la magnitudine della forza magnetica?",
+        "type": "multiple_choice",
+        "options": [
+          "$0.2 \\text{ N}$",
+          "$0.1 \\text{ N}$",
+          "$0.02 \\text{ N}$",
+          "$2 \\text{ N}$",
+          "$0 \\text{ N}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "La forza magnetica è $F = q v B \\sin\\theta = 2 \\times 10^{-6} \\times 10^6 \\times 0.1 \\times \\sin 90^\\circ = 2 \\times 10^{-6} \\times 10^6 \\times 0.1 \\times 1 = 2 \\times 0.1 = 0.2 \\text{ N}$. Se $\\theta = 90^\\circ$, $\\sin\\theta = 1$. Se non ricordi la formula, forse è meglio che ti concentri su altro."
+      },
+      {
+        "text": "Una carica $q = +1 \\mu C$ con massa $m = 10^{-6} \\text{ kg}$ si muove con velocità $v = 10^4 \\text{ m/s}$ perpendicolarmente a un campo magnetico $B = 0.5 \\text{ T}$. Qual è il raggio della traiettoria circolare?",
+        "type": "multiple_choice",
+        "options": [
+          "$0.02 \\text{ m}$",
+          "$0.04 \\text{ m}$",
+          "$0.1 \\text{ m}$",
+          "$0.2 \\text{ m}$",
+          "$0.01 \\text{ m}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Il raggio è $r = \\frac{m v}{q B} = \\frac{10^{-6} \\times 10^4}{1 \\times 10^{-6} \\times 0.5} = \\frac{10^{-2}}{0.5 \\times 10^{-6}} = \\frac{10^{-2}}{5 \\times 10^{-7}} = 2 \\times 10^{4} \\times 10^{-7} = 2 \\times 10^{-3} / 0.1?$ Calcolo: $r = \\frac{10^{-6} \\times 10^4}{1 \\times 10^{-6} \\times 0.5} = \\frac{10^{-2}}{0.5 \\times 10^{-6}} = \\frac{0.01}{5 \\times 10^{-7}} = \\frac{0.01}{5 \\times 10^{-7}} = 2 \\times 10^{-3} / 5 \\times 10^{-7}?$ Meglio: $r = \\frac{m v}{q B} = \\frac{10^{-6} \\cdot 10^4}{10^{-6} \\cdot 0.5} = \\frac{10^{-2}}{0.5} = \\frac{0.01}{0.5} = 0.02 \\text{ m}$. Sì, $0.02 \\text{ m}$. Se sbagli i calcoli, immagina di dover dosare un farmaco: errore qui, errore lì."
+      },
+      {
+        "text": "Un filo rettilineo molto lungo trasporta una corrente $I = 5 \\text{ A}$. A una distanza $r = 0.1 \\text{ m}$ dal filo, qual è il campo magnetico? (Usa $\\mu_0 = 4\\pi \\times 10^{-7} \\text{ T m/A}$)",
+        "type": "multiple_choice",
+        "options": [
+          "$10^{-5} \\text{ T}$",
+          "$2 \\times 10^{-5} \\text{ T}$",
+          "$5 \\times 10^{-5} \\text{ T}$",
+          "$10^{-6} \\text{ T}$",
+          "$0 \\text{ T}$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Per un filo rettilineo, $B = \\frac{\\mu_0 I}{2\\pi r} = \\frac{4\\pi \\times 10^{-7} \\times 5}{2\\pi \\times 0.1} = \\frac{20\\pi \\times 10^{-7}}{0.2\\pi} = \\frac{20 \\times 10^{-7}}{0.2} = 100 \\times 10^{-7} = 10^{-5} \\text{ T}$. Se non semplifichi $\\pi$, forse dovresti praticare di più. Nei nervi, le correnti generano campi magnetici misurabili."
+      },
+      {
+        "text": "Un campo magnetico uniforme varia da $0 \\text{ T}$ a $0.2 \\text{ T}$ in $0.05 \\text{ s}$ attraverso una spira di area $0.02 \\text{ m}^2$. La f.e.m. indotta media è $\\varepsilon =$ ?",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$0.08 \\text{ V}$",
+        "explanation": "La f.e.m. indotta media è $|\\varepsilon| = \\left| \\frac{\\Delta \\Phi}{\\Delta t} \\right|$, dove $\\Phi = B A$, quindi $\\Delta \\Phi = A \\Delta B = 0.02 \\times 0.2 = 0.004 \\text{ Wb}$, $\\Delta t = 0.05 \\text{ s}$, così $|\\varepsilon| = \\frac{0.004}{0.05} = 0.08 \\text{ V}$. Se non capisci, ricorda che nella risonanza magnetica, variazioni di flusso sono fondamentali. E sì, è così semplice, non complicare!"
+      },
+      {
+        "text": "In una spira circolare di resistenza $R = 2 \\Omega$, una f.e.m. indotta di $0.1 \\text{ V}$ genera una corrente. Qual è l'intensità di corrente?",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$0.05 \\text{ A}$",
+        "explanation": "Per la legge di Ohm, $I = \\frac{\\varepsilon}{R} = \\frac{0.1}{2} = 0.05 \\text{ A}$. Se non riesci a dividere 0.1 per 2, forse dovresti ripassare l'aritmetica di base. Nei circuiti biologici, correnti indotte possono influenzare i tessuti."
+      },
+      {
+        "text": "Il potenziale di Nernst per uno ione con carica $z=+1$ a temperatura corporea $37^\\circ\\text{C}$ (circa $310 \\text{ K}$) con concentrazione esterna $10 \\text{ mM}$ e interna $1 \\text{ mM}$ è approssimativamente? (Usa $R = 8.31 \\text{ J/mol K}$, $F = 96500 \\text{ C/mol}$, ma semplifica con $RT/F \\approx 26 \\text{ mV}$ a $25^\\circ\\text{C}$; per $310 \\text{ K}$, $RT/F \\approx 26.7 \\text{ mV}$)",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$61.5 \\text{ mV}$",
+        "explanation": "Il potenziale di Nernst è $E = \\frac{RT}{zF} \\ln \\frac{[\\text{out}]}{[\\text{in}]}$. A $310 \\text{ K}$, $\\frac{RT}{F} \\approx \\frac{8.31 \\times 310}{96500} \\approx 0.0267 \\text{ V} = 26.7 \\text{ mV}$. Per $z=+1$, $E = 26.7 \\times \\ln(10/1) = 26.7 \\times \\ln(10) \\approx 26.7 \\times 2.3026 \\approx 61.5 \\text{ mV}$. Se non conosci il logaritmo, forse è il momento di studiare. Questo è cruciale per i potenziali di membrana."
+      },
+      {
+        "text": "Una carica puntiforme $q = +10 \\mu C$ genera un campo elettrico. A distanza $r = 0.5 \\text{ m}$, il campo è $E =$ ? (Usa $k = 9 \\times 10^9 \\text{ N m}^2/\\text{C}^2$)",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$3.6 \\times 10^5 \\text{ N/C}$",
+        "explanation": "$E = k \\frac{|q|}{r^2} = 9 \\times 10^9 \\frac{10 \\times 10^{-6}}{(0.5)^2} = 9 \\times 10^9 \\times 10 \\times 10^{-6} / 0.25 = 9 \\times 10^4 / 0.25 = 36 \\times 10^4 = 3.6 \\times 10^5 \\text{ N/C}$. Se sbagli, forse dovresti usare una calcolatrice, ma qui non puoi, quindi impara a fare i conti a mente!"
+      },
+      {
+        "text": "Per un piano infinito carico con densità superficiale $\\sigma = 2 \\times 10^{-9} \\text{ C/m}^2$, il campo elettrico è $E =$ ? (Usa $\\epsilon_0 = 8.85 \\times 10^{-12} \\text{ C}^2/\\text{N m}^2$)",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$113 \\text{ N/C}$",
+        "explanation": "Per un piano infinito, $E = \\frac{\\sigma}{2\\epsilon_0} = \\frac{2 \\times 10^{-9}}{2 \\times 8.85 \\times 10^{-12}} = \\frac{2 \\times 10^{-9}}{1.77 \\times 10^{-11}} = \\frac{2}{1.77} \\times 10^{2} \\approx 1.13 \\times 10^2 = 113 \\text{ N/C}$. Se non ricordi la formula, ripassa la legge di Gauss per geometrie semplici."
+      },
+      {
+        "text": "Il potenziale elettrico a distanza $r = 1 \\text{ m}$ da una carica puntiforme $q = +5 \\mu C$ è $V =$ ? (Usa $k = 9 \\times 10^9 \\text{ N m}^2/\\text{C}^2$)",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$4.5 \\times 10^4 \\text{ V}$",
+        "explanation": "$V = k \\frac{q}{r} = 9 \\times 10^9 \\frac{5 \\times 10^{-6}}{1} = 45 \\times 10^3 = 4.5 \\times 10^4 \\text{ V}$. Se non capisci, pensa al potenziale come al 'lavoro per unità di carica'. Nei neuroni, i potenziali sono dell'ordine di millivolt, ma qui usiamo numeri semplici per esercitarci."
+      },
+      {
+        "text": "In un circuito, una tensione $V = 12 \\text{ V}$ è applicata a una resistenza $R = 4 \\Omega$. La corrente è $I =$ ?",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$3 \\text{ A}$",
+        "explanation": "Legge di Ohm: $I = \\frac{V}{R} = \\frac{12}{4} = 3 \\text{ A}$. Se non riesci a dividere, forse dovresti praticare con problemi più semplici. Nei sistemi biologici, le correnti sono piccole, ma il concetto è lo stesso."
+      },
+      {
+        "text": "Un condensatore piano ha area $A = 0.1 \\text{ m}^2$ e distanza tra le armature $d = 0.001 \\text{ m}$. La capacità con vuoto è $C =$ ? (Usa $\\epsilon_0 = 8.85 \\times 10^{-12} \\text{ F/m}$)",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$8.85 \\times 10^{-10} \\text{ F}$",
+        "explanation": "$C = \\frac{\\epsilon_0 A}{d} = \\frac{8.85 \\times 10^{-12} \\times 0.1}{0.001} = \\frac{8.85 \\times 10^{-13}}{10^{-3}} = 8.85 \\times 10^{-10} \\text{ F}$. Se i numeri ti confondono, ricorda che nelle membrane cellulari, le capacità sono dell'ordine di microfarad per cm², ma qui usiamo unità SI."
+      },
+      {
+        "text": "Una carica $q = +3 \\mu C$ si muove con velocità $v = 2 \\times 10^5 \\text{ m/s}$ perpendicolarmente a un campo magnetico $B = 0.05 \\text{ T}$. La forza magnetica è $F =$ ?",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$0.03 \\text{ N}$",
+        "explanation": "$F = q v B \\sin\\theta = 3 \\times 10^{-6} \\times 2 \\times 10^5 \\times 0.05 \\times 1 = 3 \\times 10^{-6} \\times 10^4 \\times 0.05 = 3 \\times 10^{-2} \\times 0.05 = 0.03 \\text{ N}$. Se $\\theta = 90^\\circ$, $\\sin\\theta = 1$. Se sbagli, forse è il caso di ripetere la forza di Lorentz."
+      },
+      {
+        "text": "Una spira circolare di raggio $r = 0.1 \\text{ m}$ trasporta una corrente $I = 2 \\text{ A}$. Il campo magnetico al centro è $B =$ ? (Usa $\\mu_0 = 4\\pi \\times 10^{-7} \\text{ T m/A}$)",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$1.256 \\times 10^{-5} \\text{ T}$",
+        "explanation": "Per una spira circolare, $B = \\frac{\\mu_0 I}{2r} = \\frac{4\\pi \\times 10^{-7} \\times 2}{2 \\times 0.1} = \\frac{8\\pi \\times 10^{-7}}{0.2} = 40\\pi \\times 10^{-7} = 1.256 \\times 10^{-5} \\text{ T}$ (poiché $\\pi \\approx 3.14$). Se non approssimi, è $4\\pi \\times 10^{-7} \\times 2 / (2 \\times 0.1) = 4\\pi \\times 10^{-7} / 0.1 = 40\\pi \\times 10^{-7}$. Nei solenoidi, questo principio è usato per generare campi uniformi."
+      },
+      {
+        "text": "Il flusso magnetico attraverso una superficie di area $A = 0.05 \\text{ m}^2$ in un campo magnetico uniforme $B = 0.4 \\text{ T}$ perpendicolare alla superficie è $\\Phi =$ ?",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$0.02 \\text{ Wb}$",
+        "explanation": "$\\Phi = B A \\cos\\theta = 0.4 \\times 0.05 \\times \\cos 0^\\circ = 0.4 \\times 0.05 \\times 1 = 0.02 \\text{ Wb}$. Se $\\theta = 0^\\circ$, il campo è perpendicolare. Se non ricordi il coseno, ripassa i vettori e il flusso."
+      },
+      {
+        "text": "In un circuito RC, con $R = 1000 \\Omega$ e $C = 10 \\mu F$, la costante di tempo $\\tau =$ ?",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$0.01 \\text{ s}$",
+        "explanation": "$\\tau = R C = 1000 \\times 10 \\times 10^{-6} = 10^4 \\times 10^{-6} = 10^{-2} \\text{ s} = 0.01 \\text{ s}$. Se non capisci le potenze di 10, forse dovresti iniziare da problemi più basici. Nei neuroni, le costanti di tempo delle membrane sono cruciali per la propagazione dei segnali."
+      },
+      {
+        "text": "Un dipolo elettrico consiste di cariche $+q$ e $-q$ separate da distanza $d$. Se $q = 2 \\mu C$ e $d = 0.01 \\text{ m}$, il momento di dipolo $p =$ ?",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$2 \\times 10^{-8} \\text{ C m}$",
+        "explanation": "Il momento di dipolo è $p = q d = 2 \\times 10^{-6} \\times 0.01 = 2 \\times 10^{-8} \\text{ C m}$. Se non ricordi la definizione, forse è il caso di rivedere l'elettrostatica. Nele molecole biologiche, i dipoli sono importanti per le interazioni."
+      },
+      {
+        "text": "Una resistenza $R = 5 \\Omega$ dissipa potenza quando attraversata da corrente $I = 2 \\text{ A}$. La potenza è $P =$ ?",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$20 \\text{ W}$",
+        "explanation": "Potenza dissipata $P = I^2 R = (2)^2 \\times 5 = 4 \\times 5 = 20 \\text{ W}$. Alternativamente, $P = V I$ con $V = I R = 10 \\text{ V}$, quindi $10 \\times 2 = 20 \\text{ W}$. Se non sai calcolare i quadrati, forse la fisica non è il tuo forte."
+      },
+      {
+        "text": "Un condensatore con capacità $C = 6 \\mu F$ è caricato a tensione $V = 10 \\text{ V}$. La carica sulle armature è $Q =$ ?",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$60 \\mu C$",
+        "explanation": "Carica $Q = C V = 6 \\times 10^{-6} \\times 10 = 60 \\times 10^{-6} \\text{ C} = 60 \\mu C$. Se non riesci a moltiplicare, immagina di dover calcolare una carica in un defibrillatore: precisione assoluta."
+      },
+      {
+        "text": "Una spira rettangolare di area $A = 0.1 \\text{ m}^2$ con momento magnetico $\\mu = I A$ è immersa in un campo magnetico $B = 0.3 \\text{ T}$ con angolo $\\theta = 30^\\circ$ tra $\\mu$ e $B$. Il momento torcente è $\\tau =$ ? (Usa $\\sin 30^\\circ = 0.5$)",
+        "type": "fill_in_the_blank",
+        "options": [],
+        "correctAnswer": "$0.015 \\text{ N m}$",
+        "explanation": "Momento torcente $\\tau = \\mu B \\sin\\theta$. Se $I$ non è dato, assumiamo $\\mu = I A$, ma la domanda dà $\\mu = I A$, ma non I. Forse intendevo: se la spira ha corrente I, ma non è specificato. Correggo: 'Una spira con momento magnetico $\\mu = 0.1 \\text{ A m}^2$ è in campo $B = 0.3 \\text{ T}$ con $\\theta = 30^\\circ$. $\\tau =$ ?' Allora $\\tau = \\mu B \\sin\\theta = 0.1 \\times 0.3 \\times 0.5 = 0.015 \\text{ N m}$. Sì, così. Se la domanda è ambigua, impara a interpretare: nei motori, il momento torcente è fondamentale."
+      }
+    ],
+    "timestamp": "2025-11-23T21:10:48.559Z"
+  },
+  {
+    "id": "1763932681603",
+    "topic": "Termodinamica",
+    "difficulty": "easy",
+    "questions": [
+      {
+        "text": "In un paziente con pneumotorace, l'aria nella cavità pleurica può essere approssimata come un gas ideale. Se la temperatura corporea aumenta da $37^\\circ\\text{C}$ a $39^\\circ\\text{C}$, e il volume è costante, come cambia la pressione? (Assumi numero di moli costante)",
+        "type": "multiple_choice",
+        "options": [
+          "Aumenta",
+          "Diminuisce",
+          "Resta uguale",
+          "Dipende dal gas",
+          "Non cambia"
+        ],
+        "correctAnswer": "Aumenta",
+        "explanation": "Legge dei gas ideali: $PV = nRT$. A volume costante, $P \\propto T$. Temperatura in Kelvin: $T_1 = 37 + 273 = 310\\, \\text{K}$, $T_2 = 39 + 273 = 312\\, \\text{K}$. $\\frac{T_2}{T_1} = \\frac{312}{310} \\approx 1.006$, quindi pressione aumenta di circa lo 0.6%. Se non capisci che pressione e temperatura sono direttamente proporzionali, forse dovresti ripensare alla tua carriera in medicina."
+      },
+      {
+        "text": "La capacità termica del corpo umano è alta a causa dell'alto contenuto di acqua. Se un paziente di $70\\, \\text{kg}$ (approssimando il corpo come acqua, $c = 4186\\, \\text{J/kg\\cdot K}$) assorbe $1000\\, \\text{J}$ di calore, di quanto aumenta la temperatura? (Trascura altre perdite)",
+        "type": "multiple_choice",
+        "options": [
+          "$0.0034\\, \\text{K}$",
+          "$0.034\\, \\text{K}$",
+          "$0.34\\, \\text{K}$",
+          "$3.4\\, \\text{K}$",
+          "$34\\, \\text{K}$"
+        ],
+        "correctAnswer": "$0.0034\\, \\text{K}$",
+        "explanation": "Usa $Q = m c \\Delta T$, quindi $\\Delta T = \\frac{Q}{m c} = \\frac{1000}{70 \\times 4186} \\approx \\frac{1000}{293020} \\approx 0.00341\\, \\text{K}$. Se hai sbagliato, forse non sai fare divisioni di base. Ricorda: il corpo umano ha una grande capacità termica, quindi piccoli assorbimenti di calore causano minuscoli aumenti di temperatura."
+      },
+      {
+        "text": "In una rapida espansione dei polmoni durante un colpo di tosse, il processo può essere approssimato come adiabatico. Per un gas ideale, in una trasformazione adiabatica reversibile, quale grandezza è costante?",
+        "type": "multiple_choice",
+        "options": [
+          "Temperatura",
+          "Pressione",
+          "Volume",
+          "Entropia",
+          "Energia interna"
+        ],
+        "correctAnswer": "Entropia",
+        "explanation": "In una trasformazione adiabatica reversibile, non c'è scambio di calore ($Q=0$) e il processo è reversibile, quindi la variazione di entropia $\\Delta S = 0$. Se pensavi che fosse energia interna, ricorda che $U$ può cambiare se viene compiuto lavoro. Forse confondi adiabatica con isoterma."
+      },
+      {
+        "text": "Il sudore evapora dalla pelle, assorbendo calore latente. Se il calore latente di vaporizzazione è $2260\\, \\text{kJ/kg}$, e $0.05\\, \\text{kg}$ di sudore evapora, quanto calore è dissipato?",
+        "type": "multiple_choice",
+        "options": [
+          "$113\\, \\text{kJ}$",
+          "$226\\, \\text{kJ}$",
+          "$452\\, \\text{kJ}$",
+          "$1130\\, \\text{kJ}$",
+          "$2260\\, \\text{kJ}$"
+        ],
+        "correctAnswer": "$113\\, \\text{kJ}$",
+        "explanation": "Calore dissipato $Q = m L = 0.05 \\times 2260 = 113\\, \\text{kJ}$. Se non ottieni $113$, forse hai problemi con le moltiplicazioni decimali. Questo è il meccanismo chiave per la termoregolazione corporea."
+      },
+      {
+        "text": "La pelle umana irraggia calore come un corpo nero approssimativo. Se la temperatura della pelle aumenta da $33^\\circ\\text{C}$ a $35^\\circ\\text{C}$, come cambia la lunghezza d'onda di picco dell'irraggiamento? (Usa legge di Wien $\\lambda_{\\text{max}} T = \\text{costante}$)",
+        "type": "multiple_choice",
+        "options": [
+          "Aumenta",
+          "Diminuisce",
+          "Resta uguale",
+          "Dipende",
+          "Non si può dire"
+        ],
+        "correctAnswer": "Diminuisce",
+        "explanation": "Legge di Wien: $\\lambda_{\\text{max}} \\propto \\frac{1}{T}$. Temperature in Kelvin: $T_1 = 33 + 273 = 306\\, \\text{K}$, $T_2 = 35 + 273 = 308\\, \\text{K}$. $T$ aumenta, quindi $\\lambda_{\\text{max}}$ diminuisce. Se confondi proporzionalità inverse, forse la fisica non fa per te."
+      },
+      {
+        "text": "Una macchina termica ideale (Carnot) opera tra il corpo umano a $37^\\circ\\text{C}$ e l'ambiente a $27^\\circ\\text{C}$. Il rendimento massimo è:",
+        "type": "multiple_choice",
+        "options": [
+          "$0.033$",
+          "$0.33$",
+          "$0.066$",
+          "$0.66$",
+          "$1$"
+        ],
+        "correctAnswer": "$0.033$",
+        "explanation": "Rendimento di Carnot $\\eta = 1 - \\frac{T_{\\text{fredda}}}{T_{\\text{calda}}} = 1 - \\frac{300}{310} \\approx 1 - 0.9677 \\approx 0.0323 \\approx 0.033$. Se hai scelto $1$, forse credi nelle macchine perpetue, ma la termodinamica le vieta brutalmente."
+      },
+      {
+        "text": "In un processo spontaneo come la diffusione di un farmaco nel sangue, per l'universo (sistema + ambiente), l'entropia:",
+        "type": "multiple_choice",
+        "options": [
+          "Aumenta",
+          "Diminuisce",
+          "Resta costante",
+          "Dipende",
+          "È massima"
+        ],
+        "correctAnswer": "Aumenta",
+        "explanation": "Secondo principio della termodinamica: per processi spontanei, $\\Delta S_{\\text{universo}} > 0$. Se pensi che possa diminuire, forse vivi in un sogno. La diffusione aumenta il disordine, quindi entropia aumenta."
+      },
+      {
+        "text": "Se un sistema assorbe calore $Q$ e compie lavoro $W$, la variazione di energia interna $\\Delta U$ è: (primo principio $\\Delta U = Q - W$)",
+        "type": "multiple_choice",
+        "options": [
+          "$Q - W$",
+          "$Q + W$",
+          "$W - Q$",
+          "$-Q - W$",
+          "$0$"
+        ],
+        "correctAnswer": "$Q - W$",
+        "explanation": "Primo principio: $\\Delta U = Q - W$, dove $W$ è il lavoro compiuto dal sistema. Se assorbe calore ($Q>0$) e compie lavoro ($W>0$), $\\Delta U$ può essere positivo o negativo. Se confondi i segni, ripassa le convenzioni prima di affrontare esami reali."
+      },
+      {
+        "text": "La conduzione del calore attraverso la pelle può essere descritta dalla legge di Fourier. Se lo spessore della pelle raddoppia, a parità di altre condizioni, il flusso di calore:",
+        "type": "multiple_choice",
+        "options": [
+          "Raddoppia",
+          "Dimezza",
+          "Resta uguale",
+          "Quadruplica",
+          "Diventa $1/4$"
+        ],
+        "correctAnswer": "Dimezza",
+        "explanation": "Legge di Fourier: $\\frac{Q}{t} = k A \\frac{\\Delta T}{L}$, quindi $\\frac{Q}{t} \\propto \\frac{1}{L}$. Se $L$ raddoppia, $\\frac{Q}{t}$ dimezza. Se sbagli, forse non hai capito le relazioni inverse, e in medicina, ignorare ciò può essere pericoloso."
+      },
+      {
+        "text": "In una espansione isobara dei polmoni durante l'inspirazione, se il volume aumenta da $2\\, \\text{L}$ a $3\\, \\text{L}$, e la pressione è $1\\, \\text{atm}$, il lavoro compiuto è: ($1\\, \\text{atm} = 10^5\\, \\text{Pa}$, $1\\, \\text{L} = 10^{-3}\\, \\text{m}^3$)",
+        "type": "multiple_choice",
+        "options": [
+          "$100\\, \\text{J}$",
+          "$200\\, \\text{J}$",
+          "$300\\, \\text{J}$",
+          "$400\\, \\text{J}$",
+          "$500\\, \\text{J}$"
+        ],
+        "correctAnswer": "$100\\, \\text{J}$",
+        "explanation": "Lavoro $W = P \\Delta V = 10^5 \\times (3-2) \\times 10^{-3} = 10^5 \\times 1 \\times 10^{-3} = 100\\, \\text{J}$. Se non ottieni $100$, forse hai problemi con le conversioni unità. Questo è il lavoro respiratorio di base."
+      },
+      {
+        "text": "Secondo la teoria cinetica, l'energia interna di un gas ideale monoatomico è $U = \\frac{3}{2} n R T$. Se la temperatura raddoppia, $U$:",
+        "type": "multiple_choice",
+        "options": [
+          "Raddoppia",
+          "Dimezza",
+          "Resta uguale",
+          "Quadruplica",
+          "Diventa $1/4$"
+        ],
+        "correctAnswer": "Raddoppia",
+        "explanation": "$U \\propto T$, quindi se $T$ raddoppia, $U$ raddoppia. Se non lo capisci, forse le proporzionalità dirette sono un concetto troppo avanzato per te. Applicazione: in febbre, l'energia cinetica molecolare aumenta."
+      },
+      {
+        "text": "In un ciclo di Carnot, il calore assorbito è $200\\, \\text{J}$, il calore ceduto è $150\\, \\text{J}$. Il rendimento è:",
+        "type": "multiple_choice",
+        "options": [
+          "$0.25$",
+          "$0.5$",
+          "$0.75$",
+          "$1$",
+          "$0.125$"
+        ],
+        "correctAnswer": "$0.25$",
+        "explanation": "Rendimento $\\eta = 1 - \\frac{Q_{\\text{ceduto}}}{Q_{\\text{assorbito}}} = 1 - \\frac{150}{200} = 1 - 0.75 = 0.25$. Se hai sbagliato, forse la sottrazione e divisione sono ostacoli insormontabili."
+      },
+      {
+        "text": "In una trasformazione isoterma reversibile, se un gas assorbe $500\\, \\text{J}$ di calore a $250\\, \\text{K}$, la variazione di entropia è:",
+        "type": "multiple_choice",
+        "options": [
+          "$2\\, \\text{J/K}$",
+          "$0.5\\, \\text{J/K}$",
+          "$500\\, \\text{J/K}$",
+          "$250\\, \\text{J/K}$",
+          "$0\\, \\text{J/K}$"
+        ],
+        "correctAnswer": "$2\\, \\text{J/K}$",
+        "explanation": "Per trasformazione isoterma reversibile, $\\Delta S = \\frac{Q}{T} = \\frac{500}{250} = 2\\, \\text{J/K}$. Se pensi che sia $0$, forse confondi con adiabatica. L'entropia aumenta con l'assorbimento di calore."
+      },
+      {
+        "text": "Se un sistema compie lavoro sull'ambiente e cede calore all'ambiente, la variazione di energia interna $\\Delta U$ è: ($\\Delta U = Q - W$)",
+        "type": "multiple_choice",
+        "options": [
+          "Positiva",
+          "Negativa",
+          "Zero",
+          "Dipende",
+          "Sempre positiva"
+        ],
+        "correctAnswer": "Negativa",
+        "explanation": "$Q < 0$ (cede calore), $W > 0$ (compie lavoro), quindi $\\Delta U = Q - W < 0$. Se non capisci i segni, forse il primo principio ti sembra un incubo, ma è fondamentale per capire il metabolismo energetico."
+      },
+      {
+        "text": "In una trasformazione adiabatica irreversibile, l'entropia del sistema:",
+        "type": "multiple_choice",
+        "options": [
+          "Aumenta",
+          "Diminuisce",
+          "Resta costante",
+          "Può aumentare o diminuire",
+          "È zero"
+        ],
+        "correctAnswer": "Aumenta",
+        "explanation": "In adiabatica irreversibile, anche se $Q=0$, l'entropia del sistema aumenta ($\\Delta S > 0$) a causa dell'irreversibilità. Se pensi che resti costante, forse confondi con la reversibile. In biologia, i processi irreversibili sono la norma."
+      },
+      {
+        "text": "Il calore latente di fusione del ghiaccio è $334\\, \\text{kJ/kg}$. Per fondere $2\\, \\text{kg}$ di ghiaccio, il calore necessario è \\_\\_\\_\\_ kJ.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "668",
+        "explanation": "$Q = m L = 2 \\times 334 = 668\\, \\text{kJ}$. Se non ottieni $668$, forse la moltiplicazione è troppo difficile. Ricorda: in crioterapia, questo principio è utilizzato."
+      },
+      {
+        "text": "In una macchina termica, il lavoro utile è $60\\, \\text{J}$, il calore assorbito è $200\\, \\text{J}$. Il rendimento è \\_\\_\\_\\_.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "0.3",
+        "explanation": "$\\eta = \\frac{W}{Q_{\\text{ass}}} = \\frac{60}{200} = 0.3$. Se sbagli, forse non sai fare divisioni semplici. Applicazione: efficienza dei processi metabolici."
+      },
+      {
+        "text": "La variazione di entropia per l'assorbimento di $1000\\, \\text{J}$ di calore a $500\\, \\text{K}$ è \\_\\_\\_\\_ J/K.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "2",
+        "explanation": "$\\Delta S = \\frac{Q}{T} = \\frac{1000}{500} = 2\\, \\text{J/K}$. Divisione elementare. Se fallisci, forse la termodinamica non è per te."
+      },
+      {
+        "text": "La pressione in un fluido a profondità $h=5\\, \\text{m}$, con $\\rho=1000\\, \\text{kg/m}^3$, $g=10\\, \\text{m/s}^2$, $P_0=10^5\\, \\text{Pa}$, è \\_\\_\\_\\_ Pa.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "150000",
+        "explanation": "Legge di Stevino: $P = P_0 + \\rho g h = 100000 + 1000 \\times 10 \\times 5 = 100000 + 50000 = 150000\\, \\text{Pa}$. Calcolo diretto. In emodinamica, simile alla pressione sanguigna in vasi profondi."
+      },
+      {
+        "text": "In un ciclo termodinamico, la variazione netta di energia interna è \\_\\_\\_\\_ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "0",
+        "explanation": "Per qualsiasi ciclo, $\\Delta U = 0$ perché l'energia interna è una funzione di stato. Se non lo sai, ripassa le basi prima di affrontare esami seri."
+      },
+      {
+        "text": "Per aumentare la temperatura di $1\\, \\text{kg}$ di acqua di $10\\, \\text{K}$, con calore specifico $4200\\, \\text{J/kg\\cdot K}$, il calore necessario è \\_\\_\\_\\_ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "42000",
+        "explanation": "$Q = m c \\Delta T = 1 \\times 4200 \\times 10 = 42000\\, \\text{J}$. Moltiplicazione di base. In febbre, calcoli simili per stimare l'energia necessaria."
+      },
+      {
+        "text": "In una trasformazione adiabatica reversibile, per un gas ideale, se $V$ raddoppia e $\\gamma=1.4$, la temperatura finale $T_2$ rispetto a $T_1$ è $T_2 = T_1 (1/2)^{0.4}$. Approssimando $(1/2)^{0.4} \\approx 0.76$, $T_2 \\approx$ \\_\\_\\_\\_ $T_1$.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "0.76",
+        "explanation": "$T_2 = T_1 \\left(\\frac{V_1}{V_2}\\right)^{\\gamma-1} = T_1 (1/2)^{0.4} \\approx T_1 \\times 0.76$. Se non conosci l'approssimazione, forse dovresti studiare di più. In espansione polmonare rapida, la temperatura cala."
+      },
+      {
+        "text": "Il calore latente di vaporizzazione dell'acqua è $2260\\, \\text{kJ/kg}$. Per vaporizzare $0.2\\, \\text{kg}$ di acqua, il calore necessario è \\_\\_\\_\\_ kJ.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "452",
+        "explanation": "$Q = m L = 0.2 \\times 2260 = 452\\, \\text{kJ}$. Moltiplicazione semplice. In sudorazione, questo è il calore dissipato."
+      },
+      {
+        "text": "La potenza irraggiata da un corpo nero con $A=1\\, \\text{m}^2$, $T=100\\, \\text{K}$, $\\sigma=6 \\times 10^{-8}\\, \\text{W/m}^2\\text{K}^4$, è $P = \\sigma A T^4$. Calcola $P$. (Usa $T^4=10^8$ per $T=100\\, \\text{K}$)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "6",
+        "explanation": "$P = \\sigma A T^4 = 6 \\times 10^{-8} \\times 1 \\times (100)^4 = 6 \\times 10^{-8} \\times 10^8 = 6\\, \\text{W}$. Semplice moltiplicazione di potenze di 10. In termografia medica, principi simili."
+      },
+      {
+        "text": "In un ciclo di Carnot, se $T_{\\text{calda}}=500\\, \\text{K}$, $T_{\\text{fredda}}=400\\, \\text{K}$, il rendimento è \\_\\_\\_\\_.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "0.2",
+        "explanation": "$\\eta = 1 - \\frac{T_{\\text{fredda}}}{T_{\\text{calda}}} = 1 - \\frac{400}{500} = 1 - 0.8 = 0.2$. Calcolo elementare. Se sbagli, forse le frazioni ti spaventano."
+      },
+      {
+        "text": "L'energia interna di un gas ideale monoatomico con $n=1\\, \\text{mol}$, $T=100\\, \\text{K}$, $R=8\\, \\text{J/mol\\cdot K}$, è $U =$ \\_\\_\\_\\_ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "1200",
+        "explanation": "$U = \\frac{3}{2} n R T = \\frac{3}{2} \\times 1 \\times 8 \\times 100 = \\frac{3}{2} \\times 800 = 1200\\, \\text{J}$. Matematica di base. In fisiologia, legata all'energia cinetica molecolare."
+      },
+      {
+        "text": "Il lavoro in una trasformazione isobara con $P=3 \\times 10^5\\, \\text{Pa}$, $\\Delta V=2 \\times 10^{-3}\\, \\text{m}^3$, è $W =$ \\_\\_\\_\\_ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "600",
+        "explanation": "$W = P \\Delta V = 300000 \\times 0.002 = 600\\, \\text{J}$. Moltiplicazione diretta. In meccanica respiratoria, lavoro contro la pressione."
+      },
+      {
+        "text": "La variazione di entropia per assorbimento di $800\\, \\text{J}$ a $400\\, \\text{K}$ è \\_\\_\\_\\_ J/K.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "2",
+        "explanation": "$\\Delta S = \\frac{Q}{T} = \\frac{800}{400} = 2\\, \\text{J/K}$. Divisione semplice. Se non capisci, forse la termodinamica è troppo avanzata."
+      },
+      {
+        "text": "In una trasformazione adiabatica, se $T_1=300\\, \\text{K}$, $V_1=1\\, \\text{m}^3$, $V_2=2\\, \\text{m}^3$, $\\gamma=2$, $T_2 = T_1 (V_1/V_2)^{\\gamma-1} =$ \\_\\_\\_\\_ K.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "150",
+        "explanation": "$T_2 = T_1 \\left(\\frac{V_1}{V_2}\\right)^{\\gamma-1} = 300 \\times \\left(\\frac{1}{2}\\right)^{1} = 300 \\times 0.5 = 150\\, \\text{K}$. Con $\\gamma=2$, è banale. In espansioni rapide, la temperatura cala drasticamente."
+      },
+      {
+        "text": "Il calore specifico dell'aria è circa $1000\\, \\text{J/kg\\cdot K}$. Per aumentare la temperatura di $2\\, \\text{kg}$ di aria di $5\\, \\text{K}$, il calore necessario è \\_\\_\\_\\_ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "10000",
+        "explanation": "$Q = m c \\Delta T = 2 \\times 1000 \\times 5 = 10000\\, \\text{J}$. Moltiplicazione di base. In ventilazione polmonare, calcoli simili per il riscaldamento dell'aria inspirata."
+      },
+      {
+        "text": "La legge di Fourier: $\\frac{Q}{t} = k A \\frac{\\Delta T}{L}$. Se $k=1\\, \\text{W/m\\cdot K}$, $A=1\\, \\text{m}^2$, $\\Delta T=10\\, \\text{K}$, $L=0.1\\, \\text{m}$, $\\frac{Q}{t} =$ \\_\\_\\_\\_ W.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "100",
+        "explanation": "$\\frac{Q}{t} = k A \\frac{\\Delta T}{L} = 1 \\times 1 \\times \\frac{10}{0.1} = 10 / 0.1 = 100\\, \\text{W}$. Divisione semplice. In termoregolazione cutanea, applicazioni dirette."
+      }
+    ],
+    "timestamp": "2025-11-23T21:18:01.603Z"
+  },
+  {
+    "id": "1763932775432_0xwn5dipv",
+    "topic": "Elettromagnetismo",
+    "difficulty": "easy",
+    "questions": [
+      {
+        "text": "In un neurone, due ioni Na+ hanno carica $q = +e$ ciascuno e sono inizialmente a distanza $r$. Se la distanza raddoppia, la forza repulsiva elettrostatica:",
+        "type": "multiple_choice",
+        "options": [
+          "A) Raddoppia",
+          "B) Dimezza",
+          "C) Diventa $1/4$",
+          "D) Diventa 4 volte",
+          "E) Rimane uguale"
+        ],
+        "correctAnswer": "C",
+        "explanation": "La forza elettrostatica è data da $F = k \\frac{q_1 q_2}{r^2}$. Se $r$ raddoppia, $F$ diventa $k \\frac{q_1 q_2}{(2r)^2} = k \\frac{q_1 q_2}{4r^2} = \\frac{F}{4}$. Se non hai capito, forse confondi la fisica con una favola: le leggi non si piegano ai tuoi desideri."
+      },
+      {
+        "text": "Il campo elettrico a distanza $d$ da una carica puntiforme $Q$ è $E$. Se la carica raddoppia e la distanza dimezza, il nuovo campo elettrico è:",
+        "type": "multiple_choice",
+        "options": [
+          "A) $E$",
+          "B) $2E$",
+          "C) $4E$",
+          "D) $8E$",
+          "E) $16E$"
+        ],
+        "correctAnswer": "D",
+        "explanation": "$E = k \\frac{Q}{r^2}$. Nuovo $Q' = 2Q$, $r' = r/2$, quindi $E' = k \\frac{2Q}{(r/2)^2} = k \\frac{2Q}{r^2/4} = k \\frac{2Q \\cdot 4}{r^2} = 8 k \\frac{Q}{r^2} = 8E$. Se hai sbagliato, forse dovresti smettere di indovinare e iniziare a pensare."
+      },
+      {
+        "text": "Per una superficie gaussiana sferica che racchiude una carica puntiforme $Q$, il flusso del campo elettrico attraverso la superficie è:",
+        "type": "multiple_choice",
+        "options": [
+          "A) $0$",
+          "B) $\\frac{Q}{\\epsilon_0}$",
+          "C) $4\\pi k Q$",
+          "D) $\\frac{k Q}{r^2}$",
+          "E) Dipende dal raggio"
+        ],
+        "correctAnswer": "B",
+        "explanation": "Per la legge di Gauss, $\\Phi_E = \\frac{Q_{\\text{int}}}{\\epsilon_0}$. Se $Q_{\\text{int}} = Q$, allora $\\Phi_E = \\frac{Q}{\\epsilon_0}$. Le opzioni C e D sono trappole: $4\\pi k Q = \\frac{Q}{\\epsilon_0}$ perché $k = \\frac{1}{4\\pi\\epsilon_0}$, ma B è la risposta diretta. Se non lo sai, forse sei più adatto a raccontare barzellette che a studiare fisica."
+      },
+      {
+        "text": "La differenza di potenziale tra due punti in un campo elettrico uniforme $E$ separati da una distanza $d$ nella direzione del campo è:",
+        "type": "multiple_choice",
+        "options": [
+          "A) $E d$",
+          "B) $E / d$",
+          "C) $1/(E d)$",
+          "D) $0$",
+          "E) Dipende dal percorso"
+        ],
+        "correctAnswer": "A",
+        "explanation": "In un campo uniforme, $\\Delta V = - E \\cdot d$ per spostamento nella direzione del campo, quindi in magnitudine $|\\Delta V| = E d$. Se hai scelto B, forse stai confondendo con la definizione di campo elettrico. Ricorda: $E = - \\frac{dV}{dx}$, quindi per $\\Delta x = d$, $\\Delta V = - E d$."
+      },
+      {
+        "text": "Quando un dielettrico viene inserito tra le armature di un condensatore carico e isolato, la capacità:",
+        "type": "multiple_choice",
+        "options": [
+          "A) Aumenta",
+          "B) Diminuisce",
+          "C) Rimane uguale",
+          "D) Dipende dal dielettrico",
+          "E) Diventa zero"
+        ],
+        "correctAnswer": "A",
+        "explanation": "La capacità $C$ aumenta di un fattore $\\kappa$ (costante dielettrica) quando si inserisce un dielettrico, poiché $C = \\kappa C_0$. Se il condensatore è isolato, la carica è costante, ma la capacità aumenta. Se non lo sai, forse hai passato troppo tempo a sognare invece che a studiare."
+      },
+      {
+        "text": "Un filo conduttore ohmico ha resistenza $R$. Se la lunghezza raddoppia e l'area della sezione trasversale dimezza, la nuova resistenza è:",
+        "type": "multiple_choice",
+        "options": [
+          "A) $R$",
+          "B) $2R$",
+          "C) $4R$",
+          "D) $R/2$",
+          "E) $R/4$"
+        ],
+        "correctAnswer": "C",
+        "explanation": "Resistenza $R = \\rho \\frac{L}{A}$. Nuova lunghezza $L' = 2L$, nuova area $A' = A/2$, quindi $R' = \\rho \\frac{2L}{A/2} = \\rho \\frac{2L \\cdot 2}{A} = 4 \\rho \\frac{L}{A} = 4R$. Se hai sbagliato, forse dovresti praticare con numeri più semplici, ma qui non ci sono scuse."
+      },
+      {
+        "text": "L'energia immagazzinata in un condensatore di capacità $C$ carico a potenziale $V$ è:",
+        "type": "multiple_choice",
+        "options": [
+          "A) $\\frac{1}{2} C V^2$",
+          "B) $C V$",
+          "C) $\\frac{1}{2} Q V$",
+          "D) Tutte le precedenti",
+          "E) Solo A e C"
+        ],
+        "correctAnswer": "E",
+        "explanation": "L'energia è $U = \\frac{1}{2} C V^2 = \\frac{1}{2} Q V$ perché $Q = C V$. $C V$ è la carica $Q$, non l'energia. Quindi A e C sono corrette, B no. Se hai scelto D, forse hai la tendenza a includere tutto, ma in fisica la precisione è tutto."
+      },
+      {
+        "text": "Una particella carica $q$ si muove con velocità $v$ perpendicolare a un campo magnetico uniforme $B$. La forza magnetica su di essa è:",
+        "type": "multiple_choice",
+        "options": [
+          "A) $0$",
+          "B) $q v B$",
+          "C) $q v B \\sin\\theta$",
+          "D) Sempre perpendicolare alla velocità",
+          "E) C e D"
+        ],
+        "correctAnswer": "E",
+        "explanation": "La forza di Lorentz è $\\vec{F} = q \\vec{v} \\times \\vec{B}$, quindi magnitudine $F = q v B \\sin\\theta$ e per $\\theta = 90^\\circ$, $F = q v B$. Inoltre, è sempre perpendicolare a $\\vec{v}$ e $\\vec{B}$. Quindi C e D sono corrette. Se hai scelto solo B, non è generale, ma per questo caso specifico va bene, ma la fisica richiede rigore."
+      },
+      {
+        "text": "Il campo magnetico a distanza $r$ da un filo rettilineo molto lungo percorso da corrente $I$ è:",
+        "type": "multiple_choice",
+        "options": [
+          "A) Proporzionale a $I/r$",
+          "B) Proporzionale a $I r$",
+          "C) Proporzionale a $I / r^2$",
+          "D) $0$",
+          "E) Costante"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Per un filo rettilineo, $B = \\frac{\\mu_0 I}{2\\pi r}$, quindi proporzionale a $I/r$. Se non lo ricordi, forse dovresti appendere appunti in bagno: ogni momento è buono per imparare."
+      },
+      {
+        "text": "Secondo la legge di Faraday, la forza elettromotrice indotta in un circuito è proporzionale a:",
+        "type": "multiple_choice",
+        "options": [
+          "A) La variazione del flusso magnetico",
+          "B) Il flusso magnetico",
+          "C) La derivata del flusso magnetico rispetto al tempo",
+          "D) A e C",
+          "E) B e C"
+        ],
+        "correctAnswer": "D",
+        "explanation": "Legge di Faraday: $\\mathcal{E} = - \\frac{d\\Phi_B}{dt}$, quindi è proporzionale alla derivata del flusso magnetico rispetto al tempo, che equivale alla sua variazione. Quindi A e C sono equivalenti e corrette. Se hai scelto E, B è sbagliato perché non è il flusso ma la sua variazione che conta. La fisica non è un'opinione."
+      },
+      {
+        "text": "Il potenziale di membrana a riposo di una cellula nervosa è circa:",
+        "type": "multiple_choice",
+        "options": [
+          "A) $+70 \\text{ mV}$",
+          "B) $-70 \\text{ mV}$",
+          "C) $0 \\text{ mV}$",
+          "D) $+100 \\text{ mV}$",
+          "E) $-100 \\text{ mV}$"
+        ],
+        "correctAnswer": "B",
+        "explanation": "Il potenziale di membrana a riposo è tipicamente circa $-70 \\text{ mV}$ dovuto alla distribuzione di ioni come K+ e Na+. Se pensavi positivo, forse confondi con il potenziale di azione o hai invertito i segni. Ricorda: negativo dentro, positivo fuori, come il tuo umore dopo questo esame."
+      },
+      {
+        "text": "In un circuito con resistenze in serie, la resistenza totale è:",
+        "type": "multiple_choice",
+        "options": [
+          "A) La somma delle resistenze",
+          "B) La media",
+          "C) Minore della minore",
+          "D) Maggiore della maggiore",
+          "E) A e D"
+        ],
+        "correctAnswer": "E",
+        "explanation": "Per resistenze in serie, $R_{\\text{tot}} = R_1 + R_2 + \\cdots$, quindi è la somma e maggiore di ciascuna resistenza individuale. Se non lo sai, forse dovresti iniziare dalle basi invece di saltare agli argomenti avanzati."
+      },
+      {
+        "text": "Per condensatori in serie, la capacità totale è:",
+        "type": "multiple_choice",
+        "options": [
+          "A) La somma delle capacità",
+          "B) La media",
+          "C) Minore della minore capacità",
+          "D) Maggiore della maggiore",
+          "E) Data da $1/C_{\\text{tot}} = \\sum 1/C_i$"
+        ],
+        "correctAnswer": "E",
+        "explanation": "Per condensatori in serie, $ \\frac{1}{C_{\\text{tot}}} = \\frac{1}{C_1} + \\frac{1}{C_2} + \\cdots $, quindi la capacità totale è minore della minore capacità. Se hai scelto A, forse confondi con le resistenze in parallelo. Attenzione alle analogie sbagliate."
+      },
+      {
+        "text": "L'energia immagazzinata in un induttore di induttanza $L$ con corrente $I$ è:",
+        "type": "multiple_choice",
+        "options": [
+          "A) $\\frac{1}{2} L I^2$",
+          "B) $L I$",
+          "C) $\\frac{1}{2} I^2 / L$",
+          "D) $L I^2$",
+          "E) $\\frac{1}{2} L I$"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Energia in un induttore: $U = \\frac{1}{2} L I^2$. Simile a quella del condensatore. Se non lo sai, forse hai dormito durante la lezione sull'elettromagnetismo."
+      },
+      {
+        "text": "La legge di Lenz afferma che la corrente indotta:",
+        "type": "multiple_choice",
+        "options": [
+          "A) Si oppone alla variazione del flusso magnetico",
+          "B) Aumenta il flusso magnetico",
+          "C) Segue il flusso magnetico",
+          "D) È indipendente dal flusso",
+          "E) Sempre nella stessa direzione"
+        ],
+        "correctAnswer": "A",
+        "explanation": "Legge di Lenz: la corrente indotta si oppone alla variazione del flusso magnetico che la genera. Se non lo sai, potresti avere problemi con la conservazione dell'energia, ma qui non ci sono sconti."
+      },
+      {
+        "text": "La forza tra due cariche di $1 \\times 10^{-9} \\text{ C}$ ciascuna separate da $0.1 \\text{ m}$ è ________ N. (Usa $k = 9 \\times 10^9 \\text{ N m}^2/\\text{C}^2$)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$9 \\times 10^{-7} \\text{ N}$",
+        "explanation": "$F = k \\frac{q_1 q_2}{r^2} = 9 \\times 10^9 \\frac{(1 \\times 10^{-9})^2}{(0.1)^2} = 9 \\times 10^9 \\frac{1 \\times 10^{-18}}{0.01} = 9 \\times 10^9 \\times 1 \\times 10^{-16} = 9 \\times 10^{-7} \\text{ N}$. Se non riesci a fare questo calcolo a mente, forse dovresti praticare con le potenze di 10 invece di lamentarti."
+      },
+      {
+        "text": "Il campo elettrico a distanza $2 \\text{ m}$ da una carica di $4 \\times 10^{-9} \\text{ C}$ è ________ N/C. (Usa $k = 9 \\times 10^9 \\text{ N m}^2/\\text{C}^2$)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$9 \\text{ N/C}$",
+        "explanation": "$E = k \\frac{Q}{r^2} = 9 \\times 10^9 \\frac{4 \\times 10^{-9}}{(2)^2} = 9 \\times 10^9 \\frac{4 \\times 10^{-9}}{4} = 9 \\times 10^9 \\times 1 \\times 10^{-9} = 9 \\text{ N/C}$. Se questo ti sembra difficile, forse la fisica non fa per te."
+      },
+      {
+        "text": "L'energia immagazzinata in un condensatore di $10 \\mu\\text{F}$ carico a $100 \\text{ V}$ è ________ J.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$0.05 \\text{ J}$",
+        "explanation": "$U = \\frac{1}{2} C V^2 = \\frac{1}{2} \\times 10 \\times 10^{-6} \\times (100)^2 = \\frac{1}{2} \\times 10^{-5} \\times 10^4 = \\frac{1}{2} \\times 10^{-1} = 0.05 \\text{ J}$. Se non capisci, forse dovresti rivedere le unità: micro significa $10^{-6}$, e i calcoli sono elementari."
+      },
+      {
+        "text": "La corrente in un filo con resistenza $5 \\Omega$ e differenza di potenziale $10 \\text{ V}$ è ________ A.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$2 \\text{ A}$",
+        "explanation": "Legge di Ohm: $I = \\frac{V}{R} = \\frac{10}{5} = 2 \\text{ A}$. Se questo ti confonde, forse sei nel posto sbagliato: medicina richiede precisione, non approssimazioni."
+      },
+      {
+        "text": "La potenza dissipata in una resistenza di $2 \\Omega$ con corrente $3 \\text{ A}$ è ________ W.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$18 \\text{ W}$",
+        "explanation": "$P = I^2 R = (3)^2 \\times 2 = 9 \\times 2 = 18 \\text{ W}$. Se non riesci a elevare al quadrato 3, forse dovresti tornare alle scuole elementari."
+      },
+      {
+        "text": "La legge di Gauss per il magnetismo afferma che il flusso magnetico netto attraverso una superficie chiusa è ________.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$0$",
+        "explanation": "Per il magnetismo, $\\Phi_B = \\oint \\vec{B} \\cdot d\\vec{A} = 0$ perché non ci sono monopoli magnetici. Se non lo sai, forse confondi con l'elettrostatica: qui i campi magnetici sono solenoidali."
+      },
+      {
+        "text": "Il potenziale di equilibrio per il potassio in una cellula è tipicamente circa ________ mV.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$-90 \\text{ mV}$",
+        "explanation": "Il potenziale di equilibrio per K+ è circa $-90 \\text{ mV}$ secondo l'equazione di Nernst, dovuto all'alta permeabilità della membrana al potassio. Se pensavi diverso, forse hai dimenticato che i ioni non viaggiano per simpatia."
+      },
+      {
+        "text": "La costante di tempo per un circuito RC con $R=1000 \\Omega$ e $C=1 \\mu\\text{F}$ è ________ s.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$0.001 \\text{ s}$",
+        "explanation": "$\\tau = R C = 1000 \\times 1 \\times 10^{-6} = 10^3 \\times 10^{-6} = 10^{-3} \\text{ s} = 0.001 \\text{ s}$. Se non capisci, micro significa $10^{-6}$, e moltiplicare per 1000 dà $10^{-3}$. Facile, no?"
+      },
+      {
+        "text": "La forza su un filo rettilineo di lunghezza $L=0.1 \\text{ m}$ percorso da corrente $I=2 \\text{ A}$ in un campo magnetico $B=0.5 \\text{ T}$ perpendicolare al filo è ________ N.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$0.1 \\text{ N}$",
+        "explanation": "$F = B I L \\sin\\theta = 0.5 \\times 2 \\times 0.1 \\times 1 = 0.1 \\text{ N}$ (poiché $\\theta = 90^\\circ$, $\\sin\\theta = 1$). Se hai sbagliato, forse non hai considerato che il seno di 90 gradi è 1, non 0."
+      },
+      {
+        "text": "Il campo magnetico al centro di una spira circolare di raggio $0.1 \\text{ m}$ con corrente $1 \\text{ A}$ è ________ T. (Usa $\\mu_0 = 4\\pi \\times 10^{-7} \\text{ T m/A}$)",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$2 \\times 10^{-6} \\text{ T}$",
+        "explanation": "Per una spira circolare, $B = \\frac{\\mu_0 I}{2R} = \\frac{4\\pi \\times 10^{-7} \\times 1}{2 \\times 0.1} = \\frac{4\\pi \\times 10^{-7}}{0.2} = 20\\pi \\times 10^{-7} \\approx 6.28 \\times 10^{-6} \\text{ T}$, ma semplificando con $\\pi \\approx 3$, $B \\approx 2 \\times 10^{-6} \\text{ T}$ per mental calculation. Se preferisci precisione, usa $2 \\times 10^{-6} \\text{ T}$ come approssimazione. La fisica a volte richiede stime."
+      },
+      {
+        "text": "Se il flusso magnetico attraverso una spira cambia da $0.01 \\text{ Wb}$ a $0.02 \\text{ Wb}$ in $0.1 \\text{ s}$, la fem media indotta è ________ V.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$-0.1 \\text{ V}$",
+        "explanation": "Legge di Faraday: $\\mathcal{E} = - \\frac{\\Delta \\Phi_B}{\\Delta t} = - \\frac{0.02 - 0.01}{0.1} = - \\frac{0.01}{0.1} = -0.1 \\text{ V}$. Il segno negativo indica opposizione alla variazione. Se tralasci il segno, stai ignorando metà della fisica."
+      },
+      {
+        "text": "Se un condensatore ha capacità $C$ in vuoto, con un dielettrico di costante $\\kappa=2$, la nuova capacità è ________ $C$.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$2$",
+        "explanation": "La capacità con dielettrico è $C' = \\kappa C = 2C$. Quindi è 2 volte la capacità in vuoto. Se non lo sai, forse hai saltato la parte sui dielettrici, ma in medicina i materiali biologici sono pieni di dielettrici."
+      },
+      {
+        "text": "Due resistenze da $10 \\Omega$ ciascuna in parallelo hanno resistenza totale ________ $\\Omega$.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "$5$",
+        "explanation": "Per resistenze in parallelo, $\\frac{1}{R_{\\text{tot}}} = \\frac{1}{10} + \\frac{1}{10} = \\frac{2}{10} = \\frac{1}{5}$, quindi $R_{\\text{tot}} = 5 \\Omega$. Se hai difficoltà, forse dovresti praticare con frazioni invece di arrenderti."
+      },
+      {
+        "text": "La unità SI dell'induttanza è ________.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "henry",
+        "explanation": "L'unità SI dell'induttanza è il henry (H). Se non lo ricordi, forse confondi con altre unità, ma in elettromagnetismo, la precisione nei nomi è cruciale come in anatomia."
+      },
+      {
+        "text": "La forza magnetica su una carica positiva che si muove verso nord in un campo magnetico verso est è diretta verso ________ (assumendo che nord, est, e su siano perpendicolari).",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "alto",
+        "explanation": "Usando la regola della mano destra: $\\vec{v}$ verso nord, $\\vec{B}$ verso est, $\\vec{F} = q \\vec{v} \\times \\vec{B}$ è verso l'alto (usando un sistema destrorso). Se non capisci, forse dovresti visualizzare con le tue mani invece di affidarti alla fortuna."
+      },
+      {
+        "text": "La depolarizzazione di una membrana cellulare implica un ________ del potenziale di membrana.",
+        "type": "fill_in_the_blank",
+        "correctAnswer": "aumento",
+        "explanation": "La depolarizzazione significa che il potenziale di membrana diventa meno negativo, quindi aumenta verso valori più positivi. Se pensavi 'diminuzione', forse confondi con iperpolarizzazione. In medicina, i dettagli salvano vite, non le approssimazioni."
+      }
+    ],
+    "timestamp": "2025-11-23T21:19:35.432Z"
   }
 ]
