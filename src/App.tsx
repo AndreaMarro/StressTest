@@ -575,7 +575,7 @@ export default function App() {
 
       </header>
 
-      <div className="grid md:grid-cols-2 gap-3 md:gap-6 mb-24 md:mb-12">
+      <div className="grid md:grid-cols-2 gap-3 md:gap-6 mb-32 md:mb-12">
         <div
           onClick={() => setExamType('full')}
           className={`terminal-box cursor-pointer transition-all hover:border-terminal-green group
@@ -664,10 +664,10 @@ export default function App() {
   }
 
   {/* Mobile Bottom Dock - Fixed App-like Bar */ }
-  <div className="md:hidden fixed bottom-0 left-0 right-0 bg-terminal-black border-t border-terminal-dim p-2 flex justify-around items-center z-50 pb-safe">
+  <div className="md:hidden fixed bottom-0 left-0 right-0 bg-terminal-black border-t border-terminal-dim p-2 flex justify-around items-center z-[100] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
     <a
       href="mailto:ermagician@gmail.com?subject=BUG_REPORT_SEMESTRE_FILTRO&body=DESCRIBE_THE_GLITCH_HERE..."
-      className="flex flex-col items-center gap-1 text-terminal-dim active:text-terminal-green"
+      className="flex flex-col items-center gap-1 text-terminal-dim active:text-terminal-green p-2"
     >
       <AlertCircle size={20} />
       <span className="text-[10px] font-bold uppercase">Report</span>
@@ -677,7 +677,7 @@ export default function App() {
 
     <button
       onClick={() => setShowForum(true)}
-      className="flex flex-col items-center gap-1 text-terminal-red animate-pulse active:scale-95 transition-transform"
+      className="flex flex-col items-center gap-1 text-terminal-red animate-pulse active:scale-95 transition-transform p-2"
     >
       <MessageSquare size={24} />
       <span className="text-[10px] font-bold uppercase">Panic Room</span>
@@ -687,7 +687,7 @@ export default function App() {
 
     <button
       onClick={() => setShowHistory(true)}
-      className="flex flex-col items-center gap-1 text-terminal-green active:scale-95 transition-transform"
+      className="flex flex-col items-center gap-1 text-terminal-green active:scale-95 transition-transform p-2"
     >
       <Trophy size={20} />
       <span className="text-[10px] font-bold uppercase">Storico</span>
