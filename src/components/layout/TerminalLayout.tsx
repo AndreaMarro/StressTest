@@ -61,7 +61,7 @@ export default function TerminalLayout({ children }: TerminalLayoutProps) {
             </div>
 
             {/* Footer */}
-            <footer className="relative z-20 border-t border-terminal-dim/30 p-4 mt-auto">
+            <footer className="relative z-20 border-t border-terminal-dim/30 p-4 pb-24 md:pb-4 mt-auto">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-terminal-dim">
                     <div>
                         <span className="text-terminal-green font-bold">SYSTEM_STATUS:</span> ONLINE // <span className="animate-pulse">MONITORING_ACTIVE</span>
@@ -82,8 +82,8 @@ export default function TerminalLayout({ children }: TerminalLayoutProps) {
             {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
             {showCookies && <CookiePolicy onClose={() => setShowCookies(false)} />}
 
-            {/* Watermark */}
-            <div className="fixed bottom-1 right-1 text-[10px] text-terminal-dim/20 font-mono pointer-events-none z-[100] select-none">
+            {/* Watermark - Hidden on mobile to prevent overlap with dock */}
+            <div className="hidden md:block fixed bottom-1 right-1 text-[10px] text-terminal-dim/20 font-mono pointer-events-none z-[100] select-none">
                 ANDREA_MARRO
             </div>
         </div>
