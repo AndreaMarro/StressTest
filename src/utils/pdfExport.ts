@@ -417,14 +417,41 @@ const compareAnswer = (user: string, correct: string, type: string): boolean => 
             }
         }
 
-        // === TEXT MATCHING ===
+        // === TEXT MATCHING PREP ===
         // Remove extra spaces but preserve word boundaries
-        const cleanUser = userNorm.replace(/\s+/g, ' ').trim();
-        const cleanCorrect = correctNorm.replace(/\s+/g, ' ').trim();
+        const cleanUserText = userNorm.replace(/\s+/g, ' ').trim();
+        const cleanCorrectText = correctNorm.replace(/\s+/g, ' ').trim();
+        const noSpaceUser = userNorm.replace(/\s+/g, '');
+        const noSpaceCorrect = correctNorm.replace(/\s+/g, '');
 
-        // Check if user answer is contained in correct answer (or vice versa for long explanations)
-        if (cleanCorrect.includes(cleanUser) && cleanUser.length > 3) return true;
-        if (cleanUser.includes(cleanCorrect) && cleanCorrect.length > 3) return true;
+        // === LEVENSHTEIN DISTANCE (more tolerant) ===
+        // Only use Levenshtein for longer answers to avoid false positives on short units/numbers
+        if (cleanCorrectText.length > 4) {
+            // Simple Levenshtein implementation for PDF export
+            const levenshteinDistance = (a: string, b: string): number => {
+                const matrix = [];
+                for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+                for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+                for (let i = 1; i <= b.length; i++) {
+                    for (let j = 1; j <= a.length; j++) {
+                        if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                            matrix[i][j] = matrix[i - 1][j - 1];
+                        } else {
+                            matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1));
+                        }
+                    }
+                }
+                return matrix[b.length][a.length];
+            };
+
+            const maxDistance = Math.floor(cleanCorrectText.length * 0.2); // 20% tolerance
+            const distance = levenshteinDistance(noSpaceUser, noSpaceCorrect);
+            if (distance <= maxDistance) return true;
+        }
+
+        // === PARTIAL MATCH (contains correct answer) ===
+        if (cleanCorrectText.includes(cleanUserText) && cleanUserText.length > 3) return true;
+        if (cleanUserText.includes(cleanCorrectText) && cleanCorrectText.length > 3) return true;
 
         return false;
     }

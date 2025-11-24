@@ -659,10 +659,9 @@ export default function App() {
       if (noSpaceUser === noSpaceCorrect) return true;
 
       // === LEVENSHTEIN DISTANCE (more tolerant) ===
-      // For longer answers, allow more edits
-      const maxDistance = Math.max(2, Math.floor(cleanCorrect.length * 0.2)); // 20% tolerance
-
-      if (cleanCorrect.length > 2) {
+      // Only use Levenshtein for longer answers to avoid false positives on short units/numbers
+      if (cleanCorrect.length > 4) {
+        const maxDistance = Math.floor(cleanCorrect.length * 0.2); // 20% tolerance
         const distance = levenshteinDistance(noSpaceUser, noSpaceCorrect);
         if (distance <= maxDistance) return true;
       }
