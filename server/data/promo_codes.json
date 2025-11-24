@@ -1,0 +1,19 @@
+[
+  {
+    "code": "MED2025",
+    "maxUses": 100,
+    "usedBy": [
+      "::1"
+    ]
+  },
+  {
+    "code": "VIP_PASS",
+    "maxUses": 5,
+    "usedBy": []
+  },
+  {
+    "code": "TEST_DEV",
+    "maxUses": 999,
+    "usedBy": []
+  }
+]

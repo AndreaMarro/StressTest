@@ -81,6 +81,7 @@ forum.db
 
 # Data files (cache, tokens, forum JSON)
 server/data/*.json
+!server/data/promo_codes.json
 server/data/access_tokens.json
 server/data/forum.json.test
 .env.production
