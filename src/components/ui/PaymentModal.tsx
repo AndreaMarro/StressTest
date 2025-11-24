@@ -96,6 +96,41 @@ const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
 
 export const PaymentModal = ({ isOpen, onClose, onSuccess }: PaymentModalProps) => {
     const [clientSecret, setClientSecret] = useState("");
+    const [showPromo, setShowPromo] = useState(false);
+    const [promoCode, setPromoCode] = useState("");
+    const [promoError, setPromoError] = useState<string | null>(null);
+    const [isPromoLoading, setIsPromoLoading] = useState(false);
+
+    const handlePromoRedeem = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!promoCode.trim()) return;
+        setIsPromoLoading(true);
+        setPromoError(null);
+
+        try {
+            const res = await fetch('/api/redeem-promo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: promoCode.trim() })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                // Save session info
+                if (data.sessionToken) localStorage.setItem('sessionToken', data.sessionToken);
+                if (data.expiresAt) localStorage.setItem('accessExpiresAt', data.expiresAt);
+                if (data.examId) localStorage.setItem('currentExamId', data.examId);
+
+                onSuccess();
+            } else {
+                setPromoError(data.error || "Codice non valido");
+            }
+        } catch (err) {
+            setPromoError("Errore di connessione");
+        } finally {
+            setIsPromoLoading(false);
+        }
+    };
 
     useEffect(() => {
         if (isOpen) {
@@ -145,6 +180,42 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess }: PaymentModalProps) 
                                 <p className="mt-4 font-bold text-gray-500">Caricamento Stripe...</p>
                             </div>
                         )}
+
+                        <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+                            {!showPromo ? (
+                                <button
+                                    onClick={() => setShowPromo(true)}
+                                    className="text-xs font-bold text-gray-400 hover:text-black uppercase tracking-wider transition-colors"
+                                >
+                                    Hai un codice promo?
+                                </button>
+                            ) : (
+                                <form onSubmit={handlePromoRedeem} className="animate-in fade-in slide-in-from-bottom-2">
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={promoCode}
+                                            onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                                            placeholder="CODICE PROMO"
+                                            className="flex-1 p-2 border-2 border-black rounded font-mono text-sm uppercase outline-none focus:bg-gray-50"
+                                            disabled={isPromoLoading}
+                                        />
+                                        <NeoButton
+                                            type="submit"
+                                            disabled={isPromoLoading || !promoCode}
+                                            className="px-4 py-2 text-xs"
+                                        >
+                                            {isPromoLoading ? '...' : 'APPLICA'}
+                                        </NeoButton>
+                                    </div>
+                                    {promoError && (
+                                        <p className="text-xs text-red-600 font-bold mt-2 text-left flex items-center gap-1">
+                                            <AlertCircle size={12} /> {promoError}
+                                        </p>
+                                    )}
+                                </form>
+                            )}
+                        </div>
                     </NeoCard>
                 </div>,
                 document.body
