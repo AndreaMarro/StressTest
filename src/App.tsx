@@ -300,61 +300,6 @@ export default function App() {
     }
   };
 
-  const handleStartExam = async () => {
-    setMode('loading');
-    setErrorMsg(null);
-
-    try {
-      const topicToUse = examType === 'full' ? 'full' : selectedTopic;
-
-      console.log('Requesting exam with excludeIds:', seenExamIds);
-
-      // Use relative path to ensure consistency with Vercel proxy
-      const response = await fetch('/api/generate-exam', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topic: topicToUse,
-          difficulty,
-          excludeIds: seenExamIds
-        })
-      });
-
-      if (!response.ok) throw new Error('Failed to fetch exam');
-
-      const data = await response.json();
-
-      if (!data.questions || data.questions.length === 0) {
-        throw new Error('No questions received');
-      }
-
-      // Save session token and access info
-      if (data.sessionToken) {
-        localStorage.setItem('sessionToken', data.sessionToken);
-      }
-      if (data.expiresAt) {
-        setAccessExpiresAt(data.expiresAt);
-        localStorage.setItem('accessExpiresAt', data.expiresAt);
-      }
-      if (data.id) {
-        localStorage.setItem('currentExamId', data.id);
-      }
-
-      // Track this exam ID
-      if (data.id) {
-        setSeenExamIds(prev => [...prev, data.id]);
-      }
-
-      setQuestions(data.questions);
-      startExam();
-    } catch (err: unknown) {
-      console.error(err);
-      const message = err instanceof Error ? err.message : "Errore sconosciuto";
-      setErrorMsg(message || "Errore nel caricamento del test. Riprova.");
-      setMode('start');
-    }
-  };
-
   // Debug: log exam when it changes
   useEffect(() => {
     if (questions.length > 0) {
@@ -1123,8 +1068,8 @@ export default function App() {
               {/* 45-min Access Window Countdown */}
               {accessTimeLeft !== null && (
                 <div className={`flex items - center gap - 2 px - 3 py - 1 border text - xs font - mono ${accessTimeLeft < 600 // Less than 10 min
-                    ? 'border-terminal-red text-terminal-red animate-pulse'
-                    : 'border-terminal-dim text-terminal-dim'
+                  ? 'border-terminal-red text-terminal-red animate-pulse'
+                  : 'border-terminal-dim text-terminal-dim'
                   } `}>
                   <AlertCircle size={14} />
                   <span>Accesso: {formatTime(accessTimeLeft)}</span>
