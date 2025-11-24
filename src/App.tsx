@@ -221,8 +221,82 @@ export default function App() {
         setMode('start');
       }
     } else {
-      // Normal payment flow: generate new exam
-      handleStartExam();
+      // Normal payment flow: Poll for webhook completion (iPhone fix)
+      console.log('[Payment] Starting webhook polling for normal payment...');
+
+      const pollForWebhookCompletion = async () => {
+        const maxAttempts = 15; // 15 seconds
+
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentIntentId = urlParams.get('payment_intent');
+
+            if (!paymentIntentId) {
+              console.error('[Payment] No payment_intent in URL after redirect');
+              break;
+            }
+
+            console.log(`[Payment] Poll attempt ${attempt + 1}/${maxAttempts}...`);
+
+            const res = await fetch(`${API_URL}/api/poll-payment-status`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paymentIntentId })
+            });
+
+            const data = await res.json();
+
+            if (data.ready && data.sessionToken && data.examId) {
+              console.log('[Payment] ✅ Webhook completed!');
+
+              // Save session
+              localStorage.setItem('sessionToken', data.sessionToken);
+              localStorage.setItem('currentExamId', data.examId);
+              localStorage.setItem('accessExpiresAt', data.expiresAt);
+              setAccessExpiresAt(data.expiresAt);
+
+              // Fetch exam
+              const accessRes = await fetch(`${API_URL}/api/verify-access`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ examId: data.examId, sessionToken: data.sessionToken })
+              });
+
+              const accessData = await accessRes.json();
+
+              if (accessData.hasAccess && accessData.exam) {
+                setQuestions(accessData.exam.questions);
+                setSeenExamIds(prev => [...prev, data.examId]);
+
+                // Generate link
+                const accessLink = `${window.location.origin}${window.location.pathname}?access=${data.sessionToken}_${data.examId}`;
+                console.log('[Payment] 🔗 Access link:', accessLink);
+
+                // Clean URL
+                window.history.replaceState({}, '', window.location.pathname);
+
+                alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}\n\nPuoi usare questo link su qualsiasi dispositivo!`);
+
+                startExam();
+                return true;
+              }
+            }
+
+            // Wait 1 second before next attempt
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          } catch (e) {
+            console.error('[Payment] Poll error:', e);
+          }
+        }
+
+        // Timeout
+        console.error('[Payment] ❌ Webhook timeout');
+        setErrorMsg('Pagamento in elaborazione. Ricarica la pagina tra 10 secondi.');
+        return false;
+      };
+
+      pollForWebhookCompletion();
     }
   };
 
@@ -308,7 +382,7 @@ export default function App() {
       console.log('[App] Saved Token:', savedToken);
 
       try {
-        const res = await fetch(`${API_URL}/api/verify-access`, {
+        const res = await fetch(`${API_URL} /api/verify - access`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -332,7 +406,7 @@ export default function App() {
           setQuestions(data.exam.questions);
 
           // Restore user answers if saved
-          const savedAnswers = localStorage.getItem(`answers_${savedExamId}`);
+          const savedAnswers = localStorage.getItem(`answers_${savedExamId} `);
           if (savedAnswers) {
             const parsedAnswers = JSON.parse(savedAnswers);
             setUserState(prev => ({
@@ -398,7 +472,7 @@ export default function App() {
   useEffect(() => {
     const examId = localStorage.getItem('currentExamId');
     if (examId && Object.keys(userState.answers).length > 0) {
-      localStorage.setItem(`answers_${examId}`, JSON.stringify(userState.answers));
+      localStorage.setItem(`answers_${examId} `, JSON.stringify(userState.answers));
     }
   }, [userState.answers]);
 
@@ -429,7 +503,7 @@ export default function App() {
 
         try {
           // Verify with backend
-          const res = await fetch(`${API_URL}/api/verify-payment/${paymentIntentId}`);
+          const res = await fetch(`${API_URL} /api/verify - payment / ${paymentIntentId} `);
           const data = await res.json();
 
           console.log('[App] Payment verification response:', data);
@@ -454,7 +528,7 @@ export default function App() {
 
               // Verify access and fetch exam
               try {
-                const accessRes = await fetch(`${API_URL}/api/verify-access`, {
+                const accessRes = await fetch(`${API_URL} /api/verify - access`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ examId: data.examId, sessionToken: data.sessionToken })
@@ -474,11 +548,11 @@ export default function App() {
                   window.history.replaceState({}, '', window.location.pathname);
 
                   // Generate shareable access link
-                  const accessLink = `${window.location.origin}${window.location.pathname}?access=${data.sessionToken}_${data.examId}`;
+                  const accessLink = `${window.location.origin}${window.location.pathname}?access = ${data.sessionToken}_${data.examId} `;
                   console.log('[App] 🔗 Shareable access link:', accessLink);
 
                   // Show link to user
-                  alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}\n\nPuoi usare questo link su qualsiasi dispositivo!`);
+                  alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso(valido 45 min): \n${accessLink} \n\nPuoi usare questo link su qualsiasi dispositivo!`);
 
                   startExam();
                   return;
@@ -515,7 +589,7 @@ export default function App() {
           } else if (data.status === 'processing') {
             setErrorMsg("Pagamento in elaborazione. Ricarica la pagina tra poco.");
           } else {
-            setErrorMsg(`Pagamento non riuscito: ${data.status || 'Errore sconosciuto'}. Riprova.`);
+            setErrorMsg(`Pagamento non riuscito: ${data.status || 'Errore sconosciuto'}.Riprova.`);
           }
         } catch (e) {
           console.error("Payment verification failed", e);
@@ -806,7 +880,7 @@ export default function App() {
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
+    return `${m}:${s < 10 ? '0' : ''}${s} `;
   };
 
 
@@ -849,12 +923,12 @@ export default function App() {
       <div className="grid md:grid-cols-2 gap-3 md:gap-6 mb-32 md:mb-12">
         <div
           onClick={() => setExamType('full')}
-          className={`terminal-box cursor-pointer transition-all hover:border-terminal-green group
+          className={`terminal - box cursor - pointer transition - all hover: border - terminal - green group
             ${examType === 'full' ? 'border-terminal-green bg-terminal-green/10' : ''}
-          `}
+              `}
         >
           <div className="flex justify-between items-start mb-4">
-            <GraduationCap className={`w-8 h-8 ${examType === 'full' ? 'text-terminal-green' : 'text-terminal-dim'}`} />
+            <GraduationCap className={`w - 8 h - 8 ${examType === 'full' ? 'text-terminal-green' : 'text-terminal-dim'} `} />
             {examType === 'full' && <div className="w-2 h-2 bg-terminal-green rounded-full animate-pulse"></div>}
           </div>
           <h3 className="text-xl font-bold mb-2 group-hover:text-terminal-green">FULL_SYSTEM_SCAN</h3>
@@ -866,12 +940,12 @@ export default function App() {
 
         <div
           onClick={() => setExamType('topic')}
-          className={`terminal-box cursor-pointer transition-all hover:border-terminal-green group
+          className={`terminal - box cursor - pointer transition - all hover: border - terminal - green group
             ${examType === 'topic' ? 'border-terminal-green bg-terminal-green/10' : ''}
-          `}
+              `}
         >
           <div className="flex justify-between items-start mb-4">
-            <Brain className={`w-8 h-8 ${examType === 'topic' ? 'text-terminal-green' : 'text-terminal-dim'}`} />
+            <Brain className={`w - 8 h - 8 ${examType === 'topic' ? 'text-terminal-green' : 'text-terminal-dim'} `} />
             {examType === 'topic' && <div className="w-2 h-2 bg-terminal-green rounded-full animate-pulse"></div>}
           </div>
           <h3 className="text-xl font-bold mb-2 group-hover:text-terminal-green">TARGETED_DIAGNOSTIC</h3>
@@ -908,11 +982,12 @@ export default function App() {
                   key={level}
                   onClick={() => setDifficulty(level)}
                   className={`
-                  flex-1 py-2 text-xs font-bold border transition-all uppercase tracking-wider
+              flex - 1 py - 2 text - xs font - bold border transition - all uppercase tracking - wider
                   ${difficulty === level
                       ? 'bg-terminal-green text-terminal-black border-terminal-green'
-                      : 'bg-transparent text-terminal-dim border-terminal-dim hover:border-terminal-green hover:text-terminal-green'}
-                `}
+                      : 'bg-transparent text-terminal-dim border-terminal-dim hover:border-terminal-green hover:text-terminal-green'
+                    }
+              `}
                 >
                   {level === 'easy' ? 'L1_BASIC' : level === 'medium' ? 'L2_STD' : 'L3_NIGHTMARE'}
                 </button>
@@ -991,10 +1066,10 @@ export default function App() {
       <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-200px)]">
         {/* Sidebar */}
         <aside className={`
-          fixed md:relative z-40 w-72 md:w-64 bg-terminal-black border-r border-terminal-dim h-full transform transition-transform duration-300 shadow-2xl md:shadow-none
+          fixed md:relative z - 40 w - 72 md: w - 64 bg - terminal - black border - r border - terminal - dim h - full transform transition - transform duration - 300 shadow - 2xl md: shadow - none
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-          top-0 left-0 p-4 md:p-0 md:bg-transparent md:border-r-0
-        `}>
+              top - 0 left - 0 p - 4 md: p - 0 md: bg - transparent md: border - r - 0
+                `}>
           <div className="md:hidden flex justify-end mb-4">
             <button onClick={() => setSidebarOpen(false)}><X className="text-terminal-green" /></button>
           </div>
@@ -1013,10 +1088,11 @@ export default function App() {
                     key={q.id}
                     onClick={() => setUserState(p => ({ ...p, currentQuestionIndex: idx }))}
                     className={`
-                        relative h-8 text-xs font-bold transition-all border
+                        relative h - 8 text - xs font - bold transition - all border
                         ${isCurrent ? 'bg-terminal-green text-terminal-black border-terminal-green' :
-                        isAnswered ? 'bg-terminal-dim/20 text-terminal-green border-terminal-green' : 'text-terminal-dim border-terminal-dim hover:border-terminal-green'}
-                      `}
+                        isAnswered ? 'bg-terminal-dim/20 text-terminal-green border-terminal-green' : 'text-terminal-dim border-terminal-dim hover:border-terminal-green'
+                      }
+              `}
                   >
                     {idx + 1}
                     {isFlaggedQ && <div className="absolute -top-1 -right-1 w-2 h-2 bg-terminal-red rounded-full" />}
@@ -1039,17 +1115,17 @@ export default function App() {
             <button onClick={() => setSidebarOpen(true)} className="md:hidden text-terminal-green"><Menu /></button>
 
             <div className="flex items-center gap-4">
-              <div className={`flex items-center gap-2 px-4 py-1 border border-terminal-green rounded text-terminal-green font-mono ${userState.timeRemaining < 300 ? 'animate-pulse text-terminal-red border-terminal-red' : ''}`}>
+              <div className={`flex items - center gap - 2 px - 4 py - 1 border border - terminal - green rounded text - terminal - green font - mono ${userState.timeRemaining < 300 ? 'animate-pulse text-terminal-red border-terminal-red' : ''} `}>
                 <Clock size={16} />
                 <span>{formatTime(userState.timeRemaining)}</span>
               </div>
 
               {/* 45-min Access Window Countdown */}
               {accessTimeLeft !== null && (
-                <div className={`flex items-center gap-2 px-3 py-1 border text-xs font-mono ${accessTimeLeft < 600 // Less than 10 min
-                  ? 'border-terminal-red text-terminal-red animate-pulse'
-                  : 'border-terminal-dim text-terminal-dim'
-                  }`}>
+                <div className={`flex items - center gap - 2 px - 3 py - 1 border text - xs font - mono ${accessTimeLeft < 600 // Less than 10 min
+                    ? 'border-terminal-red text-terminal-red animate-pulse'
+                    : 'border-terminal-dim text-terminal-dim'
+                  } `}>
                   <AlertCircle size={14} />
                   <span>Accesso: {formatTime(accessTimeLeft)}</span>
                 </div>
@@ -1057,9 +1133,9 @@ export default function App() {
 
               <button
                 onClick={toggleFlag}
-                className={`flex items-center gap-2 px-3 py-1 border text-xs font-bold uppercase transition-all
+                className={`flex items - center gap - 2 px - 3 py - 1 border text - xs font - bold uppercase transition - all
                   ${isFlagged ? 'bg-terminal-red text-terminal-black border-terminal-red' : 'border-terminal-dim text-terminal-dim hover:text-terminal-red hover:border-terminal-red'}
-                `}
+              `}
               >
                 <Flag size={14} /> {isFlagged ? 'FLAGGED' : 'FLAG'}
               </button>
@@ -1083,16 +1159,17 @@ export default function App() {
                   <button
                     key={i}
                     onClick={() => handleAnswer(opt)}
-                    className={`w-full p-3 md:p-4 text-left border transition-all flex items-center gap-3 md:gap-4 group
+                    className={`w - full p - 3 md: p - 4 text - left border transition - all flex items - center gap - 3 md: gap - 4 group
                        ${userState.answers[currentQ.id] === opt
                         ? 'bg-terminal-green/10 border-terminal-green text-terminal-green'
-                        : 'border-terminal-dim hover:border-terminal-green hover:text-terminal-green'}
-                     `}
+                        : 'border-terminal-dim hover:border-terminal-green hover:text-terminal-green'
+                      }
+              `}
                   >
                     <div className={`
-                       w-6 h-6 flex items-center justify-center border text-xs font-bold
+              w - 6 h - 6 flex items - center justify - center border text - xs font - bold
                        ${userState.answers[currentQ.id] === opt ? 'bg-terminal-green text-terminal-black border-terminal-green' : 'border-terminal-dim group-hover:border-terminal-green'}
-                     `}>
+              `}>
                       {String.fromCharCode(65 + i)}
                     </div>
                     <div className="flex-1"><MathText content={opt} /></div>
@@ -1155,18 +1232,18 @@ export default function App() {
     return (
       <div className="max-w-4xl mx-auto pb-12">
         <div className="terminal-box text-center mb-12 relative overflow-hidden">
-          <div className={`absolute top-0 left-0 w-full h-1 ${passed ? 'bg-terminal-green' : 'bg-terminal-red'}`}></div>
+          <div className={`absolute top - 0 left - 0 w - full h - 1 ${passed ? 'bg-terminal-green' : 'bg-terminal-red'} `}></div>
 
           <h2 className="text-3xl font-bold mb-8 mt-4 tracking-widest">SESSION_REPORT</h2>
 
           <div className="flex justify-center mb-8">
-            <div className={`w-32 h-32 rounded-full border-4 flex items-center justify-center ${passed ? 'border-terminal-green text-terminal-green' : 'border-terminal-red text-terminal-red'}`}>
+            <div className={`w - 32 h - 32 rounded - full border - 4 flex items - center justify - center ${passed ? 'border-terminal-green text-terminal-green' : 'border-terminal-red text-terminal-red'} `}>
               <span className="text-4xl font-bold">{percentage}%</span>
             </div>
           </div>
 
           <p className="text-xl mb-8">
-            STATUS: <span className={`font-bold ${passed ? 'text-terminal-green' : 'text-terminal-red'}`}>{passed ? 'PASSED' : 'FAILED'}</span>
+            STATUS: <span className={`font - bold ${passed ? 'text-terminal-green' : 'text-terminal-red'} `}>{passed ? 'PASSED' : 'FAILED'}</span>
             <br />
             <span className="text-sm text-terminal-dim block mt-2">SCORE: {userState.score}/{questions.length}</span>
           </p>
@@ -1190,7 +1267,7 @@ export default function App() {
             const userAns = userState.answers[q.id];
             const isCorrect = compareAnswers(userAns, q.correctAnswer, q.type);
             return (
-              <div key={q.id} className={`terminal-box p-6 group hover:border-terminal-dim transition-all ${isCorrect ? 'border-terminal-green/30' : 'border-terminal-red/30'}`}>
+              <div key={q.id} className={`terminal - box p - 6 group hover: border - terminal - dim transition - all ${isCorrect ? 'border-terminal-green/30' : 'border-terminal-red/30'} `}>
                 <div className="flex justify-between items-start mb-4">
                   <span className="text-xs font-bold text-terminal-dim">LOG_ENTRY_#{idx + 1}</span>
                   {isCorrect ? <CheckCircle className="text-terminal-green w-5 h-5" /> : <XCircle className="text-terminal-red w-5 h-5" />}
@@ -1199,7 +1276,7 @@ export default function App() {
                 <h4 className="text-lg font-bold mb-4"><MathText content={q.text} /></h4>
 
                 <div className="grid md:grid-cols-2 gap-4 text-sm mb-4">
-                  <div className={`p-3 border ${isCorrect ? 'border-terminal-green/50 text-terminal-green' : 'border-terminal-red/50 text-terminal-red'}`}>
+                  <div className={`p - 3 border ${isCorrect ? 'border-terminal-green/50 text-terminal-green' : 'border-terminal-red/50 text-terminal-red'} `}>
                     <span className="block text-[10px] uppercase opacity-70 mb-1">User_Input</span>
                     <MathText content={userAns || "NULL"} />
                   </div>
