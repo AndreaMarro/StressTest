@@ -447,10 +447,17 @@ export default function App() {
     if (timerRef.current) clearInterval(timerRef.current);
 
     let score = 0;
+    let answeredCount = 0;
+
     questions.forEach(q => {
       const userAns = userState.answers[q.id];
-      if (compareAnswers(userAns, q.correctAnswer, q.type)) {
-        score++;
+
+      // Only count answered questions
+      if (userAns && userAns.trim() !== '') {
+        answeredCount++;
+        if (compareAnswers(userAns, q.correctAnswer, q.type)) {
+          score++;
+        }
       }
     });
 
@@ -511,37 +518,80 @@ export default function App() {
   };
 
   const compareAnswers = (user: string, correct: string, type: string) => {
-    if (!user) return false;
+    // If user didn't answer, return false (but DON'T count it in the score)
+    if (!user || user.trim() === '') return false;
 
     if (type === 'multiple_choice') {
-      // Exact match o match prima lettera (A-E)
+      // Exact match or match first letter (A-E)
       const userTrim = user.trim();
       const correctTrim = correct.trim();
       return userTrim === correctTrim ||
         (userTrim.length > 0 && correctTrim.length > 0 && userTrim.charAt(0) === correctTrim.charAt(0));
     } else {
-      // Fill in the blank
-      const cleanUser = user.toLowerCase().replace(/\s+/g, '').replace(',', '.');
-      const cleanCorrect = correct.toLowerCase().replace(/\s+/g, '').replace(',', '.');
+      // Fill in the blank - ADVANCED FUZZY MATCHING
 
-      // Exact match first
+      // === NORMALIZATION ===
+      const normalize = (str: string) => {
+        return str
+          .toLowerCase()
+          .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remove accents
+          .trim();
+      };
+
+      const userNorm = normalize(user);
+      const correctNorm = normalize(correct);
+
+      // === EXACT MATCH ===
+      if (userNorm === correctNorm) return true;
+
+      // === NUMBER EXTRACTION ===
+      // Extract first number from user answer (handles "4 volte" → "4")
+      const extractNumber = (str: string) => {
+        const match = str.match(/[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?/);
+        return match ? match[0] : null;
+      };
+
+      const userNumber = extractNumber(userNorm);
+      const correctNumber = extractNumber(correctNorm);
+
+      // If both have numbers, compare numerically
+      if (userNumber && correctNumber) {
+        const userNum = parseFloat(userNumber.replace(',', '.'));
+        const correctNum = parseFloat(correctNumber.replace(',', '.'));
+
+        if (!isNaN(userNum) && !isNaN(correctNum)) {
+          // ±5% tolerance for numbers
+          const tolerance = Math.abs(correctNum * 0.05);
+          if (Math.abs(userNum - correctNum) <= tolerance) return true;
+        }
+      }
+
+      // === TEXT MATCHING (for non-numeric answers) ===
+      // Remove extra spaces but preserve word boundaries
+      const cleanUser = userNorm.replace(/\s+/g, ' ').trim();
+      const cleanCorrect = correctNorm.replace(/\s+/g, ' ').trim();
+
+      // Exact match after cleaning
       if (cleanUser === cleanCorrect) return true;
 
-      // Try numerical comparison with ±5% tolerance
-      const userNum = parseFloat(cleanUser);
-      const correctNum = parseFloat(cleanCorrect);
+      // Remove ALL spaces for very lenient matching
+      const noSpaceUser = cleanUser.replace(/\s/g, '');
+      const noSpaceCorrect = cleanCorrect.replace(/\s/g, '');
 
-      if (!isNaN(userNum) && !isNaN(correctNum)) {
-        const tolerance = Math.abs(correctNum * 0.05);
-        return Math.abs(userNum - correctNum) <= tolerance;
+      if (noSpaceUser === noSpaceCorrect) return true;
+
+      // === LEVENSHTEIN DISTANCE (more tolerant) ===
+      // For longer answers, allow more edits
+      const maxDistance = Math.max(2, Math.floor(cleanCorrect.length * 0.2)); // 20% tolerance
+
+      if (cleanCorrect.length > 2) {
+        const distance = levenshteinDistance(noSpaceUser, noSpaceCorrect);
+        if (distance <= maxDistance) return true;
       }
 
-      // Fuzzy matching for text answers (tolerance <= 2 edits)
-      // Only if strings are long enough to justify fuzzy match (e.g. > 3 chars)
-      if (cleanCorrect.length > 3) {
-        const distance = levenshteinDistance(cleanUser, cleanCorrect);
-        if (distance <= 2) return true;
-      }
+      // === PARTIAL MATCH (contains correct answer) ===
+      if (noSpaceCorrect.length > 3 && noSpaceUser.includes(noSpaceCorrect)) return true;
+      if (noSpaceUser.length > 3 && noSpaceCorrect.includes(noSpaceUser)) return true;
 
       return false;
     }
