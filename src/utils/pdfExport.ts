@@ -2,66 +2,52 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import type { Question, UserState } from '../types';
 
-// Convert LaTeX to readable Unicode/text
+// Convert LaTeX to readable ASCII/text for PDF
 const convertLatexToReadable = (text: string): string => {
     let result = text;
 
-    // Greek letters
+    // Greek letters - Map to text names for PDF safety
     const greekMap: Record<string, string> = {
-        '\\alpha': 'α', '\\beta': 'β', '\\gamma': 'γ', '\\delta': 'δ',
-        '\\epsilon': 'ε', '\\theta': 'θ', '\\lambda': 'λ', '\\mu': 'μ',
-        '\\pi': 'π', '\\rho': 'ρ', '\\sigma': 'σ', '\\tau': 'τ',
-        '\\phi': 'φ', '\\omega': 'ω', '\\Delta': 'Δ', '\\Omega': 'Ω'
+        '\\alpha': 'alpha', '\\beta': 'beta', '\\gamma': 'gamma', '\\delta': 'delta',
+        '\\epsilon': 'epsilon', '\\theta': 'theta', '\\lambda': 'lambda', '\\mu': 'mu',
+        '\\pi': 'pi', '\\rho': 'rho', '\\sigma': 'sigma', '\\tau': 'tau',
+        '\\phi': 'phi', '\\omega': 'omega', '\\Delta': 'Delta', '\\Omega': 'Ohm'
     };
 
-    // Math symbols
+    // Math symbols - Map to ASCII equivalents
     const symbolMap: Record<string, string> = {
-        '\\times': '×', '\\div': '÷', '\\pm': '±', '\\mp': '∓',
-        '\\leq': '≤', '\\geq': '≥', '\\neq': '≠', '\\approx': '≈',
-        '\\infty': '∞', '\\partial': '∂', '\\nabla': '∇',
-        '\\sqrt': '√', '\\int': '∫', '\\sum': 'Σ', '\\prod': 'Π',
-        '\\deg': '°', '\\circ': '°'
+        '\\times': 'x', '\\div': '/', '\\pm': '+/-', '\\mp': '-/+',
+        '\\leq': '<=', '\\geq': '>=', '\\neq': '!=', '\\approx': '~',
+        '\\infty': 'infinity', '\\partial': 'd', '\\nabla': 'del',
+        '\\sqrt': 'sqrt', '\\int': 'integral', '\\sum': 'sum', '\\prod': 'prod',
+        '\\deg': 'deg', '\\circ': 'deg', '\\cdot': '*'
     };
 
-    // Replace Greek letters - FIX: Escape backslashes for Regex
-    for (const [latex, unicode] of Object.entries(greekMap)) {
-        // latex is like "\pi" (string), so we need to escape the backslash for regex
+    // Replace Greek letters
+    for (const [latex, replacement] of Object.entries(greekMap)) {
         const escapedLatex = latex.replace(/\\/g, '\\\\');
-        result = result.replace(new RegExp(escapedLatex, 'g'), unicode);
+        result = result.replace(new RegExp(escapedLatex, 'g'), replacement);
     }
 
     // Replace math symbols
-    for (const [latex, unicode] of Object.entries(symbolMap)) {
+    for (const [latex, replacement] of Object.entries(symbolMap)) {
         const escapedLatex = latex.replace(/\\/g, '\\\\');
-        result = result.replace(new RegExp(escapedLatex, 'g'), unicode);
+        result = result.replace(new RegExp(escapedLatex, 'g'), ` ${replacement} `);
     }
 
     // Handle fractions: \frac{a}{b} → (a/b)
     result = result.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1/$2)');
 
-    // Handle sqrt: \sqrt{x} → √(x)
-    result = result.replace(/\\sqrt\{([^}]+)\}/g, '√($1)');
+    // Handle sqrt: \sqrt{x} → sqrt(x)
+    result = result.replace(/\\sqrt\{([^}]+)\}/g, 'sqrt($1)');
 
-    // Handle superscripts: ^{2} → ²
-    const superscriptMap: Record<string, string> = {
-        '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-        '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
-        '-': '⁻', '+': '⁺'
-    };
-    result = result.replace(/\^\{([^}]+)\}/g, (_, exp) => {
-        return exp.split('').map((c: string) => superscriptMap[c] || c).join('');
-    });
-    result = result.replace(/\^(\w)/g, (_, exp) => superscriptMap[exp] || `^${exp}`);
+    // Handle superscripts: ^{...} → ^(...)
+    result = result.replace(/\^\{([^}]+)\}/g, '^($1)');
+    result = result.replace(/\^(\w)/g, '^$1');
 
-    // Handle subscripts: _{1} → ₁
-    const subscriptMap: Record<string, string> = {
-        '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
-        '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉'
-    };
-    result = result.replace(/_\{([^}]+)\}/g, (_, sub) => {
-        return sub.split('').map((c: string) => subscriptMap[c] || c).join('');
-    });
-    result = result.replace(/_(\w)/g, (_, sub) => subscriptMap[sub] || `_${sub}`);
+    // Handle subscripts: _{...} → _(...)
+    result = result.replace(/_\{([^}]+)\}/g, '_($1)');
+    result = result.replace(/_(\w)/g, '_$1');
 
     // Handle \text{...}
     result = result.replace(/\\text\{([^}]+)\}/g, '$1');
