@@ -623,7 +623,6 @@ export default function App() {
       if (userNorm === correctNorm) return true;
 
       // === NUMBER EXTRACTION ===
-      // Extract first number from user answer (handles "4 volte" → "4")
       const extractNumber = (str: string) => {
         const match = str.match(/[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?/);
         return match ? match[0] : null;
@@ -632,7 +631,8 @@ export default function App() {
       const userNumber = extractNumber(userNorm);
       const correctNumber = extractNumber(correctNorm);
 
-      // If both have numbers, compare numerically
+      // If both have numbers, compare numerically ONLY
+      // This prevents "130 N" matching "120 N" via Levenshtein
       if (userNumber && correctNumber) {
         const userNum = parseFloat(userNumber.replace(',', '.'));
         const correctNum = parseFloat(correctNumber.replace(',', '.'));
@@ -640,35 +640,29 @@ export default function App() {
         if (!isNaN(userNum) && !isNaN(correctNum)) {
           // ±5% tolerance for numbers
           const tolerance = Math.abs(correctNum * 0.05);
-          if (Math.abs(userNum - correctNum) <= tolerance) return true;
+          return Math.abs(userNum - correctNum) <= tolerance;
         }
       }
 
-      // === TEXT MATCHING (for non-numeric answers) ===
+      // === TEXT MATCHING ===
       // Remove extra spaces but preserve word boundaries
-      const cleanUser = userNorm.replace(/\s+/g, ' ').trim();
-      const cleanCorrect = correctNorm.replace(/\s+/g, ' ').trim();
-
-      // Exact match after cleaning
-      if (cleanUser === cleanCorrect) return true;
-
-      // Remove ALL spaces for very lenient matching
-      const noSpaceUser = cleanUser.replace(/\s/g, '');
-      const noSpaceCorrect = cleanCorrect.replace(/\s/g, '');
-
-      if (noSpaceUser === noSpaceCorrect) return true;
+      const cleanUserText = userNorm.replace(/\s+/g, ' ').trim();
+      const cleanCorrectText = correctNorm.replace(/\s+/g, ' ').trim();
+      const noSpaceUser = userNorm.replace(/\s+/g, '');
+      const noSpaceCorrect = correctNorm.replace(/\s+/g, '');
 
       // === LEVENSHTEIN DISTANCE (more tolerant) ===
       // Only use Levenshtein for longer answers to avoid false positives on short units/numbers
-      if (cleanCorrect.length > 4) {
-        const maxDistance = Math.floor(cleanCorrect.length * 0.2); // 20% tolerance
+      if (cleanCorrectText.length > 4) {
+        // Allow 30% tolerance or at least 2 edits for longer words
+        const maxDistance = Math.max(2, Math.floor(cleanCorrectText.length * 0.3));
         const distance = levenshteinDistance(noSpaceUser, noSpaceCorrect);
         if (distance <= maxDistance) return true;
       }
 
       // === PARTIAL MATCH (contains correct answer) ===
-      if (noSpaceCorrect.length > 3 && noSpaceUser.includes(noSpaceCorrect)) return true;
-      if (noSpaceUser.length > 3 && noSpaceCorrect.includes(noSpaceUser)) return true;
+      if (cleanCorrectText.length > 3 && cleanUserText.includes(cleanCorrectText)) return true;
+      if (cleanUserText.length > 3 && cleanCorrectText.includes(cleanUserText)) return true;
 
       return false;
     }

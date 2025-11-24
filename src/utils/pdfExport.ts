@@ -6,6 +6,23 @@ import type { Question, UserState } from '../types';
 const convertLatexToReadable = (text: string): string => {
     let result = text;
 
+    // Handle fractions: \frac{a}{b} → (a/b)
+    result = result.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1/$2)');
+
+    // Handle sqrt: \sqrt{x} → sqrt(x)
+    result = result.replace(/\\sqrt\{([^}]+)\}/g, 'sqrt($1)');
+
+    // Handle superscripts: ^{...} → ^(...)
+    result = result.replace(/\^\{([^}]+)\}/g, '^($1)');
+    result = result.replace(/\^(\w)/g, '^$1');
+
+    // Handle subscripts: _{...} → _(...)
+    result = result.replace(/_\{([^}]+)\}/g, '_($1)');
+    result = result.replace(/_(\w)/g, '_$1');
+
+    // Handle \text{...}
+    result = result.replace(/\\text\{([^}]+)\}/g, '$1');
+
     // Greek letters - Map to text names for PDF safety
     const greekMap: Record<string, string> = {
         '\\alpha': 'alpha', '\\beta': 'beta', '\\gamma': 'gamma', '\\delta': 'delta',
@@ -34,23 +51,6 @@ const convertLatexToReadable = (text: string): string => {
         const escapedLatex = latex.replace(/\\/g, '\\\\');
         result = result.replace(new RegExp(escapedLatex, 'g'), ` ${replacement} `);
     }
-
-    // Handle fractions: \frac{a}{b} → (a/b)
-    result = result.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1/$2)');
-
-    // Handle sqrt: \sqrt{x} → sqrt(x)
-    result = result.replace(/\\sqrt\{([^}]+)\}/g, 'sqrt($1)');
-
-    // Handle superscripts: ^{...} → ^(...)
-    result = result.replace(/\^\{([^}]+)\}/g, '^($1)');
-    result = result.replace(/\^(\w)/g, '^$1');
-
-    // Handle subscripts: _{...} → _(...)
-    result = result.replace(/_\{([^}]+)\}/g, '_($1)');
-    result = result.replace(/_(\w)/g, '_$1');
-
-    // Handle \text{...}
-    result = result.replace(/\\text\{([^}]+)\}/g, '$1');
 
     // Remove remaining LaTeX commands
     result = result.replace(/\\[a-zA-Z]+/g, '');
@@ -391,7 +391,8 @@ const compareAnswer = (user: string, correct: string, type: string): boolean => 
         const userNumber = extractNumber(userNorm);
         const correctNumber = extractNumber(correctNorm);
 
-        // If both have numbers, compare numerically
+        // If both have numbers, compare numerically ONLY
+        // This prevents "130 N" matching "120 N" via Levenshtein
         if (userNumber && correctNumber) {
             const userNum = parseFloat(userNumber.replace(',', '.'));
             const correctNum = parseFloat(correctNumber.replace(',', '.'));
@@ -399,7 +400,7 @@ const compareAnswer = (user: string, correct: string, type: string): boolean => 
             if (!isNaN(userNum) && !isNaN(correctNum)) {
                 // ±5% tolerance for numbers
                 const tolerance = Math.abs(correctNum * 0.05);
-                if (Math.abs(userNum - correctNum) <= tolerance) return true;
+                return Math.abs(userNum - correctNum) <= tolerance;
             }
         }
 
@@ -430,14 +431,15 @@ const compareAnswer = (user: string, correct: string, type: string): boolean => 
                 return matrix[b.length][a.length];
             };
 
-            const maxDistance = Math.floor(cleanCorrectText.length * 0.2); // 20% tolerance
+            // Allow 30% tolerance or at least 2 edits for longer words
+            const maxDistance = Math.max(2, Math.floor(cleanCorrectText.length * 0.3));
             const distance = levenshteinDistance(noSpaceUser, noSpaceCorrect);
             if (distance <= maxDistance) return true;
         }
 
         // === PARTIAL MATCH (contains correct answer) ===
-        if (cleanCorrectText.includes(cleanUserText) && cleanUserText.length > 3) return true;
-        if (cleanUserText.includes(cleanCorrectText) && cleanCorrectText.length > 3) return true;
+        if (cleanCorrectText.length > 3 && cleanUserText.includes(cleanCorrectText)) return true;
+        if (cleanUserText.length > 3 && cleanCorrectText.includes(cleanUserText)) return true;
 
         return false;
     }
