@@ -87,6 +87,99 @@ export default function App() {
     setShowPayment(true);
   };
 
+  useEffect(() => {
+    const checkSaved = async () => {
+      // PRIORITY 1: Check for ?access= URL parameter (shareable link)
+      const urlParams = new URLSearchParams(window.location.search);
+      const accessParam = urlParams.get('access');
+
+      if (accessParam) {
+        console.log('[App] Access link detected in URL');
+        try {
+          // Decode access parameter: format is "sessionToken_examId"
+          const [sessionToken, examId] = accessParam.split('_');
+
+          if (sessionToken && examId) {
+            console.log('[App] Restoring session from access link');
+
+            // Save to localStorage
+            localStorage.setItem('sessionToken', sessionToken);
+            localStorage.setItem('currentExamId', examId);
+
+            // Verify access
+            const res = await fetch(`${API_URL}/api/verify-access`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ examId, sessionToken })
+            });
+            const data = await res.json();
+
+            if (data.hasAccess && data.exam) {
+              console.log('[App] ✅ Access link valid!');
+              setQuestions(data.exam.questions);
+              if (data.expiresAt) {
+                setAccessExpiresAt(data.expiresAt);
+                localStorage.setItem('accessExpiresAt', data.expiresAt);
+              }
+              // Clean URL
+              window.history.replaceState({}, '', window.location.pathname);
+              setMode('start');
+              return; // Exit early, don't check localStorage
+            } else {
+              console.log('[App] ❌ Access link expired or invalid');
+              setErrorMsg('Link di accesso scaduto o non valido.');
+            }
+          }
+        } catch (e) {
+          console.error('[App] Failed to process access link', e);
+          setErrorMsg('Errore nel processare il link di accesso.');
+        }
+
+        // Clean URL even if failed
+        window.history.replaceState({}, '', window.location.pathname);
+        return;
+      }
+
+      // PRIORITY 2: Check localStorage (existing session)
+      const savedToken = localStorage.getItem('sessionToken');
+      const savedExamId = localStorage.getItem('currentExamId');
+      const savedExpires = localStorage.getItem('accessExpiresAt');
+
+      if (savedToken && savedExamId && savedExpires) {
+        // Check if access still valid
+        const expiresDate = new Date(savedExpires);
+        const now = new Date();
+
+        if (now < expiresDate) {
+          setAccessExpiresAt(savedExpires);
+          try {
+            const res = await fetch(`${API_URL}/api/verify-access`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ examId: savedExamId, sessionToken: savedToken })
+            });
+            const data = await res.json();
+            if (data.hasAccess && data.exam) {
+              console.log('[App] Restored session from localStorage');
+              setQuestions(data.exam.questions);
+              setMode('start');
+            } else {
+              console.log('[App] Saved session no longer valid');
+              // Clean up invalid session
+              localStorage.removeItem('sessionToken');
+              localStorage.removeItem('currentExamId');
+              localStorage.removeItem('accessExpiresAt');
+              setAccessExpiresAt(null);
+            }
+          } catch (e) {
+            console.error('[App] Failed to verify saved session', e);
+          }
+        }
+      }
+    };
+    checkSaved();
+  }, []); // Run only once on mount
+
   const handlePaymentSuccess = async () => {
     setShowPayment(false);
 
@@ -365,8 +458,16 @@ export default function App() {
                   if (pendingType) setExamType(pendingType);
                   if (pendingTopic) setSelectedTopic(pendingTopic);
                   if (pendingDifficulty) setDifficulty(pendingDifficulty);
-                  // Clear URL and start exam
+                  // Clear URL
                   window.history.replaceState({}, '', window.location.pathname);
+
+                  // Generate shareable access link
+                  const accessLink = `${window.location.origin}${window.location.pathname}?access=${data.sessionToken}_${data.examId}`;
+                  console.log('[App] 🔗 Shareable access link:', accessLink);
+
+                  // Show link to user (optional: could show in UI)
+                  alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}\n\nPuoi usare questo link su qualsiasi dispositivo!`);
+
                   startExam();
                   return;
                 }
