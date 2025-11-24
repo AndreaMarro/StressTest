@@ -71,7 +71,11 @@ const paymentLimiter = rateLimit({
     message: { error: 'Too many payment requests. Please try again later.' }
 });
 
-// --- Promo Code Endpoint ---
+
+app.use(express.json());
+app.use(morgan('combined'));
+
+// --- Promo Code System ---
 
 const PROMO_FILE = path.join(__dirname, 'data', 'promo_codes.json');
 
@@ -85,12 +89,6 @@ app.post('/api/redeem-promo', (req, res) => {
 
     try {
         // Ensure data directory exists for promo codes
-        const dataDir = path.join(__dirname, 'data');
-        if (!fs.existsSync(dataDir)) {
-            fs.mkdirSync(dataDir, { recursive: true });
-        }
-
-        // If promo file doesn't exist, create an empty one
         if (!fs.existsSync(PROMO_FILE)) {
             fs.writeFileSync(PROMO_FILE, JSON.stringify([], null, 2));
         }
@@ -118,13 +116,11 @@ app.post('/api/redeem-promo', (req, res) => {
             console.log(`🎟️ Promo ${code} re-used by ${clientIp}`);
         }
 
-
         // Grant access - need to get an exam first
         // Fetch an available exam from cache or generate one
         const cache = getCache();
 
         // Get a random exam from cache (any topic/difficulty)
-        // Or we could let the promo specify preferred topic/difficulty
         let examToGrant = null;
 
         if (cache.length > 0) {
@@ -151,9 +147,6 @@ app.post('/api/redeem-promo', (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
-app.use(express.json());
-app.use(morgan('combined'));
 
 // DeepSeek Configuration
 const deepseek = new OpenAI({
