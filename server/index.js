@@ -304,6 +304,21 @@ const checkAccess = (examId, sessionToken) => {
     return { hasAccess: true, expiresAt: token.expiresAt };
 };
 
+// NEW: Check if webhook created access for an examId (for polling)
+const findAccessByExamId = (examId) => {
+    const tokens = getAccessTokens();
+    const now = new Date();
+
+    // Find ANY valid token for this examId
+    const token = tokens.find(t => {
+        if (t.examId !== examId) return false;
+        const expiresAt = new Date(t.expiresAt);
+        return now < expiresAt; // Only return non-expired tokens
+    });
+
+    return token || null;
+};
+
 const cleanupExpiredTokens = () => {
     const tokens = getAccessTokens();
     const now = new Date();
@@ -488,6 +503,53 @@ app.post('/api/generate-study-plan', async (req, res) => {
 });
 
 // 2.5 Verify Session-Based Access (45-min window)
+// NEW: Polling endpoint for payment webhook completion (iPhone fix)
+app.post('/api/poll-payment-status', (req, res) => {
+    try {
+        const { paymentIntentId } = req.body;
+
+        if (!paymentIntentId) {
+            return res.status(400).json({ error: 'paymentIntentId required' });
+        }
+
+        console.log(`[Poll] Checking if webhook created token for payment ${paymentIntentId}`);
+
+        // Get payment intent metadata to find examId
+        stripe.paymentIntents.retrieve(paymentIntentId)
+            .then(paymentIntent => {
+                const examId = paymentIntent.metadata?.examId;
+
+                if (!examId) {
+                    console.log('[Poll] No examId in payment metadata');
+                    return res.json({ ready: false, reason: 'no_exam_id' });
+                }
+
+                // Check if webhook created access token for this exam
+                const token = findAccessByExamId(examId);
+
+                if (token) {
+                    console.log(`[Poll] ✅ Token found for exam ${examId}!`);
+                    return res.json({
+                        ready: true,
+                        sessionToken: token.sessionToken,
+                        examId: token.examId,
+                        expiresAt: token.expiresAt
+                    });
+                } else {
+                    console.log(`[Poll] ⏳ Token not ready yet for exam ${examId}`);
+                    return res.json({ ready: false, reason: 'webhook_pending' });
+                }
+            })
+            .catch(err => {
+                console.error('[Poll] Stripe error:', err);
+                res.status(500).json({ error: 'Failed to check payment status' });
+            });
+    } catch (error) {
+        console.error('[Poll] Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 app.post('/api/verify-access', (req, res) => {
     try {
         const { examId, sessionToken } = req.body;
