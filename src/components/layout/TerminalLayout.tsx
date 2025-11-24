@@ -36,7 +36,7 @@ export default function TerminalLayout({ children }: TerminalLayoutProps) {
     };
 
     return (
-        <div className="min-h-screen bg-terminal-black text-terminal-text font-mono selection:bg-terminal-green selection:text-terminal-black relative overflow-hidden flex flex-col transition-colors duration-300">
+        <div className="min-h-[100dvh] bg-terminal-black text-terminal-text font-mono selection:bg-terminal-green selection:text-terminal-black relative overflow-hidden flex flex-col transition-colors duration-300 pt-safe">
             {/* Grid Background */}
             <div className="fixed inset-0 grid-pattern opacity-20 pointer-events-none z-0"></div>
 

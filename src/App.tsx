@@ -353,11 +353,11 @@ export default function App() {
           } else if (data.status === 'processing') {
             setErrorMsg("Pagamento in elaborazione. Ricarica la pagina tra poco.");
           } else {
-            setErrorMsg("Pagamento non riuscito o annullato. Riprova.");
+            setErrorMsg(`Pagamento non riuscito: ${data.status || 'Errore sconosciuto'}. Riprova.`);
           }
         } catch (e) {
           console.error("Payment verification failed", e);
-          setErrorMsg("Errore verifica pagamento. Contatta il supporto.");
+          setErrorMsg(`Errore verifica pagamento: ${(e as Error).message}. Contatta il supporto.`);
         }
       }
     };
