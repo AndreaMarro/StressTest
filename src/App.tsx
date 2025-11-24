@@ -549,7 +549,8 @@ export default function App() {
       score: finalScore,
       totalQuestions: questions.length,
       difficulty,
-      topic: examType === 'full' ? 'Simulazione Completa' : selectedTopic
+      topic: examType === 'full' ? 'Simulazione Completa' : selectedTopic,
+      answers: userState.answers // Save answers for PDF export
     };
 
     const updatedHistory = [newHistoryItem, ...history];

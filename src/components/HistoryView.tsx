@@ -9,6 +9,7 @@ interface HistoryItem {
     totalQuestions: number;
     difficulty: string;
     topic: string;
+    answers?: Record<string, string>;
 }
 
 interface HistoryViewProps {

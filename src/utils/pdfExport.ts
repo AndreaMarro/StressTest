@@ -23,14 +23,17 @@ const convertLatexToReadable = (text: string): string => {
         '\\deg': '°', '\\circ': '°'
     };
 
-    // Replace Greek letters
+    // Replace Greek letters - FIX: Escape backslashes for Regex
     for (const [latex, unicode] of Object.entries(greekMap)) {
-        result = result.replace(new RegExp(latex, 'g'), unicode);
+        // latex is like "\pi" (string), so we need to escape the backslash for regex
+        const escapedLatex = latex.replace(/\\/g, '\\\\');
+        result = result.replace(new RegExp(escapedLatex, 'g'), unicode);
     }
 
     // Replace math symbols
     for (const [latex, unicode] of Object.entries(symbolMap)) {
-        result = result.replace(new RegExp(latex.replace(/\\/g, '\\\\'), 'g'), unicode);
+        const escapedLatex = latex.replace(/\\/g, '\\\\');
+        result = result.replace(new RegExp(escapedLatex, 'g'), unicode);
     }
 
     // Handle fractions: \frac{a}{b} → (a/b)
@@ -84,6 +87,7 @@ export const exportExamPDF = (
     difficulty: string
 ) => {
     // Sanitize text for PDF (standard fonts don't support all UTF-8)
+    // Map problematic characters to safe ASCII or supported symbols
     const sanitizeForPdf = (str: string): string => {
         return str
             .replace(/€/g, 'EUR')
@@ -92,7 +96,14 @@ export const exportExamPDF = (
             .replace(/“/g, '"')
             .replace(/”/g, '"')
             .replace(/‘/g, "'")
-            .replace(/’/g, "'");
+            .replace(/’/g, "'")
+            .replace(/π/g, '(pi)') // Map Greek to text if font fails
+            .replace(/α/g, '(alpha)')
+            .replace(/β/g, '(beta)')
+            .replace(/μ/g, 'u')
+            .replace(/Ω/g, 'Ohm')
+            .replace(/Δ/g, 'Delta')
+            .replace(/°/g, 'deg');
     };
 
     try {
@@ -149,7 +160,16 @@ export const exportExamPDF = (
         const scoreBoxW = 45;
         const scoreBoxH = 24;
 
-        const percentage = Math.round((userState.score / questions.length) * 100);
+        // Recalculate score to be safe
+        let calculatedScore = 0;
+        questions.forEach(q => {
+            const ans = userState.answers[q.id];
+            if (ans && compareAnswer(ans, q.correctAnswer, q.type)) {
+                calculatedScore++;
+            }
+        });
+
+        const percentage = Math.round((calculatedScore / questions.length) * 100);
         const passed = percentage >= 60;
 
         doc.setFillColor(passed ? 230 : 255, passed ? 250 : 235, passed ? 230 : 235);
@@ -164,7 +184,7 @@ export const exportExamPDF = (
 
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
-        doc.text(`${userState.score}/${questions.length} Corrette`, scoreBoxX + scoreBoxW / 2, scoreBoxY + 18, { align: 'center' });
+        doc.text(`${calculatedScore}/${questions.length} Corrette`, scoreBoxX + scoreBoxW / 2, scoreBoxY + 18, { align: 'center' });
 
         yPos += 12;
         doc.setLineWidth(0.5);
@@ -352,7 +372,7 @@ export const exportExamPDF = (
 
 // Helper to compare answers (copied from App.tsx logic)
 const compareAnswer = (user: string, correct: string, type: string): boolean => {
-    if (!user) return false;
+    if (!user || user.trim() === '') return false;
 
     if (type === 'multiple_choice') {
         const userTrim = user.trim();
@@ -360,18 +380,51 @@ const compareAnswer = (user: string, correct: string, type: string): boolean => 
         return userTrim === correctTrim ||
             (userTrim.length > 0 && correctTrim.length > 0 && userTrim.charAt(0) === correctTrim.charAt(0));
     } else {
-        const cleanUser = user.toLowerCase().replace(/\s+/g, '').replace(',', '.');
-        const cleanCorrect = correct.toLowerCase().replace(/\s+/g, '').replace(',', '.');
+        // Fill in the blank - ADVANCED FUZZY MATCHING
 
-        if (cleanUser === cleanCorrect) return true;
+        // === NORMALIZATION ===
+        const normalize = (str: string) => {
+            return str
+                .toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remove accents
+                .trim();
+        };
 
-        const userNum = parseFloat(cleanUser);
-        const correctNum = parseFloat(cleanCorrect);
+        const userNorm = normalize(user);
+        const correctNorm = normalize(correct);
 
-        if (!isNaN(userNum) && !isNaN(correctNum)) {
-            const tolerance = Math.abs(correctNum * 0.05);
-            return Math.abs(userNum - correctNum) <= tolerance;
+        // === EXACT MATCH ===
+        if (userNorm === correctNorm) return true;
+
+        // === NUMBER EXTRACTION ===
+        const extractNumber = (str: string) => {
+            const match = str.match(/[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?/);
+            return match ? match[0] : null;
+        };
+
+        const userNumber = extractNumber(userNorm);
+        const correctNumber = extractNumber(correctNorm);
+
+        // If both have numbers, compare numerically
+        if (userNumber && correctNumber) {
+            const userNum = parseFloat(userNumber.replace(',', '.'));
+            const correctNum = parseFloat(correctNumber.replace(',', '.'));
+
+            if (!isNaN(userNum) && !isNaN(correctNum)) {
+                // ±5% tolerance for numbers
+                const tolerance = Math.abs(correctNum * 0.05);
+                if (Math.abs(userNum - correctNum) <= tolerance) return true;
+            }
         }
+
+        // === TEXT MATCHING ===
+        // Remove extra spaces but preserve word boundaries
+        const cleanUser = userNorm.replace(/\s+/g, ' ').trim();
+        const cleanCorrect = correctNorm.replace(/\s+/g, ' ').trim();
+
+        // Check if user answer is contained in correct answer (or vice versa for long explanations)
+        if (cleanCorrect.includes(cleanUser) && cleanUser.length > 3) return true;
+        if (cleanUser.includes(cleanCorrect) && cleanCorrect.length > 3) return true;
 
         return false;
     }
