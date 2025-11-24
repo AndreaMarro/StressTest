@@ -295,11 +295,45 @@ export default function App() {
           const data = await res.json();
 
           if (data.status === 'succeeded') {
-            // Restore state from before redirect
+            // Store pending UI state
             const pendingType = localStorage.getItem('pendingExamType') as 'full' | 'topic' | null;
             const pendingTopic = localStorage.getItem('pendingTopic');
             const pendingDifficulty = localStorage.getItem('pendingDifficulty') as 'easy' | 'medium' | 'hard' | null;
 
+            // If backend provided session token and examId, use them directly
+            if (data.sessionToken && data.examId) {
+              // Save session info
+              localStorage.setItem('sessionToken', data.sessionToken);
+              localStorage.setItem('currentExamId', data.examId);
+              if (data.expiresAt) {
+                setAccessExpiresAt(data.expiresAt);
+                localStorage.setItem('accessExpiresAt', data.expiresAt);
+              }
+              // Verify access and fetch exam
+              try {
+                const accessRes = await fetch(`${API_URL}/api/verify-access`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ examId: data.examId, sessionToken: data.sessionToken })
+                });
+                const accessData = await accessRes.json();
+                if (accessData.hasAccess && accessData.exam) {
+                  setQuestions(accessData.exam.questions);
+                  // Restore UI selections
+                  if (pendingType) setExamType(pendingType);
+                  if (pendingTopic) setSelectedTopic(pendingTopic);
+                  if (pendingDifficulty) setDifficulty(pendingDifficulty);
+                  // Clear URL and start exam
+                  window.history.replaceState({}, '', window.location.pathname);
+                  startExam();
+                  return;
+                }
+              } catch (e) {
+                console.error('Access verification failed after payment', e);
+              }
+            }
+
+            // Fallback: generate a new exam as before
             if (pendingType) {
               setExamType(pendingType);
               if (pendingTopic) setSelectedTopic(pendingTopic);

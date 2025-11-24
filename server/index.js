@@ -441,7 +441,22 @@ app.get('/api/verify-payment/:id', paymentLimiter, async (req, res) => {
             return res.status(400).json({ error: 'Invalid payment ID' });
         }
         const paymentIntent = await stripe.paymentIntents.retrieve(id);
-        res.json({ status: paymentIntent.status });
+        // Base response includes status
+        const responsePayload = { status: paymentIntent.status };
+        // If payment succeeded, attach session token info from access tokens
+        if (paymentIntent.status === 'succeeded') {
+            const examId = paymentIntent.metadata?.examId;
+            if (examId) {
+                const tokens = getAccessTokens();
+                const tokenObj = tokens.find(t => t.examId === examId);
+                if (tokenObj) {
+                    responsePayload.sessionToken = tokenObj.sessionToken;
+                    responsePayload.expiresAt = tokenObj.expiresAt;
+                    responsePayload.examId = examId;
+                }
+            }
+        }
+        res.json(responsePayload);
     } catch (error) {
         console.error('Stripe Verification Error:', error);
         res.status(500).json({ error: 'Failed to verify payment. Please contact support.' });
