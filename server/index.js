@@ -79,7 +79,7 @@ app.use(morgan('combined'));
 
 const PROMO_FILE = path.join(__dirname, 'data', 'promo_codes.json');
 
-app.post('/api/redeem-promo', (req, res) => {
+app.post('/api/redeem-promo', async (req, res) => {
     const { code } = req.body;
     const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.ip || req.connection.remoteAddress;
 
