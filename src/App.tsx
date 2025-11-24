@@ -416,18 +416,23 @@ export default function App() {
     setMode('exam');
   };
 
-  // Check for Stripe Redirect
+  // Check for Stripe Redirect (CRITICAL: Must run on URL change, not just mount)
   useEffect(() => {
     const checkPaymentStatus = async () => {
-      const paymentIntentId = new URLSearchParams(window.location.search).get(
-        "payment_intent"
-      );
+      const urlParams = new URLSearchParams(window.location.search);
+      const paymentIntentId = urlParams.get("payment_intent");
+      const redirectStatus = urlParams.get("redirect_status");
 
-      if (paymentIntentId) {
+      // Only process if we have both params (Stripe redirect)
+      if (paymentIntentId && redirectStatus === 'succeeded') {
+        console.log('[App] 💳 Stripe redirect detected:', paymentIntentId);
+
         try {
           // Verify with backend
           const res = await fetch(`${API_URL}/api/verify-payment/${paymentIntentId}`);
           const data = await res.json();
+
+          console.log('[App] Payment verification response:', data);
 
           if (data.status === 'succeeded') {
             // Store pending UI state
@@ -437,6 +442,8 @@ export default function App() {
 
             // If backend provided session token and examId, use them directly
             if (data.sessionToken && data.examId) {
+              console.log('[App] ✅ Payment verified, token received');
+
               // Save session info
               localStorage.setItem('sessionToken', data.sessionToken);
               localStorage.setItem('currentExamId', data.examId);
@@ -444,6 +451,7 @@ export default function App() {
                 setAccessExpiresAt(data.expiresAt);
                 localStorage.setItem('accessExpiresAt', data.expiresAt);
               }
+
               // Verify access and fetch exam
               try {
                 const accessRes = await fetch(`${API_URL}/api/verify-access`, {
@@ -452,28 +460,39 @@ export default function App() {
                   body: JSON.stringify({ examId: data.examId, sessionToken: data.sessionToken })
                 });
                 const accessData = await accessRes.json();
+
                 if (accessData.hasAccess && accessData.exam) {
+                  console.log('[App] ✅ Exam loaded, starting...');
                   setQuestions(accessData.exam.questions);
+
                   // Restore UI selections
                   if (pendingType) setExamType(pendingType);
                   if (pendingTopic) setSelectedTopic(pendingTopic);
                   if (pendingDifficulty) setDifficulty(pendingDifficulty);
-                  // Clear URL
+
+                  // Clear URL BEFORE showing alert (prevents re-processing)
                   window.history.replaceState({}, '', window.location.pathname);
 
                   // Generate shareable access link
                   const accessLink = `${window.location.origin}${window.location.pathname}?access=${data.sessionToken}_${data.examId}`;
                   console.log('[App] 🔗 Shareable access link:', accessLink);
 
-                  // Show link to user (optional: could show in UI)
+                  // Show link to user
                   alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}\n\nPuoi usare questo link su qualsiasi dispositivo!`);
 
                   startExam();
                   return;
+                } else {
+                  console.error('[App] ❌ Access denied after payment:', accessData);
+                  setErrorMsg('Errore: accesso negato dopo pagamento. Contatta supporto.');
                 }
               } catch (e) {
-                console.error('Access verification failed after payment', e);
+                console.error('[App] ❌ Access verification failed:', e);
+                setErrorMsg('Errore nella verifica accesso. Riprova.');
               }
+            } else {
+              console.error('[App] ❌ No session token in response:', data);
+              setErrorMsg('Errore: token mancante. Contatta supporto.');
             }
 
             // Fallback: generate a new exam as before
