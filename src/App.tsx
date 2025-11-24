@@ -183,60 +183,20 @@ export default function App() {
   const handlePaymentSuccess = async () => {
     setShowPayment(false);
 
-    // Check if we have sessionToken from promo code
-    const savedToken = localStorage.getItem('sessionToken');
-    const savedExamId = localStorage.getItem('currentExamId');
-    const savedExpires = localStorage.getItem('accessExpiresAt');
+    // CRITICAL: Check for payment redirect FIRST (highest priority)
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentIntentId = urlParams.get('payment_intent');
+    const redirectStatus = urlParams.get('redirect_status');
 
-    if (savedToken && savedExamId) {
-      // Promo code flow: verify access and fetch the exam
-      try {
-        setMode('loading');
-        setErrorMsg(null);
-
-        // Use relative path to ensure consistency with PaymentModal and Vercel proxy
-        const response = await fetch('/api/verify-access', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            examId: savedExamId,
-            sessionToken: savedToken
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.hasAccess && data.exam) {
-          setQuestions(data.exam.questions);
-          if (savedExpires) setAccessExpiresAt(savedExpires);
-          setSeenExamIds(prev => [...prev, savedExamId]);
-          startExam();
-        } else {
-          throw new Error(data.error || 'Access denied or exam not found');
-        }
-      } catch (err) {
-        console.error('Promo access error:', err);
-        const errMsg = err instanceof Error ? err.message : String(err);
-        setErrorMsg(`Errore caricamento esame: ${errMsg}. Riprova.`);
-        setMode('start');
-      }
-    } else {
-      // Normal payment flow: Poll for webhook completion (iPhone fix)
-      console.log('[Payment] Starting webhook polling for normal payment...');
+    if (paymentIntentId && redirectStatus === 'succeeded') {
+      // Payment redirect flow: Poll for webhook completion (iPhone fix)
+      console.log('[Payment] 💳 Stripe redirect detected, starting polling...');
 
       const pollForWebhookCompletion = async () => {
         const maxAttempts = 15; // 15 seconds
 
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
           try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const paymentIntentId = urlParams.get('payment_intent');
-
-            if (!paymentIntentId) {
-              console.error('[Payment] No payment_intent in URL after redirect');
-              break;
-            }
-
             console.log(`[Payment] Poll attempt ${attempt + 1}/${maxAttempts}...`);
 
             const res = await fetch(`${API_URL}/api/poll-payment-status`, {
@@ -297,6 +257,46 @@ export default function App() {
       };
 
       pollForWebhookCompletion();
+      return; // CRITICAL: Exit early to prevent other flows
+    }
+
+    // Check if we have sessionToken from promo code (LOWER priority)
+    const savedToken = localStorage.getItem('sessionToken');
+    const savedExamId = localStorage.getItem('currentExamId');
+    const savedExpires = localStorage.getItem('accessExpiresAt');
+
+    if (savedToken && savedExamId) {
+      // Promo code flow: verify access and fetch the exam
+      try {
+        setMode('loading');
+        setErrorMsg(null);
+
+        // Use relative path to ensure consistency with PaymentModal and Vercel proxy
+        const response = await fetch('/api/verify-access', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            examId: savedExamId,
+            sessionToken: savedToken
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.hasAccess && data.exam) {
+          setQuestions(data.exam.questions);
+          if (savedExpires) setAccessExpiresAt(savedExpires);
+          setSeenExamIds(prev => [...prev, savedExamId]);
+          startExam();
+        } else {
+          throw new Error(data.error || 'Access denied or exam not found');
+        }
+      } catch (err) {
+        console.error('Promo access error:', err);
+        const errMsg = err instanceof Error ? err.message : String(err);
+        setErrorMsg(`Errore caricamento esame: ${errMsg}. Riprova.`);
+        setMode('start');
+      }
     }
   };
 
