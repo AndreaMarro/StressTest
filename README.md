@@ -60,3 +60,4 @@ Both Render and Vercel watch the same Git repository. Every push to `main` (or t
 - **`build_deploy.sh`** – Local build script you can run on a VPS if you prefer a manual deploy.
 
 Feel free to ask if you need help linking the repo, setting secrets, or customizing the domain names! 🚀
+# Vercel deploy trigger 1764023140
