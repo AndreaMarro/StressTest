@@ -79,7 +79,14 @@ app.use(morgan('combined'));
 
 const PROMO_FILE = path.join(__dirname, 'data', 'promo_codes.json');
 
-app.post('/api/redeem-promo', async (req, res) => {
+// Rate limiter for promo code endpoint (prevent abuse)
+const promoLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 5, // Max 5 promo attempts per minute per IP
+    message: { error: 'Troppi tentativi. Riprova tra 1 minuto.' }
+});
+
+app.post('/api/redeem-promo', promoLimiter, async (req, res) => {
     const { code, topic, difficulty } = req.body;
     const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.ip || req.connection.remoteAddress;
 
