@@ -1117,6 +1117,7 @@ export default function App() {
         onSuccess={handlePaymentSuccess}
         topic={examType === 'full' ? 'full' : selectedTopic}
         difficulty={difficulty}
+        excludeIds={seenExamIds}
       />
 
       {showHistory && (

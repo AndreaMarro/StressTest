@@ -122,14 +122,22 @@ app.post('/api/redeem-promo', async (req, res) => {
         let chosenExamId = null;
         let chosenTopic = topic;
         let chosenDifficulty = difficulty;
+        const { excludeIds = [] } = req.body;
 
         if (topic && difficulty) {
-            // Look for a matching exam in cache
+            // Look for a matching exam in cache that hasn't been seen
             const cache = getCache();
-            const match = cache.find(e => e.topic === topic && e.difficulty === difficulty);
+            const match = cache.find(e =>
+                e.topic === topic &&
+                e.difficulty === difficulty &&
+                !excludeIds.includes(e.id)
+            );
+
             if (match) {
                 chosenExamId = match.id;
-                console.log(`✅ Promo: found existing exam ${chosenExamId} for ${topic}/${difficulty}`);
+                console.log(`✅ Promo: found existing exam ${chosenExamId} for ${topic}/${difficulty} (not in exclude list)`);
+            } else {
+                console.log(`⚠️ Promo: no fresh exam found in cache for ${topic}/${difficulty} (checked ${cache.length} exams, excluded ${excludeIds.length})`);
             }
         }
 

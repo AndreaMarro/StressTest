@@ -15,6 +15,7 @@ interface PaymentModalProps {
     onSuccess: () => void;
     topic?: string;
     difficulty?: string;
+    excludeIds?: string[];
 }
 
 const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
@@ -96,7 +97,7 @@ const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
     );
 };
 
-export const PaymentModal = ({ isOpen, onClose, onSuccess, topic, difficulty }: PaymentModalProps) => {
+export const PaymentModal = ({ isOpen, onClose, onSuccess, topic, difficulty, excludeIds = [] }: PaymentModalProps) => {
     const [clientSecret, setClientSecret] = useState("");
     const [showPromo, setShowPromo] = useState(false);
     const [promoCode, setPromoCode] = useState("");
@@ -116,7 +117,8 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess, topic, difficulty }: 
                 body: JSON.stringify({
                     code: promoCode.trim(),
                     topic,
-                    difficulty
+                    difficulty,
+                    excludeIds
                 })
             });
             const data = await res.json();
