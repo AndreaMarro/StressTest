@@ -116,8 +116,8 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess }: PaymentModalProps) 
         <>
             {/* Portal to body to avoid z-index/stacking context issues */}
             {typeof document !== 'undefined' && ReactDOM.createPortal(
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
-                    <NeoCard className="w-full max-w-md relative animate-in fade-in zoom-in duration-300 max-h-[85vh] overflow-y-auto pb-safe bg-white shadow-2xl">
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm overflow-y-auto">
+                    <NeoCard className="w-full max-w-md relative animate-in fade-in zoom-in duration-300 max-h-[90dvh] overflow-y-auto pb-safe bg-white shadow-2xl my-auto">
                         <button
                             onClick={onClose}
                             className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full border-2 border-transparent hover:border-black transition-all z-10"

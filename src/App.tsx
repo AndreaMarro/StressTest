@@ -170,6 +170,7 @@ export default function App() {
       if (!savedExamId || !savedToken) return;
 
       console.log('[App] Checking session access for exam:', savedExamId);
+      console.log('[App] Saved Token:', savedToken);
 
       try {
         const res = await fetch(`${API_URL}/api/verify-access`, {
@@ -207,7 +208,7 @@ export default function App() {
 
           startExam();
         } else if (data.expired) {
-          console.log('[App] Access expired, clearing session');
+          console.log('[App] Access expired, clearing session. ExpiresAt:', data.expiresAt || 'unknown');
           localStorage.removeItem('currentExamId');
           localStorage.removeItem('sessionToken');
           localStorage.removeItem('accessExpiresAt');
@@ -478,6 +479,37 @@ export default function App() {
     setAccessExpiresAt(null);
   };
 
+  // Levenshtein distance for fuzzy matching
+  const levenshteinDistance = (a: string, b: string): number => {
+    const matrix = [];
+
+    for (let i = 0; i <= b.length; i++) {
+      matrix[i] = [i];
+    }
+
+    for (let j = 0; j <= a.length; j++) {
+      matrix[0][j] = j;
+    }
+
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        if (b.charAt(i - 1) === a.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1, // substitution
+            Math.min(
+              matrix[i][j - 1] + 1, // insertion
+              matrix[i - 1][j] + 1 // deletion
+            )
+          );
+        }
+      }
+    }
+
+    return matrix[b.length][a.length];
+  };
+
   const compareAnswers = (user: string, correct: string, type: string) => {
     if (!user) return false;
 
@@ -488,7 +520,7 @@ export default function App() {
       return userTrim === correctTrim ||
         (userTrim.length > 0 && correctTrim.length > 0 && userTrim.charAt(0) === correctTrim.charAt(0));
     } else {
-      // Fill in the blank - numerical answers
+      // Fill in the blank
       const cleanUser = user.toLowerCase().replace(/\s+/g, '').replace(',', '.');
       const cleanCorrect = correct.toLowerCase().replace(/\s+/g, '').replace(',', '.');
 
@@ -504,7 +536,13 @@ export default function App() {
         return Math.abs(userNum - correctNum) <= tolerance;
       }
 
-      // For non-numerical answers, require exact match (no dangerous fuzzy matching)
+      // Fuzzy matching for text answers (tolerance <= 2 edits)
+      // Only if strings are long enough to justify fuzzy match (e.g. > 3 chars)
+      if (cleanCorrect.length > 3) {
+        const distance = levenshteinDistance(cleanUser, cleanCorrect);
+        if (distance <= 2) return true;
+      }
+
       return false;
     }
   };
@@ -820,15 +858,22 @@ export default function App() {
                   </button>
                 ))
               ) : (
-                <div className="border border-terminal-dim p-6 bg-terminal-black/50">
-                  <label className="block text-xs font-bold text-terminal-green mb-2 uppercase">INPUT_ANSWER:</label>
+                <div className="border border-terminal-dim p-6 bg-terminal-black/50 relative">
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-xs font-bold text-terminal-green uppercase">INPUT_ANSWER:</label>
+                    {userState.answers[currentQ.id] && (
+                      <div className="flex items-center gap-1 text-terminal-green animate-in fade-in duration-300">
+                        <CheckCircle size={14} />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">SAVED</span>
+                      </div>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={userState.answers[currentQ.id] || ''}
                     onChange={(e) => handleAnswer(e.target.value)}
                     placeholder="_"
-                    className="w-full bg-transparent border-b-2 border-terminal-dim focus:border-terminal-green text-xl p-2 outline-none font-mono text-terminal-text placeholder-terminal-dim"
-                    autoFocus
+                    className="w-full bg-transparent border-b-2 border-terminal-dim focus:border-terminal-green text-xl p-2 outline-none font-mono text-terminal-text placeholder-terminal-dim transition-colors"
                   />
                 </div>
               )}

@@ -83,6 +83,18 @@ export const exportExamPDF = (
     topic: string,
     difficulty: string
 ) => {
+    // Sanitize text for PDF (standard fonts don't support all UTF-8)
+    const sanitizeForPdf = (str: string): string => {
+        return str
+            .replace(/€/g, 'EUR')
+            .replace(/–/g, '-')
+            .replace(/—/g, '-')
+            .replace(/“/g, '"')
+            .replace(/”/g, '"')
+            .replace(/‘/g, "'")
+            .replace(/’/g, "'");
+    };
+
     try {
         console.log('[PDF Export] Starting professional PDF generation...');
 
@@ -93,83 +105,70 @@ export const exportExamPDF = (
         let yPos = 20;
 
         // === HEADER ===
-        doc.setFontSize(22);
+        doc.setFontSize(24);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(0, 0, 0);
         doc.text("StressTest FISICA", pageWidth / 2, yPos, { align: 'center' });
 
         yPos += 8;
-        doc.setFontSize(11);
+        doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(100, 100, 100);
-        doc.text("Report Risultati Esame - DM418/2025", pageWidth / 2, yPos, { align: 'center' });
+        doc.text("Report Ufficiale - DM418/2025", pageWidth / 2, yPos, { align: 'center' });
 
-        yPos += 10;
+        yPos += 12;
         doc.setLineWidth(0.5);
         doc.setDrawColor(0, 0, 0);
         doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 8;
+        yPos += 10;
 
         // === EXAM INFO ===
         doc.setFontSize(10);
         doc.setTextColor(60, 60, 60);
         const infoStartY = yPos;
 
-        doc.setFont('helvetica', 'bold');
-        doc.text("Data:", margin, yPos);
-        doc.setFont('helvetica', 'normal');
-        doc.text(new Date().toLocaleDateString('it-IT', {
+        const addInfoLine = (label: string, value: string) => {
+            doc.setFont('helvetica', 'bold');
+            doc.text(label, margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(sanitizeForPdf(value), margin + 35, yPos);
+            yPos += 6;
+        };
+
+        addInfoLine("Data:", new Date().toLocaleDateString('it-IT', {
             year: 'numeric', month: 'long', day: 'numeric',
             hour: '2-digit', minute: '2-digit'
-        }), margin + 30, yPos);
-        yPos += 6;
-
-        doc.setFont('helvetica', 'bold');
-        doc.text("Tipo Esame:", margin, yPos);
-        doc.setFont('helvetica', 'normal');
-        doc.text(examType === 'full' ? 'Simulazione Completa (31 domande)' : 'Focus Argomento', margin + 30, yPos);
-        yPos += 6;
-
-        doc.setFont('helvetica', 'bold');
-        doc.text("Argomento:", margin, yPos);
-        doc.setFont('helvetica', 'normal');
-        doc.text(topic, margin + 30, yPos);
-        yPos += 6;
-
-        doc.setFont('helvetica', 'bold');
-        doc.text("Difficoltà:", margin, yPos);
-        doc.setFont('helvetica', 'normal');
-        const difficultyText = difficulty === 'easy' ? 'L1 - BASIC' :
-            difficulty === 'medium' ? 'L2 - STANDARD' :
-                'L3 - NIGHTMARE';
-        doc.text(difficultyText, margin + 30, yPos);
+        }));
+        addInfoLine("Tipo Esame:", examType === 'full' ? 'Simulazione Completa' : 'Focus Argomento');
+        addInfoLine("Argomento:", topic);
+        addInfoLine("Difficoltà:", difficulty === 'easy' ? 'L1 - BASIC' : difficulty === 'medium' ? 'L2 - STANDARD' : 'L3 - NIGHTMARE');
 
         // === SCORE BOX ===
         const scoreBoxX = pageWidth - margin - 50;
         const scoreBoxY = infoStartY - 2;
         const scoreBoxW = 45;
-        const scoreBoxH = 22;
+        const scoreBoxH = 24;
 
         const percentage = Math.round((userState.score / questions.length) * 100);
         const passed = percentage >= 60;
 
-        doc.setFillColor(passed ? 220 : 255, passed ? 250 : 240, passed ? 220 : 240);
-        doc.setDrawColor(passed ? 0 : 220, passed ? 128 : 20, passed ? 0 : 60);
+        doc.setFillColor(passed ? 230 : 255, passed ? 250 : 235, passed ? 230 : 235);
+        doc.setDrawColor(passed ? 34 : 220, passed ? 139 : 20, passed ? 34 : 60);
         doc.setLineWidth(1);
         doc.rect(scoreBoxX, scoreBoxY, scoreBoxW, scoreBoxH, 'FD');
 
-        doc.setFontSize(18);
+        doc.setFontSize(20);
         doc.setFont('helvetica', 'bold');
-        doc.setTextColor(passed ? 0 : 220, passed ? 128 : 20, passed ? 0 : 60);
-        doc.text(`${percentage}%`, scoreBoxX + scoreBoxW / 2, scoreBoxY + 10, { align: 'center' });
+        doc.setTextColor(passed ? 34 : 220, passed ? 139 : 20, passed ? 34 : 60);
+        doc.text(`${percentage}%`, scoreBoxX + scoreBoxW / 2, scoreBoxY + 11, { align: 'center' });
 
-        doc.setFontSize(8);
+        doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
-        doc.text(`${userState.score}/${questions.length}`, scoreBoxX + scoreBoxW / 2, scoreBoxY + 16, { align: 'center' });
-        doc.text(passed ? 'PASSED' : 'FAILED', scoreBoxX + scoreBoxW / 2, scoreBoxY + 20, { align: 'center' });
+        doc.text(`${userState.score}/${questions.length} Corrette`, scoreBoxX + scoreBoxW / 2, scoreBoxY + 18, { align: 'center' });
 
         yPos += 12;
         doc.setLineWidth(0.5);
+        doc.setDrawColor(200, 200, 200);
         doc.line(margin, yPos, pageWidth - margin, yPos);
         yPos += 10;
 
@@ -178,7 +177,7 @@ export const exportExamPDF = (
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(0, 0, 0);
         doc.text("Riepilogo Risposte", margin, yPos);
-        yPos += 5;
+        yPos += 6;
 
         const summaryData = questions.map((q, idx) => {
             const userAns = userState.answers[q.id];
@@ -186,20 +185,20 @@ export const exportExamPDF = (
 
             return [
                 `#${idx + 1}`,
-                convertLatexToReadable(q.text).substring(0, 55) + '...',
-                userAns ? convertLatexToReadable(userAns) : '(non risposto)',
-                convertLatexToReadable(q.correctAnswer),
-                isCorrect ? '✓' : '✗'
+                sanitizeForPdf(convertLatexToReadable(q.text)).substring(0, 60) + '...',
+                userAns ? sanitizeForPdf(convertLatexToReadable(userAns)) : '-',
+                sanitizeForPdf(convertLatexToReadable(q.correctAnswer)),
+                isCorrect ? 'OK' : 'NO'
             ];
         });
 
         autoTable(doc, {
             startY: yPos,
-            head: [['N°', 'Domanda', 'Tua Risposta', 'Risposta Corretta', '✓']],
+            head: [['N', 'Domanda', 'Tua Risposta', 'Corretta', 'Esito']],
             body: summaryData,
-            theme: 'striped',
+            theme: 'grid',
             headStyles: {
-                fillColor: [40, 40, 40],
+                fillColor: [20, 20, 20],
                 textColor: [255, 255, 255],
                 fontSize: 9,
                 fontStyle: 'bold',
@@ -207,20 +206,21 @@ export const exportExamPDF = (
             },
             styles: {
                 fontSize: 8,
-                cellPadding: 2,
-                overflow: 'linebreak'
+                cellPadding: 3,
+                overflow: 'linebreak',
+                valign: 'middle'
             },
             columnStyles: {
                 0: { cellWidth: 10, halign: 'center', fontStyle: 'bold' },
-                1: { cellWidth: 70 },
+                1: { cellWidth: 80 },
                 2: { cellWidth: 35, halign: 'center' },
                 3: { cellWidth: 35, halign: 'center' },
-                4: { cellWidth: 10, halign: 'center', fontStyle: 'bold' }
+                4: { cellWidth: 15, halign: 'center', fontStyle: 'bold' }
             },
             didParseCell: (data) => {
                 if (data.section === 'body' && data.column.index === 4) {
-                    data.cell.styles.textColor = data.cell.raw === '✓' ? [0, 128, 0] : [220, 20, 60];
-                    data.cell.styles.fontSize = 11;
+                    const isOk = data.cell.raw === 'OK';
+                    data.cell.styles.textColor = isOk ? [0, 150, 0] : [200, 0, 0];
                 }
             }
         });
@@ -231,117 +231,112 @@ export const exportExamPDF = (
 
         doc.setFontSize(14);
         doc.setFont('helvetica', 'bold');
-        doc.text("Dettaglio Domande e Spiegazioni", margin, yPos);
-        yPos += 10;
+        doc.setTextColor(0, 0, 0);
+        doc.text("Dettaglio Analitico", margin, yPos);
+        yPos += 12;
 
         questions.forEach((q, idx) => {
             const userAns = userState.answers[q.id];
             const isCorrect = userAns && compareAnswer(userAns, q.correctAnswer, q.type);
 
-            // Check if we need a new page
-            if (yPos > pageHeight - 60) {
+            // Check page break
+            if (yPos > pageHeight - 50) {
                 doc.addPage();
                 yPos = 20;
             }
 
-            // Question number and status
-            doc.setFontSize(11);
+            // Question Header
+            doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(0, 0, 0);
             doc.text(`Domanda ${idx + 1}`, margin, yPos);
 
             doc.setFontSize(9);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(isCorrect ? 0 : 220, isCorrect ? 128 : 20, isCorrect ? 0 : 60);
-            doc.text(isCorrect ? '✓ CORRETTA' : '✗ ERRATA', pageWidth - margin, yPos, { align: 'right' });
-            yPos += 6;
+            doc.setTextColor(isCorrect ? 0 : 200, isCorrect ? 150 : 0, isCorrect ? 0 : 0);
+            doc.text(isCorrect ? 'CORRETTA' : 'ERRATA', pageWidth - margin, yPos, { align: 'right' });
+            yPos += 5;
 
-            // Question text
+            // Question Text
             doc.setFontSize(9);
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(40, 40, 40);
-            const questionText = convertLatexToReadable(q.text);
+            const questionText = sanitizeForPdf(convertLatexToReadable(q.text));
             const questionLines = doc.splitTextToSize(questionText, pageWidth - 2 * margin);
             doc.text(questionLines, margin, yPos);
-            yPos += questionLines.length * 5;
+            yPos += questionLines.length * 4 + 2;
 
-            // Options for multiple choice
+            // Options (if multiple choice)
             if (q.type === 'multiple_choice' && q.options) {
-                yPos += 2;
                 doc.setFontSize(8);
+                doc.setTextColor(80, 80, 80);
                 q.options.forEach((opt) => {
-                    const optText = convertLatexToReadable(opt);
-                    const optLines = doc.splitTextToSize(optText, pageWidth - 2 * margin - 10);
+                    const optText = sanitizeForPdf(convertLatexToReadable(opt));
+                    const optLines = doc.splitTextToSize(`- ${optText}`, pageWidth - 2 * margin - 10);
                     doc.text(optLines, margin + 5, yPos);
-                    yPos += optLines.length * 4;
+                    yPos += optLines.length * 3.5;
                 });
+                yPos += 2;
             }
 
-            yPos += 2;
-
-            // User answer vs correct
+            // Answers Comparison
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(100, 100, 100);
-            doc.text("Tua risposta:", margin, yPos);
+            doc.text("Tua:", margin, yPos);
             doc.setFont('helvetica', 'normal');
-            doc.setTextColor(isCorrect ? 0 : 220, isCorrect ? 100 : 20, isCorrect ? 0 : 60);
-            doc.text(userAns ? convertLatexToReadable(userAns) : '(non risposto)', margin + 25, yPos);
-            yPos += 4;
+            doc.setTextColor(isCorrect ? 0 : 200, isCorrect ? 150 : 0, isCorrect ? 0 : 0);
+            doc.text(userAns ? sanitizeForPdf(convertLatexToReadable(userAns)) : '-', margin + 15, yPos);
 
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(100, 100, 100);
-            doc.text("Risposta corretta:", margin, yPos);
+            doc.text("Corretta:", margin + 60, yPos);
             doc.setFont('helvetica', 'normal');
-            doc.setTextColor(0, 128, 0);
-            doc.text(convertLatexToReadable(q.correctAnswer), margin + 35, yPos);
+            doc.setTextColor(0, 150, 0);
+            doc.text(sanitizeForPdf(convertLatexToReadable(q.correctAnswer)), margin + 85, yPos);
             yPos += 6;
 
-            // Explanation
+            // Explanation Box
             if (q.explanation) {
-                doc.setFillColor(245, 245, 245);
-                const explText = convertLatexToReadable(q.explanation);
-                const explLines = doc.splitTextToSize(explText, pageWidth - 2 * margin - 4);
-                const explHeight = explLines.length * 4 + 4;
+                doc.setFillColor(248, 248, 248);
+                doc.setDrawColor(230, 230, 230);
+                const explText = "SPIEGAZIONE: " + sanitizeForPdf(convertLatexToReadable(q.explanation));
+                const explLines = doc.splitTextToSize(explText, pageWidth - 2 * margin - 6);
+                const explHeight = explLines.length * 3.5 + 6;
 
                 if (yPos + explHeight > pageHeight - 20) {
                     doc.addPage();
                     yPos = 20;
                 }
 
-                doc.rect(margin, yPos - 2, pageWidth - 2 * margin, explHeight, 'F');
+                doc.rect(margin, yPos, pageWidth - 2 * margin, explHeight, 'FD');
                 doc.setFontSize(8);
-                doc.setFont('helvetica', 'normal');
                 doc.setTextColor(60, 60, 60);
-                doc.text(explLines, margin + 2, yPos + 2);
-                yPos += explHeight + 2;
+                doc.text(explLines, margin + 3, yPos + 5);
+                yPos += explHeight + 8;
+            } else {
+                yPos += 5;
             }
 
-            yPos += 4;
-
-            // Separator
-            doc.setDrawColor(200, 200, 200);
-            doc.setLineWidth(0.3);
-            doc.line(margin, yPos, pageWidth - margin, yPos);
-            yPos += 8;
+            // Divider
+            doc.setDrawColor(220, 220, 220);
+            doc.line(margin, yPos - 3, pageWidth - margin, yPos - 3);
         });
 
-        // === FOOTER ON ALL PAGES ===
+        // === FOOTER ===
         const totalPages = (doc.internal as any).getNumberOfPages();
         for (let i = 1; i <= totalPages; i++) {
             doc.setPage(i);
-            doc.setFontSize(7);
-            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(8);
             doc.setTextColor(150, 150, 150);
             doc.text(
-                `Pagina ${i}/${totalPages} - Generato da StressTest FISICA (DM418/2025)`,
+                `StressTest FISICA - Pagina ${i} di ${totalPages}`,
                 pageWidth / 2,
                 pageHeight - 10,
                 { align: 'center' }
             );
         }
 
-        const filename = `stresstest_${examType}_${new Date().toISOString().slice(0, 10)}.pdf`;
+        const filename = `StressTest_Report_${new Date().toISOString().slice(0, 10)}.pdf`;
         console.log('[PDF Export] Saving professional PDF:', filename);
         doc.save(filename);
 
@@ -350,7 +345,7 @@ export const exportExamPDF = (
 
     } catch (error) {
         console.error('[PDF Export] Error:', error);
-        alert('⚠️ Errore durante la generazione del PDF. Riprova o contatta il supporto.');
+        alert('⚠️ Errore durante la generazione del PDF.');
         return false;
     }
 };

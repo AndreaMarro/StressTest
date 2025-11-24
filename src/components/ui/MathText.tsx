@@ -13,7 +13,9 @@ export const MathText = ({ content }: { content: string }) => {
     };
 
     // Split by $...$ but keep delimiters
-    const parts = content.split(/(\$[^$]+\$)/g);
+    // Also sanitize common LaTeX errors before splitting
+    const sanitizedContent = content.replace(/\\cdotp/g, '\\cdot');
+    const parts = sanitizedContent.split(/(\$[^$]+\$)/g);
 
     return (
         <span className="inline-block leading-relaxed font-medium text-terminal-text">

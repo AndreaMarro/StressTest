@@ -133,18 +133,21 @@ async function generateExam(topic, difficulty, apiKey) {
            Copri TUTTI i sotto-argomenti dell'unità didatica corrispondente.`
         }
       
-      FORMATTAZIONE MATEMATICA (CRUCIALE):
+      FORMATTAZIONE MATEMATICA (CRUCIALE - ATTENZIONE AI DETTAGLI):
       1. Usa SEMPRE e SOLO LaTeX per qualsiasi formula, numero con unità o variabile.
       2. Racchiudi il LaTeX tra dollari singoli per inline: $E = mc^2$.
       3. Usa doppi dollari per equazioni standalone complesse: $$\\frac{dV}{dt} = -\\frac{V}{RC}$$
-      4. Esempio inline: "La velocità è $v = 10 \\text{ m/s}$."
-      5. Esempio display: "L'equazione differenziale è: $$\\frac{d^2x}{dt^2} = -\\omega^2 x$$"
+      4. **UNITÀ DI MISURA**: Usa SEMPRE \\text{...} per le unità. MAI mescolare unità con comandi LaTeX.
+         - ✅ CORRETTO: $v = 10 \\text{ m/s}$, $R = 0.08 \\text{ L}\\cdot\\text{atm}/\\text{mol}\\cdot\\text{K}$
+         - ❌ SBAGLIATO: $v = 10 m/s$, $R = 0.08 L\\cdotpatm/mol\\cdotpK$
+      5. **MOLTIPLICAZIONE**: Usa \\cdot (punto centrato) per moltiplicazioni, MAI \\cdotp.
+      6. Esempio display: "L'equazione differenziale è: $$\\frac{d^2x}{dt^2} = -\\omega^2 x$$"
       
       STRUTTURA OUTPUT:
       1. Genera ESATTAMENTE 31 domande.
       2. Domande 1-15: 'multiple_choice' (5 opzioni A-E, 1 corretta).
       3. Domande 16-31: 'fill_in_the_blank' (Risposta secca: numero o parola).
-      4. Difficoltà: ${difficulty} (easy = livello base, medium = TOLC-MED standard, hard = semestre filtro brutale).
+      4. Difficoltà: ${difficulty === 'easy' ? 'easy = livello base MA comunque rigoroso e impegnativo' : difficulty === 'medium' ? 'medium = TOLC-MED standard PLUS (più elaborato e concettuale)' : 'hard = semestre filtro estremo, massima profondità concettuale'}.
       
       Rispondi SOLO con un JSON valido:
       {

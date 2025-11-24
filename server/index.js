@@ -35,8 +35,15 @@ app.set('trust proxy', 1);
 
 // Security Middleware
 app.use(helmet());
+
+// CORS Configuration
+const clientUrl = process.env.CLIENT_URL;
+if (process.env.NODE_ENV === 'production' && !clientUrl) {
+    console.warn('⚠️ WARNING: CLIENT_URL not set in production. CORS will allow all origins (*).');
+}
+
 app.use(cors({
-    origin: process.env.CLIENT_URL || '*', // Restrict in production
+    origin: clientUrl || '*', // Restrict in production
     methods: ['GET', 'POST']
 }));
 
