@@ -118,50 +118,32 @@ app.post('/api/redeem-promo', (req, res) => {
             console.log(`🎟️ Promo ${code} re-used by ${clientIp}`);
         }
 
-        // Grant access (reuse logic)
-        // For promo codes, we need to generate an exam first or use a pre-defined one.
-        // For simplicity, let's assume promo codes grant access to a generic "promo" exam or a specific one.
-        // A more robust system would link promo codes to specific exam IDs or types.
-        // For now, we'll grant access to a dummy exam ID or require the promo to be tied to an existing one.
-        // The instruction's `grantAccess` call implies `examId` is returned, but `grantAccess` takes `examId` as input.
-        // Let's assume for a promo, we grant access to a "generic" exam or the promo itself defines what it grants access to.
-        // For this implementation, we'll need to decide what `examId` to use.
-        // A simple approach is to have the promo code grant access to a specific exam ID, or generate one on the fly.
-        // Given the current `grantAccess` signature, it expects an `examId`.
-        // Let's assume promo codes are for a "free exam" and we'll need to generate one or pick one from cache.
-        // This part of the instruction is a bit ambiguous with the existing `grantAccess` function.
-        // The instruction's snippet `const { sessionToken, expiresAt, examId } = grantAccess(clientIp);`
-        // implies `grantAccess` can be called with just `clientIp` and returns `examId`.
-        // However, the existing `grantAccess` is `grantAccess(ip, examId)`.
-        // To make this syntactically correct and functional, we need an `examId`.
-        // Let's assume the promo code itself specifies an `examId` or we generate a temporary one.
-        // For now, let's use a placeholder or assume the promo object has an `examId`.
-        // If `promo.examId` exists, use it. Otherwise, this endpoint needs to generate an exam first.
-        // Given the instruction, it seems to imply `grantAccess` is called without an `examId` and returns one.
-        // This would require modifying `grantAccess` or providing a default `examId`.
-        // Let's assume the promo object has an `examId` for now, or we use a dummy one.
-        // For a real system, a promo might grant access to a *newly generated* exam, or a *specific* cached exam.
-        // The instruction's snippet is: `const { sessionToken, expiresAt, examId } = grantAccess(clientIp);`
-        // This implies `grantAccess` is being called with only `clientIp` and returns `examId`.
-        // This is a mismatch with the existing `grantAccess(ip, examId)`.
-        // To make it work, we either need to:
-        // 1. Modify `grantAccess` to accept one argument and generate/find an exam.
-        // 2. Generate/find an `examId` *before* calling `grantAccess` here.
-        // 3. Assume `promo.examId` exists.
 
-        // Let's go with option 2 for now, as it's safer than changing `grantAccess` without explicit instruction.
-        // This means the promo code itself should be tied to an exam, or we generate one.
-        // For the sake of making the provided snippet syntactically correct, I will assume `promo.examId` exists.
-        // If not, a real implementation would need to generate an exam here.
-        const examIdToGrant = promo.examId || 'promo_exam_default'; // Placeholder if promo doesn't specify
+        // Grant access - need to get an exam first
+        // Fetch an available exam from cache or generate one
+        const cache = getCache();
 
-        const { sessionToken, expiresAt } = grantAccess(clientIp, examIdToGrant);
+        // Get a random exam from cache (any topic/difficulty)
+        // Or we could let the promo specify preferred topic/difficulty
+        let examToGrant = null;
+
+        if (cache.length > 0) {
+            // Pick a random exam from cache
+            const randomIndex = Math.floor(Math.random() * cache.length);
+            examToGrant = cache[randomIndex];
+        }
+
+        if (!examToGrant) {
+            return res.status(500).json({ error: 'Nessun esame disponibile. Riprova più tardi.' });
+        }
+
+        const { sessionToken, expiresAt } = grantAccess(clientIp, examToGrant.id);
 
         res.json({
             success: true,
             sessionToken,
             expiresAt,
-            examId: examIdToGrant // Return the examId that access was granted for
+            examId: examToGrant.id
         });
 
     } catch (error) {
