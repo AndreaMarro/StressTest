@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { X, Lock, AlertCircle } from 'lucide-react';
@@ -112,36 +113,42 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess }: PaymentModalProps) 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
-            <NeoCard className="w-full max-w-md relative animate-in fade-in zoom-in duration-300 max-h-[85vh] overflow-y-auto pb-safe bg-white">
-                <button
-                    onClick={onClose}
-                    className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full border-2 border-transparent hover:border-black transition-all z-10"
-                >
-                    <X size={20} />
-                </button>
+        <>
+            {/* Portal to body to avoid z-index/stacking context issues */}
+            {typeof document !== 'undefined' && ReactDOM.createPortal(
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
+                    <NeoCard className="w-full max-w-md relative animate-in fade-in zoom-in duration-300 max-h-[85vh] overflow-y-auto pb-safe bg-white shadow-2xl">
+                        <button
+                            onClick={onClose}
+                            className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full border-2 border-transparent hover:border-black transition-all z-10"
+                        >
+                            <X size={20} />
+                        </button>
 
-                <div className="mb-6 text-center">
-                    <h2 className="text-2xl font-black uppercase">Sblocca Simulazione</h2>
-                    <p className="text-gray-600 font-medium mt-2">Accesso completo al test generato dall'IA.</p>
-                </div>
+                        <div className="mb-6 text-center">
+                            <h2 className="text-2xl font-black uppercase">Sblocca Simulazione</h2>
+                            <p className="text-gray-600 font-medium mt-2">Accesso completo al test generato dall'IA.</p>
+                        </div>
 
-                <div className="bg-neo-bg p-4 rounded-lg border-2 border-black mb-6 text-center">
-                    <span className="block text-sm font-bold text-gray-500 uppercase">Totale da pagare</span>
-                    <span className="block text-4xl font-black text-black">€0.50</span>
-                </div>
+                        <div className="bg-neo-bg p-4 rounded-lg border-2 border-black mb-6 text-center">
+                            <span className="block text-sm font-bold text-gray-500 uppercase">Totale da pagare</span>
+                            <span className="block text-4xl font-black text-black">€0.50</span>
+                        </div>
 
-                {clientSecret ? (
-                    <Elements options={{ clientSecret, appearance: { theme: 'stripe' } }} stripe={stripePromise}>
-                        <CheckoutForm onSuccess={onSuccess} />
-                    </Elements>
-                ) : (
-                    <div className="py-12 text-center">
-                        <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto"></div>
-                        <p className="mt-4 font-bold text-gray-500">Caricamento Stripe...</p>
-                    </div>
-                )}
-            </NeoCard>
-        </div>
+                        {clientSecret ? (
+                            <Elements options={{ clientSecret, appearance: { theme: 'stripe' } }} stripe={stripePromise}>
+                                <CheckoutForm onSuccess={onSuccess} />
+                            </Elements>
+                        ) : (
+                            <div className="py-12 text-center">
+                                <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto"></div>
+                                <p className="mt-4 font-bold text-gray-500">Caricamento Stripe...</p>
+                            </div>
+                        )}
+                    </NeoCard>
+                </div>,
+                document.body
+            )}
+        </>
     );
 };

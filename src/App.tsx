@@ -310,25 +310,15 @@ export default function App() {
             // Clear URL
             window.history.replaceState({}, '', window.location.pathname);
 
-            // Generate Exam using the new handler
-            // We need to wait for state to update? No, we can just call it, but it uses state.
-            // Actually, handleStartExam uses 'examType' from state.
-            // React state updates are async. We should pass params to handleStartExam or wait.
-            // Better: Pass params to handleStartExam or just use the local variables.
-
-            // For simplicity, let's just call it. If state isn't ready, we might default to 'full'.
-            // To be safe, let's manually trigger the fetch here with the restored values.
-
-            // Actually, let's just call handleStartExam() and hope the state update from above is fast enough? 
-            // No, it won't be.
-            // Let's refactor handleStartExam to accept optional params.
-
-            // Refactored call below:
             triggerExamGeneration(
               pendingType || 'full',
               pendingTopic || 'Introduzione e Metodi',
               pendingDifficulty || 'medium'
             );
+          } else if (data.status === 'processing') {
+            setErrorMsg("Pagamento in elaborazione. Ricarica la pagina tra poco.");
+          } else {
+            setErrorMsg("Pagamento non riuscito o annullato. Riprova.");
           }
         } catch (e) {
           console.error("Payment verification failed", e);
@@ -367,9 +357,20 @@ export default function App() {
         throw new Error('No questions received');
       }
 
+      // Save session token if provided (critical for access check)
+      if (data.sessionToken) {
+        localStorage.setItem('sessionToken', data.sessionToken);
+      }
+
       if (data.id) {
         localStorage.setItem('currentExamId', data.id);
-        localStorage.setItem('examExpiresAt', data.expiresAt || '');
+
+        // Fix: Use consistent key 'accessExpiresAt' and update state
+        if (data.expiresAt) {
+          localStorage.setItem('accessExpiresAt', data.expiresAt);
+          setAccessExpiresAt(data.expiresAt);
+        }
+
         const newSeenIds = [...seenExamIds, data.id];
         setSeenExamIds(newSeenIds);
         localStorage.setItem('seenExamIds', JSON.stringify(newSeenIds));
@@ -648,8 +649,18 @@ export default function App() {
 
       {
         errorMsg && (
-          <div className="mt-8 p-4 border border-terminal-red text-terminal-red flex items-center justify-center gap-2 font-bold bg-terminal-red/10">
-            <AlertCircle size={20} /> ERROR: {errorMsg}
+          <div className="mt-8 p-4 border border-terminal-red text-terminal-red flex flex-col md:flex-row items-center justify-center gap-4 font-bold bg-terminal-red/10 animate-in fade-in slide-in-from-bottom-4">
+            <div className="flex items-center gap-2">
+              <AlertCircle size={20} /> ERROR: {errorMsg}
+            </div>
+            {errorMsg.includes("pagamento") && (
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-1 bg-terminal-red text-terminal-black hover:bg-red-400 transition-colors text-sm uppercase"
+              >
+                Riprova Verifica
+              </button>
+            )}
           </div>
         )
       }

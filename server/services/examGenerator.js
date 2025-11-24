@@ -59,9 +59,9 @@ async function generateExam(topic, difficulty, apiKey) {
          - Usa SOLO numeri semplici (1, 2, 5, 10) o potenze di 10.
          - Oppure usa calcolo letterale (es. "v = sqrt(2gh)").
          - VIETATO usare numeri complessi (es. 3.14, 1.6x10^-19) se non si semplificano immediatamente.
-      4. SARCASMO EDUCATIVO: Sii brutalmente onesto nelle spiegazioni.
+      4. SARCASMO EDUCATIVO: Sii brutalmente onesto nelle spiegazioni, ma bilancia con incoraggiamento costruttivo.
       5. SPIEGAZIONI ESAUSTIVE: Devi mostrare TUTTI i passaggi logici e matematici. Non dare nulla per scontato.
-      6. TONO: "Sei qui per soffrire, ma imparerai". Usa un tono da sergente istruttore di fisica. Sii cinico, sarcastico, ma didatticamente ineccepibile.
+      6. TONO: "Questa domanda separa i futuri medici dai turisti". Usa un tono da sergente istruttore di fisica - esigente ma motivante. Sii cinico quando serve, ma concludi con una frase che incoraggi il ragionamento metodico.
       
       SYLLABUS OBBLIGATORIO COMPLETO (DM418/2025) - DISTRIBUZIONE CFU:
       
@@ -135,9 +135,10 @@ async function generateExam(topic, difficulty, apiKey) {
       
       FORMATTAZIONE MATEMATICA (CRUCIALE):
       1. Usa SEMPRE e SOLO LaTeX per qualsiasi formula, numero con unità o variabile.
-      2. Racchiudi il LaTeX tra dollari singoli: $E = mc^2$.
-      3. NON usare mai doppi dollari ($$) o parentesi quadre ([\\]).
-      4. Esempio corretto: "La velocità è $v = 10 \\text{ m/s}$."
+      2. Racchiudi il LaTeX tra dollari singoli per inline: $E = mc^2$.
+      3. Usa doppi dollari per equazioni standalone complesse: $$\\frac{dV}{dt} = -\\frac{V}{RC}$$
+      4. Esempio inline: "La velocità è $v = 10 \\text{ m/s}$."
+      5. Esempio display: "L'equazione differenziale è: $$\\frac{d^2x}{dt^2} = -\\omega^2 x$$"
       
       STRUTTURA OUTPUT:
       1. Genera ESATTAMENTE 31 domande.
@@ -183,6 +184,11 @@ async function generateExam(topic, difficulty, apiKey) {
         }
         examData.coverage = coverage;
     }
+
+    // --- QUALITY LOGGING ---
+    console.log(`[DeepSeek] Generated ${examData.questions.length} questions`);
+    console.log(`[DeepSeek] Sample Q1: ${examData.questions[0].text.substring(0, 80)}...`);
+    console.log(`[DeepSeek] Sample Q16: ${examData.questions[15]?.text.substring(0, 80)}...`);
 
     return examData;
 }
