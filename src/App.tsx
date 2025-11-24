@@ -101,7 +101,8 @@ export default function App() {
         setMode('loading');
         setErrorMsg(null);
 
-        const response = await fetch(`${API_URL}/api/verify-access`, {
+        // Use relative path to ensure consistency with PaymentModal and Vercel proxy
+        const response = await fetch('/api/verify-access', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -118,11 +119,12 @@ export default function App() {
           setSeenExamIds(prev => [...prev, savedExamId]);
           startExam();
         } else {
-          throw new Error('Access denied or exam not found');
+          throw new Error(data.error || 'Access denied or exam not found');
         }
       } catch (err) {
         console.error('Promo access error:', err);
-        setErrorMsg('Errore caricamento esame. Riprova.');
+        const errMsg = err instanceof Error ? err.message : String(err);
+        setErrorMsg(`Errore caricamento esame: ${errMsg}. Riprova.`);
         setMode('start');
       }
     } else {
@@ -140,7 +142,8 @@ export default function App() {
 
       console.log('Requesting exam with excludeIds:', seenExamIds);
 
-      const response = await fetch(`${API_URL}/api/generate-exam`, {
+      // Use relative path to ensure consistency with Vercel proxy
+      const response = await fetch('/api/generate-exam', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -413,7 +416,8 @@ export default function App() {
     try {
       const topicToUse = type === 'full' ? 'full' : topic;
 
-      const response = await fetch(`${API_URL}/api/generate-exam`, {
+      // Use relative path to ensure consistency with Vercel proxy
+      const response = await fetch('/api/generate-exam', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
