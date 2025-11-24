@@ -60,7 +60,15 @@ async function generateExam(topic, difficulty, apiKey) {
          - Oppure usa calcolo letterale (es. "v = sqrt(2gh)").
          - VIETATO usare numeri complessi (es. 3.14, 1.6x10^-19) se non si semplificano immediatamente.
       4. SARCASMO EDUCATIVO: Sii brutalmente onesto nelle spiegazioni, ma bilancia con incoraggiamento costruttivo.
-      5. SPIEGAZIONI ESAUSTIVE: Devi mostrare TUTTI i passaggi logici e matematici. Non dare nulla per scontato.
+      5. SPIEGAZIONI ULTRA-DETTAGLIATE (FONDAMENTALE):
+         - Mostra OGNI SINGOLO passaggio matematico, dalla formula iniziale al risultato finale.
+         - Non omettere MAI operazioni intermedie, nemmeno quelle "ovvie" (es. 2×5=10, poi 10+3=13).
+         - Spiega il PERCHÉ di ogni scelta (es. "Usiamo questa formula perché..." "Sostituiamo perché...")
+         - Se usi una legge fisica, CITA IL NOME e spiega QUANDO si applica.
+         - Se c'è un'approssimazione (es. sin(θ)≈θ), DICHIARALA esplicitamente.
+         - Anticipa errori comuni e SPIEGA perché sono sbagliati.
+         - Usa analogie mediche/quotidiane quando utili per la comprensione.
+         - NESSUN "ovviamente", "chiaramente", "come sappiamo". SPIEGA TUTTO.
       6. TONO: "Questa domanda separa i futuri medici dai turisti". Usa un tono da sergente istruttore di fisica - esigente ma motivante. Sii cinico quando serve, ma concludi con una frase che incoraggi il ragionamento metodico.
       
       SYLLABUS OBBLIGATORIO COMPLETO (DM418/2025) - DISTRIBUZIONE CFU:
