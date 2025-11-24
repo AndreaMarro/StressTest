@@ -13,6 +13,8 @@ interface PaymentModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    topic?: string;
+    difficulty?: string;
 }
 
 const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
@@ -94,7 +96,7 @@ const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
     );
 };
 
-export const PaymentModal = ({ isOpen, onClose, onSuccess }: PaymentModalProps) => {
+export const PaymentModal = ({ isOpen, onClose, onSuccess, topic, difficulty }: PaymentModalProps) => {
     const [clientSecret, setClientSecret] = useState("");
     const [showPromo, setShowPromo] = useState(false);
     const [promoCode, setPromoCode] = useState("");
@@ -111,7 +113,11 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess }: PaymentModalProps) 
             const res = await fetch('/api/redeem-promo', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: promoCode.trim() })
+                body: JSON.stringify({
+                    code: promoCode.trim(),
+                    topic,
+                    difficulty
+                })
             });
             const data = await res.json();
 

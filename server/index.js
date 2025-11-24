@@ -80,7 +80,7 @@ app.use(morgan('combined'));
 const PROMO_FILE = path.join(__dirname, 'data', 'promo_codes.json');
 
 app.post('/api/redeem-promo', async (req, res) => {
-    const { code } = req.body;
+    const { code, topic, difficulty } = req.body;
     const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.ip || req.connection.remoteAddress;
 
     console.log(`🔍 Promo redemption attempt:`, { code, trimmed: code?.trim(), clientIp, body: req.body });
@@ -118,51 +118,66 @@ app.post('/api/redeem-promo', async (req, res) => {
             console.log(`🎟️ Promo ${code} re-used by ${clientIp}`);
         }
 
-        // Grant access - generate a FRESH exam for this promo user
-        // Pick random topic and difficulty for variety
-        const TOPICS = [
-            "Introduzione e Metodi", "Meccanica", "Meccanica dei Fluidi",
-            "Onde Meccaniche", "Termodinamica", "Elettricità e Magnetismo",
-            "Radiazioni e Ottica"
-        ];
-        const DIFFICULTIES = ["easy", "medium", "hard"];
+        // Grant access - try to use an existing exam from cache if topic/difficulty provided
+        let chosenExamId = null;
+        let chosenTopic = topic;
+        let chosenDifficulty = difficulty;
 
-        const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
-        const randomDifficulty = DIFFICULTIES[Math.floor(Math.random() * DIFFICULTIES.length)];
-
-        console.log(`🎓 Generating fresh exam for promo: ${randomTopic}/${randomDifficulty}`);
-
-        try {
-            const examData = await generateExam(randomTopic, randomDifficulty, process.env.DEEPSEEK_API_KEY);
-
-            // Create new exam entry
-            const newId = Date.now().toString();
-            const newCacheEntry = {
-                id: newId,
-                topic: randomTopic,
-                difficulty: randomDifficulty,
-                questions: examData.questions,
-                timestamp: new Date().toISOString()
-            };
-
-            // Add to cache
-            const currentCache = getCache();
-            currentCache.push(newCacheEntry);
-            saveCache(currentCache);
-
-            // Grant access
-            const { sessionToken, expiresAt } = grantAccess(clientIp, newId);
-
-            res.json({
-                success: true,
-                sessionToken,
-                expiresAt,
-                examId: newId
-            });
-        } catch (genError) {
-            console.error('Failed to generate exam for promo:', genError);
-            return res.status(500).json({ error: 'Impossibile generare esame al momento. Riprova più tardi.' });
+        if (topic && difficulty) {
+            // Look for a matching exam in cache
+            const cache = getCache();
+            const match = cache.find(e => e.topic === topic && e.difficulty === difficulty);
+            if (match) {
+                chosenExamId = match.id;
+                console.log(`✅ Promo: found existing exam ${chosenExamId} for ${topic}/${difficulty}`);
+            }
         }
+
+        if (!chosenExamId) {
+            // Fallback: generate a fresh exam (random if not specified)
+            const TOPICS = [
+                "Introduzione e Metodi", "Meccanica", "Meccanica dei Fluidi",
+                "Onde Meccaniche", "Termodinamica", "Elettricità e Magnetismo",
+                "Radiazioni e Ottica"
+            ];
+            const DIFFICULTIES = ["easy", "medium", "hard"];
+
+            const randomTopic = topic || TOPICS[Math.floor(Math.random() * TOPICS.length)];
+            const randomDifficulty = difficulty || DIFFICULTIES[Math.floor(Math.random() * DIFFICULTIES.length)];
+
+            console.log(`🎓 Generating fresh exam for promo: ${randomTopic}/${randomDifficulty}`);
+            try {
+                const examData = await generateExam(randomTopic, randomDifficulty, process.env.DEEPSEEK_API_KEY);
+                const newId = Date.now().toString();
+                const newCacheEntry = {
+                    id: newId,
+                    topic: randomTopic,
+                    difficulty: randomDifficulty,
+                    questions: examData.questions,
+                    timestamp: new Date().toISOString()
+                };
+                const currentCache = getCache();
+                currentCache.push(newCacheEntry);
+                saveCache(currentCache);
+                chosenExamId = newId;
+                chosenTopic = randomTopic;
+                chosenDifficulty = randomDifficulty;
+            } catch (genError) {
+                console.error('Failed to generate exam for promo:', genError);
+                return res.status(500).json({ error: 'Impossibile generare esame al momento. Riprova più tardi.' });
+            }
+        }
+
+        // Grant access for the chosen exam
+        const { sessionToken, expiresAt } = grantAccess(clientIp, chosenExamId);
+        res.json({
+            success: true,
+            sessionToken,
+            expiresAt,
+            examId: chosenExamId,
+            topic: chosenTopic,
+            difficulty: chosenDifficulty
+        });
 
     } catch (error) {
         console.error('Promo redemption error:', error);

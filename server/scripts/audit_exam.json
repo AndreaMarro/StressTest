@@ -1,0 +1,55 @@
+{
+  "questions": [
+    {
+      "text": "Un paziente corre su un tapis roulant. La sua velocità aumenta da $0 \\text{ m/s}$ a $5 \\text{ m/s}$ in $10 \\text{ s}$. Qual è la sua accelerazione media? Se poi decelera uniformemente fino a fermarsi in altri $5 \\text{ s}$, qual è la distanza totale percorsa durante la decelerazione?",
+      "type": "multiple_choice",
+      "options": [
+        "$0.5 \\text{ m/s}^2$ e $12.5 \\text{ m}$",
+        "$1 \\text{ m/s}^2$ e $10 \\text{ m}$",
+        "$0.5 \\text{ m/s}^2$ e $10 \\text{ m}$",
+        "$1 \\text{ m/s}^2$ e $12.5 \\text{ m}$",
+        "$0.5 \\text{ m/s}^2$ e $25 \\text{ m}$"
+      ],
+      "correctAnswer": "$0.5 \\text{ m/s}^2$ e $12.5 \\text{ m}$",
+      "explanation": "Per l'accelerazione media: uso la definizione $a = \\frac{\\Delta v}{\\Delta t}$. Qui $\\Delta v = 5 \\text{ m/s} - 0 \\text{ m/s} = 5 \\text{ m/s}$ e $\\Delta t = 10 \\text{ s}$, quindi $a = \\frac{5}{10} = 0.5 \\text{ m/s}^2$. Se sbagli e ottieni $1 \\text{ m/s}^2$, forse confondi accelerazione con velocità, e in corsia potresti somministrare farmaci a dosi doppie, con esiti disastrosi. Per la decelerazione: velocità iniziale $v_i = 5 \\text{ m/s}$, finale $v_f = 0 \\text{ m/s}$, tempo $\\Delta t = 5 \\text{ s}$. L'accelerazione (decelerazione) è $a = \\frac{v_f - v_i}{\\Delta t} = \\frac{0 - 5}{5} = -1 \\text{ m/s}^2$ (il segno negativo indica decelerazione). La distanza percorsa durante la decelerazione si calcola con $s = v_i t + \\frac{1}{2} a t^2$. Sostituendo: $s = 5 \\times 5 + \\frac{1}{2} \\times (-1) \\times (5)^2 = 25 - 12.5 = 12.5 \\text{ m}$. Alternativamente, puoi usare $s = \\frac{v_i + v_f}{2} t = \\frac{5 + 0}{2} \\times 5 = 12.5 \\text{ m}$, che dà lo stesso risultato. Se ottieni $10 \\text{ m}$, forse hai dimenticato il termine $\\frac{1}{2} a t^2$ o hai usato solo $v_i t$, e in medicina ignorare i dettagli porta a errori diagnostici. Errori comuni: non considerare il segno dell'accelerazione o applicare formule sbagliate per il moto uniformemente accelerato."
+    },
+    {
+      "text": "Un medico applica una forza di $10 \\text{ N}$ per spingere una siringa di massa $0.2 \\text{ kg}$. Trascurando l'attrito, qual è l'accelerazione della siringa? Se la siringa è usata per iniettare un fluido e la pressione all'interno è $5000 \\text{ Pa}$, qual è la forza che il fluido esercita su un ago di area $10^{-4} \\text{ m}^2$?",
+      "type": "multiple_choice",
+      "options": [
+        "$50 \\text{ m/s}^2$ e $0.5 \\text{ N}$",
+        "$5 \\text{ m/s}^2$ e $5 \\text{ N}$",
+        "$50 \\text{ m/s}^2$ e $5 \\text{ N}$",
+        "$5 \\text{ m/s}^2$ e $0.5 \\text{ N}$",
+        "$20 \\text{ m/s}^2$ e $0.5 \\text{ N}$"
+      ],
+      "correctAnswer": "$50 \\text{ m/s}^2$ e $0.5 \\text{ N}$",
+      "explanation": "Per l'accelerazione della siringa: uso la seconda legge di Newton, $F = m a$, quindi $a = \\frac{F}{m} = \\frac{10 \\text{ N}}{0.2 \\text{ kg}} = 50 \\text{ m/s}^2$. Se calcoli $5 \\text{ m/s}^2$, forse hai diviso $10$ per $2$ invece che per $0.2$, e in terapia intensiva sbagliare i rapporti di dosaggio può uccidere un paziente. Per la forza sul ago: la pressione $P = 5000 \\text{ Pa}$ e l'area $A = 10^{-4} \\text{ m}^2$, quindi la forza è $F = P A = 5000 \\times 10^{-4} = 0.5 \\text{ N}$. Se ottieni $5 \\text{ N}$, forse confondi le potenze di 10 (ad esempio, scambi $10^{-4}$ per $10^{-3}$), e in chirurgia sbagliare le dimensioni degli strumenti porta a complicazioni. Errori comuni: non convertire correttamente le unità o dimenticare che la forza è proporzionale all'area."
+    },
+    {
+      "text": "Un paziente di massa $60 \\text{ kg}$ salta da un'altezza di $2 \\text{ m}$. Trascurando la resistenza dell'aria, qual è la sua velocità all'impatto con il suolo? Qual è la sua energia cinetica all'impatto? (Usa $g = 10 \\text{ m/s}^2$)",
+      "type": "multiple_choice",
+      "options": [
+        "$2\\sqrt{10} \\text{ m/s}$ e $1200 \\text{ J}$",
+        "$4 \\text{ m/s}$ e $480 \\text{ J}$",
+        "$6 \\text{ m/s}$ e $1080 \\text{ J}$",
+        "$2\\sqrt{10} \\text{ m/s}$ e $600 \\text{ J}$",
+        "$4 \\text{ m/s}$ e $1200 \\text{ J}$"
+      ],
+      "correctAnswer": "$2\\sqrt{10} \\text{ m/s}$ e $1200 \\text{ J}$",
+      "explanation": "Per la velocità all'impatto: uso la conservazione dell'energia. L'energia potenziale gravitazionale iniziale è $m g h = 60 \\times 10 \\times 2 = 1200 \\text{ J}$. Questa si converte totalmente in energia cinetica all'impatto, quindi $\\frac{1}{2} m v^2 = 1200 \\text{ J}$. Risolvo per $v^2$: $\\frac{1}{2} \\times 60 \\times v^2 = 1200$, semplifico a $30 v^2 = 1200$, quindi $v^2 = 40$, e $v = \\sqrt{40} = 2\\sqrt{10} \\text{ m/s}$. Alternativamente, con la cinematica: $v^2 = u^2 + 2 a s$, con velocità iniziale $u = 0 \\text{ m/s}$, accelerazione $a = g = 10 \\text{ m/s}^2$, spostamento $s = h = 2 \\text{ m}$, quindi $v^2 = 0 + 2 \\times 10 \\times 2 = 40$, $v = \\sqrt{40} = 2\\sqrt{10} \\text{ m/s}$. Se ottieni $4 \\text{ m/s}$, forse hai calcolato $v = \\sqrt{2 g h}$ senza radice o sbagli i numeri, e in emergenza sottostimare la velocità di caduta porta a trauma non diagnosticato. Per l'energia cinetica: $KE = \\frac{1}{2} m v^2 = \\frac{1}{2} \\times 60 \\times 40 = 1200 \\text{ J}$ (poiché $v^2 = 40$). Se calcoli $600 \\text{ J}$, forse dimentichi il fattore $\\frac{1}{2}$, e in radiologia ignorare metà dell'energia distorce le immagini. Errori comuni: confondere energia cinetica con potenziale o sbagliare il calcolo di $v^2$."
+    },
+    {
+      "text": "In un esperimento di fisiologia, un campione di sangue di massa $0.1 \\text{ kg}$ viene accelerato da $0 \\text{ m/s}$ a $2 \\text{ m/s}$ in $0.5 \\text{ s}$. La forza media applicata è ________.",
+      "type": "fill_in_the_blank",
+      "correctAnswer": "$0.4 \\text{ N}$",
+      "explanation": "La forza media si trova con la seconda legge di Newton: $F = m a$. Prima, calcolo l'accelerazione media: $a = \\frac{\\Delta v}{\\Delta t} = \\frac{2 \\text{ m/s} - 0 \\text{ m/s}}{0.5 \\text{ s}} = \\frac{2}{0.5} = 4 \\text{ m/s}^2$. Quindi, $F = 0.1 \\text{ kg} \\times 4 \\text{ m/s}^2 = 0.4 \\text{ N}$. Se ottieni $0.2 \\text{ N}$, forse hai diviso $\\Delta v$ per $\\Delta t$ sbagliato (es. $2 / 0.5 = 4$, ma se fai $2 / 5 = 0.4$ e moltiplichi per massa), e in laboratorio sbagliare le forze durante le centrifughe altera i risultati degli esami del sangue. Errori comuni: confondere accelerazione con velocità o non usare unità coerenti."
+    },
+    {
+      "text": "Un cuore pompa sangue con una portata di $2\\pi \\times 10^{-4} \\text{ m}^3/\\text{s}$ attraverso un'arteria di raggio $0.1 \\text{ m}$. La velocità media del sangue è ________.",
+      "type": "fill_in_the_blank",
+      "correctAnswer": "$0.02 \\text{ m/s}$",
+      "explanation": "La velocità media del sangue si ricava dalla portata volumetrica $Q$ e l'area della sezione trasversale $A$ dell'arteria, con $Q = A v$, quindi $v = \\frac{Q}{A}$. L'area è $A = \\pi r^2 = \\pi (0.1)^2 = \\pi \\times 0.01 = 0.01\\pi \\text{ m}^2$. Sostituendo: $v = \\frac{2\\pi \\times 10^{-4}}{0.01\\pi} = \\frac{2 \\times 10^{-4}}{0.01} = 2 \\times 10^{-4} / 10^{-2} = 2 \\times 10^{-2} = 0.02 \\text{ m/s}$. Nota che $\\pi$ si semplifica. Se ottieni $0.2 \\text{ m/s}$, forse hai sbagliato le potenze di 10 (es. $10^{-4} / 10^{-2} = 10^{-2}$, ma se confondi con $10^{-1}$), e in cardiologia sovrastimare la velocità sanguigna porta a diagnosi errate di ipertensione. Errori comuni: non semplificare $\\pi$ o calcolare male le divisioni con esponenti."
+    }
+  ]
+}

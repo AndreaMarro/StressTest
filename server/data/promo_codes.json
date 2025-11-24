@@ -9,7 +9,9 @@
   {
     "code": "VIP_PASS",
     "maxUses": 5,
-    "usedBy": []
+    "usedBy": [
+      "::1"
+    ]
   },
   {
     "code": "TEST_DEV",

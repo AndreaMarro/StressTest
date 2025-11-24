@@ -1111,6 +1111,8 @@ export default function App() {
         isOpen={showPayment}
         onClose={() => setShowPayment(false)}
         onSuccess={handlePaymentSuccess}
+        topic={examType === 'full' ? 'full' : selectedTopic}
+        difficulty={difficulty}
       />
 
       {showHistory && (
