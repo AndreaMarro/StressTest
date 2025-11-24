@@ -566,25 +566,56 @@ app.get('/api/verify-payment/:id', paymentLimiter, async (req, res) => {
         if (!id || id.length < 10) {
             return res.status(400).json({ error: 'Invalid payment ID' });
         }
+
         const paymentIntent = await stripe.paymentIntents.retrieve(id);
+        console.log(`[Payment Verify] Intent ${id}: status=${paymentIntent.status}`);
+
         // Base response includes status
         const responsePayload = { status: paymentIntent.status };
-        // If payment succeeded, attach session token info from access tokens
+
+        // If payment succeeded, ensure access is granted
         if (paymentIntent.status === 'succeeded') {
             const examId = paymentIntent.metadata?.examId;
+
             if (examId) {
                 const tokens = getAccessTokens();
-                const tokenObj = tokens.find(t => t.examId === examId);
-                if (tokenObj) {
-                    responsePayload.sessionToken = tokenObj.sessionToken;
-                    responsePayload.expiresAt = tokenObj.expiresAt;
-                    responsePayload.examId = examId;
+                let tokenObj = tokens.find(t => t.examId === examId);
+
+                // CRITICAL FIX: If no token exists, CREATE ONE NOW
+                // This handles cases where webhook didn't fire or IP mismatch
+                if (!tokenObj) {
+                    console.log(`[Payment Verify] No existing token for exam ${examId}, creating now...`);
+
+                    // Get current user IP (may differ from payment IP if multi-device)
+                    const currentIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.ip || req.connection.remoteAddress;
+
+                    // Grant access with current IP
+                    const accessData = grantAccess(currentIp, examId);
+                    console.log(`[Payment Verify] ✅ Created access for exam ${examId}, IP ${currentIp}`);
+                    console.log(`[Payment Verify]    Token: ${accessData.sessionToken.slice(0, 8)}...`);
+                    console.log(`[Payment Verify]    Expires: ${accessData.expiresAt}`);
+
+                    tokenObj = {
+                        sessionToken: accessData.sessionToken,
+                        expiresAt: accessData.expiresAt,
+                        examId: examId
+                    };
+                } else {
+                    console.log(`[Payment Verify] Found existing token for exam ${examId}`);
                 }
+
+                // Return token data to frontend
+                responsePayload.sessionToken = tokenObj.sessionToken;
+                responsePayload.expiresAt = tokenObj.expiresAt;
+                responsePayload.examId = examId;
+            } else {
+                console.warn('[Payment Verify] ⚠️ Payment succeeded but no examId in metadata');
             }
         }
+
         res.json(responsePayload);
     } catch (error) {
-        console.error('Stripe Verification Error:', error);
+        console.error('[Payment Verify] Error:', error);
         res.status(500).json({ error: 'Failed to verify payment. Please contact support.' });
     }
 });
