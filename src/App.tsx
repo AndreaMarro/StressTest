@@ -87,9 +87,48 @@ export default function App() {
     setShowPayment(true);
   };
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = async () => {
     setShowPayment(false);
-    handleStartExam(); // Call the new exam generation logic
+
+    // Check if we have sessionToken from promo code
+    const savedToken = localStorage.getItem('sessionToken');
+    const savedExamId = localStorage.getItem('currentExamId');
+    const savedExpires = localStorage.getItem('accessExpiresAt');
+
+    if (savedToken && savedExamId) {
+      // Promo code flow: verify access and fetch the exam
+      try {
+        setMode('loading');
+        setErrorMsg(null);
+
+        const response = await fetch(`${API_URL}/api/verify-access`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            examId: savedExamId,
+            sessionToken: savedToken
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.hasAccess && data.exam) {
+          setQuestions(data.exam.questions);
+          if (savedExpires) setAccessExpiresAt(savedExpires);
+          setSeenExamIds(prev => [...prev, savedExamId]);
+          startExam();
+        } else {
+          throw new Error('Access denied or exam not found');
+        }
+      } catch (err) {
+        console.error('Promo access error:', err);
+        setErrorMsg('Errore caricamento esame. Riprova.');
+        setMode('start');
+      }
+    } else {
+      // Normal payment flow: generate new exam
+      handleStartExam();
+    }
   };
 
   const handleStartExam = async () => {
