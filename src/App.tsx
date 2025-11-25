@@ -64,7 +64,6 @@ export default function App() {
   const {
     setAccessExpiresAt,
     accessTimeLeft,
-    seenExamIds,
     setSeenExamIds,
     clearSession
   } = useSession({
@@ -146,9 +145,7 @@ export default function App() {
 
           if (accessData.hasAccess && accessData.exam) {
             setQuestions(accessData.exam.questions);
-            setSeenExamIds(prev => [...prev, data.examId]);
 
-            const accessLink = `${window.location.origin}${window.location.pathname}?access=${data.sessionToken}_${data.examId}`;
             window.history.replaceState({}, '', window.location.pathname);
             // alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}`);
 
@@ -277,7 +274,6 @@ export default function App() {
                   // Clean URL
                   window.history.replaceState({}, '', window.location.pathname);
 
-                  const accessLink = `${window.location.origin}${window.location.pathname}?access=${data.sessionToken}_${data.examId}`;
                   // alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}`);
 
                   startExam();
