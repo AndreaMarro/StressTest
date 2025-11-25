@@ -65,7 +65,8 @@ export default function App() {
     setAccessExpiresAt,
     accessTimeLeft,
     setSeenExamIds,
-    clearSession
+    clearSession,
+    userId
   } = useSession({
     mode,
     setMode,
@@ -353,6 +354,7 @@ export default function App() {
           examType={examType}
           topic={selectedTopic}
           difficulty={difficulty}
+          userId={userId}
         />
       )}
 

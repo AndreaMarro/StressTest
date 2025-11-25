@@ -15,7 +15,8 @@ const { z } = require('zod');
 const generateExamSchema = z.object({
     topic: z.string().min(1),
     difficulty: z.enum(['easy', 'medium', 'hard']),
-    excludeIds: z.array(z.string()).optional()
+    excludeIds: z.array(z.string()).optional(),
+    userId: z.string().optional()
 });
 
 const app = express();
@@ -137,22 +138,27 @@ app.post('/api/redeem-promo', promoLimiter, async (req, res) => {
         let chosenExamId = null;
         let chosenTopic = topic;
         let chosenDifficulty = difficulty;
-        const { excludeIds = [] } = req.body;
+        const { excludeIds = [], userId } = req.body;
 
         if (topic && difficulty) {
             // Look for a matching exam in cache that hasn't been seen
             const cache = getCache();
+
+            // Get user history to exclude
+            const userHistory = userId ? getUserHistory(userId) : [];
+            const allExcludedIds = [...excludeIds, ...userHistory];
+
             const match = cache.find(e =>
                 e.topic === topic &&
                 e.difficulty === difficulty &&
-                !excludeIds.includes(e.id)
+                !allExcludedIds.includes(e.id)
             );
 
             if (match) {
                 chosenExamId = match.id;
                 console.log(`✅ Promo: found existing exam ${chosenExamId} for ${topic}/${difficulty} (not in exclude list)`);
             } else {
-                console.log(`⚠️ Promo: no fresh exam found in cache for ${topic}/${difficulty} (checked ${cache.length} exams, excluded ${excludeIds.length})`);
+                console.log(`⚠️ Promo: no fresh exam found in cache for ${topic}/${difficulty} (checked ${cache.length} exams, excluded ${allExcludedIds.length})`);
             }
         }
 
@@ -193,6 +199,12 @@ app.post('/api/redeem-promo', promoLimiter, async (req, res) => {
 
         // Grant access for the chosen exam
         const { sessionToken, expiresAt } = grantAccess(clientIp, chosenExamId);
+
+        // Update User History
+        if (userId) {
+            updateUserHistory(userId, chosenExamId);
+        }
+
         res.json({
             success: true,
             sessionToken,
@@ -397,16 +409,20 @@ app.post('/api/generate-exam', aiLimiter, async (req, res) => {
         });
     }
 
-    const { topic, difficulty, excludeIds = [] } = validation.data;
+    const { topic, difficulty, excludeIds = [], userId } = validation.data;
 
     // 1. Check Cache with Exclusion
     const cache = getCache();
+
+    // Get user history to exclude
+    const userHistory = userId ? getUserHistory(userId) : [];
+    const allExcludedIds = [...excludeIds, ...userHistory];
 
     // Find an exam that matches topic/difficulty AND is not in the exclude list
     const exam = cache.find(e =>
         e.topic === topic &&
         e.difficulty === difficulty &&
-        !excludeIds.includes(e.id)
+        !allExcludedIds.includes(e.id)
     );
 
     if (exam) {
@@ -431,7 +447,7 @@ app.post('/api/generate-exam', aiLimiter, async (req, res) => {
         return;
     }
 
-    console.log(`[Cache] MISS for ${topic}/${difficulty} (Excluding ${excludeIds.length} IDs). Falling back to synchronous generation.`);
+    console.log(`[Cache] MISS for ${topic}/${difficulty} (Excluding ${allExcludedIds.length} IDs). Falling back to synchronous generation.`);
 
     // 2. Fallback: Synchronous Generation
     try {
@@ -534,7 +550,7 @@ app.post('/api/poll-payment-status', async (req, res) => {
         // LAZY GENERATION: If examId is missing, try to generate/find one now
         if (!examId && paymentIntent.status === 'succeeded') {
             console.log('[Poll] ⚠️ Payment succeeded but no examId. Attempting lazy generation...');
-            const { topic, difficulty, excludeIds } = paymentIntent.metadata;
+            const { topic, difficulty, excludeIds, userId } = paymentIntent.metadata;
 
             if (topic && difficulty) {
                 try {
@@ -542,10 +558,14 @@ app.post('/api/poll-payment-status', async (req, res) => {
                     const cache = getCache();
                     const excludeList = excludeIds ? excludeIds.split(',') : [];
 
+                    // Get user history to exclude
+                    const userHistory = userId ? getUserHistory(userId) : [];
+                    const allExcludedIds = [...excludeList, ...userHistory];
+
                     let match = cache.find(e =>
                         e.topic === topic &&
                         e.difficulty === difficulty &&
-                        !excludeList.includes(e.id)
+                        !allExcludedIds.includes(e.id)
                     );
 
                     if (match) {
@@ -580,6 +600,11 @@ app.post('/api/poll-payment-status', async (req, res) => {
                         metadata: { examId: examId }
                     });
                     console.log(`[Poll] 💾 Updated Stripe metadata with examId: ${examId}`);
+
+                    // 4. Update User History
+                    if (userId) {
+                        updateUserHistory(userId, examId);
+                    }
 
                 } catch (err) {
                     console.error('[Poll] ❌ Lazy generation failed:', err);
@@ -737,6 +762,8 @@ app.get('/api/verify-payment/:id', paymentLimiter, async (req, res) => {
                     console.log(`[Payment Verify]    Token: ${accessData.sessionToken.slice(0, 8)}...`);
                     console.log(`[Payment Verify]    Expires: ${accessData.expiresAt}`);
 
+                    console.log(`[Payment Verify]    Expires: ${accessData.expiresAt}`);
+
                     tokenObj = {
                         sessionToken: accessData.sessionToken,
                         expiresAt: accessData.expiresAt,
@@ -744,6 +771,12 @@ app.get('/api/verify-payment/:id', paymentLimiter, async (req, res) => {
                     };
                 } else {
                     console.log(`[Payment Verify] Found existing token for exam ${examId}`);
+                }
+
+                // Update User History
+                const userId = paymentIntent.metadata?.userId;
+                if (userId) {
+                    updateUserHistory(userId, examId);
                 }
 
                 // Return token data to frontend
@@ -782,13 +815,18 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
         console.log(`✅ Payment succeeded webhook: ${paymentIntent.id}`);
 
         // Extract metadata
-        const { examId, userIp } = paymentIntent.metadata || {};
+        const { examId, userIp, userId } = paymentIntent.metadata || {};
 
         if (examId && userIp) {
             // Grant 45-minute access (same as generate-exam endpoint)
             try {
                 const accessData = grantAccess(userIp, examId);
                 console.log(`✅ Webhook: Granted access for exam ${examId} to IP ${userIp}`);
+
+                if (userId) {
+                    updateUserHistory(userId, examId);
+                }
+
                 console.log(`   Session token: ${accessData.sessionToken.slice(0, 8)}...`);
                 console.log(`   Expires: ${accessData.expiresAt}`);
             } catch (error) {
@@ -802,6 +840,39 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
     // Return 200 to acknowledge receipt
     res.json({ received: true });
 });
+
+// --- User History System (Unique Exam Guarantee) ---
+const USER_HISTORY_FILE = path.join(__dirname, 'data', 'user_history.json');
+
+const getUserHistory = (userId) => {
+    try {
+        if (!fs.existsSync(USER_HISTORY_FILE)) return [];
+        const data = JSON.parse(fs.readFileSync(USER_HISTORY_FILE, 'utf8'));
+        return data[userId] || [];
+    } catch (e) {
+        console.error("Error reading user history:", e);
+        return [];
+    }
+};
+
+const updateUserHistory = (userId, examId) => {
+    if (!userId || !examId) return;
+    try {
+        let data = {};
+        if (fs.existsSync(USER_HISTORY_FILE)) {
+            data = JSON.parse(fs.readFileSync(USER_HISTORY_FILE, 'utf8'));
+        }
+        if (!data[userId]) data[userId] = [];
+
+        if (!data[userId].includes(examId)) {
+            data[userId].push(examId);
+            fs.writeFileSync(USER_HISTORY_FILE, JSON.stringify(data, null, 2));
+            console.log(`[History] Added exam ${examId} to user ${userId}`);
+        }
+    } catch (e) {
+        console.error("Error updating user history:", e);
+    }
+};
 
 // --- Bug Reporting System ---
 

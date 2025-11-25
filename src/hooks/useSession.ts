@@ -201,12 +201,22 @@ export function useSession({
         setAccessExpiresAt(null);
     }, []);
 
+    // User Identity (for history tracking)
+    const [userId] = useState<string>(() => {
+        const saved = localStorage.getItem('stressTestUserId');
+        if (saved) return saved;
+        const newId = crypto.randomUUID();
+        localStorage.setItem('stressTestUserId', newId);
+        return newId;
+    });
+
     return {
         accessExpiresAt,
         setAccessExpiresAt,
         accessTimeLeft,
         seenExamIds,
         setSeenExamIds,
-        clearSession
+        clearSession,
+        userId
     };
 }

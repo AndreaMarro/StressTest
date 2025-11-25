@@ -17,6 +17,7 @@ interface PaymentModalProps {
     topic?: string;
     difficulty?: string;
     excludeIds?: string[];
+    userId: string;
 }
 
 const CheckoutForm = ({ onSuccess }: { onSuccess: (paymentIntent?: any) => void }) => {
@@ -104,7 +105,7 @@ const CheckoutForm = ({ onSuccess }: { onSuccess: (paymentIntent?: any) => void 
     );
 };
 
-export const PaymentModal = ({ isOpen, onClose, onSuccess, examType, topic, difficulty, excludeIds = [] }: PaymentModalProps) => {
+export const PaymentModal = ({ isOpen, onClose, onSuccess, examType, topic, difficulty, excludeIds = [], userId }: PaymentModalProps) => {
     const [clientSecret, setClientSecret] = useState("");
     const [showPromo, setShowPromo] = useState(false);
     const [promoCode, setPromoCode] = useState("");
@@ -126,7 +127,8 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess, examType, topic, diff
                     examType,
                     topic,
                     difficulty,
-                    excludeIds
+                    excludeIds,
+                    userId
                 })
             });
             const data = await res.json();
@@ -159,7 +161,8 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess, examType, topic, diff
                         examType,
                         topic,
                         difficulty,
-                        excludeIds: excludeIds.join(',') // Stripe metadata must be strings
+                        excludeIds: excludeIds.join(','), // Stripe metadata must be strings
+                        userId
                     }
                 })
             })
