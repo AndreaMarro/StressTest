@@ -517,7 +517,7 @@ app.post('/api/generate-study-plan', async (req, res) => {
 
 // 2.5 Verify Session-Based Access (45-min window)
 // NEW: Polling endpoint for payment webhook completion (iPhone fix)
-app.post('/api/poll-payment-status', (req, res) => {
+app.post('/api/poll-payment-status', async (req, res) => {
     try {
         const { paymentIntentId } = req.body;
 
