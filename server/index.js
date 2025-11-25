@@ -528,35 +528,102 @@ app.post('/api/poll-payment-status', (req, res) => {
         console.log(`[Poll] Checking if webhook created token for payment ${paymentIntentId}`);
 
         // Get payment intent metadata to find examId
-        stripe.paymentIntents.retrieve(paymentIntentId)
-            .then(paymentIntent => {
-                const examId = paymentIntent.metadata?.examId;
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+        let examId = paymentIntent.metadata?.examId;
 
-                if (!examId) {
-                    console.log('[Poll] No examId in payment metadata');
-                    return res.json({ ready: false, reason: 'no_exam_id' });
-                }
+        // LAZY GENERATION: If examId is missing, try to generate/find one now
+        if (!examId && paymentIntent.status === 'succeeded') {
+            console.log('[Poll] ⚠️ Payment succeeded but no examId. Attempting lazy generation...');
+            const { topic, difficulty, excludeIds } = paymentIntent.metadata;
 
-                // Check if webhook created access token for this exam
-                const token = findAccessByExamId(examId);
+            if (topic && difficulty) {
+                try {
+                    // 1. Check Cache
+                    const cache = getCache();
+                    const excludeList = excludeIds ? excludeIds.split(',') : [];
 
-                if (token) {
-                    console.log(`[Poll] ✅ Token found for exam ${examId}!`);
-                    return res.json({
-                        ready: true,
-                        sessionToken: token.sessionToken,
-                        examId: token.examId,
-                        expiresAt: token.expiresAt
+                    let match = cache.find(e =>
+                        e.topic === topic &&
+                        e.difficulty === difficulty &&
+                        !excludeList.includes(e.id)
+                    );
+
+                    if (match) {
+                        console.log(`[Poll] ✅ Found cached exam ${match.id} for lazy assignment`);
+                        examId = match.id;
+                    } else {
+                        // 2. Generate New
+                        console.log(`[Poll] 🔄 Generating fresh exam for lazy assignment (${topic}/${difficulty})...`);
+                        // Note: This might take time. If it times out, the client will retry.
+                        // Ideally we should use a job queue, but for now we await.
+                        const examData = await generateExam(topic, difficulty, process.env.DEEPSEEK_API_KEY);
+
+                        const newId = Date.now().toString();
+                        const newCacheEntry = {
+                            id: newId,
+                            topic,
+                            difficulty,
+                            questions: examData.questions,
+                            timestamp: new Date().toISOString()
+                        };
+
+                        const currentCache = getCache();
+                        currentCache.push(newCacheEntry);
+                        saveCache(currentCache);
+
+                        examId = newId;
+                        console.log(`[Poll] ✅ Generated new exam ${examId}`);
+                    }
+
+                    // 3. Update Stripe Metadata (CRITICAL: prevents double generation)
+                    await stripe.paymentIntents.update(paymentIntentId, {
+                        metadata: { examId: examId }
                     });
-                } else {
-                    console.log(`[Poll] ⏳ Token not ready yet for exam ${examId}`);
-                    return res.json({ ready: false, reason: 'webhook_pending' });
+                    console.log(`[Poll] 💾 Updated Stripe metadata with examId: ${examId}`);
+
+                } catch (err) {
+                    console.error('[Poll] ❌ Lazy generation failed:', err);
+                    return res.json({ ready: false, reason: 'generation_failed' });
                 }
-            })
-            .catch(err => {
-                console.error('[Poll] Stripe error:', err);
-                res.status(500).json({ error: 'Failed to check payment status' });
+            } else {
+                console.log('[Poll] ❌ Cannot generate: missing topic/difficulty in metadata');
+                return res.json({ ready: false, reason: 'missing_metadata' });
+            }
+        }
+
+        if (!examId) {
+            console.log('[Poll] No examId in payment metadata (and lazy gen failed/skipped)');
+            return res.json({ ready: false, reason: 'no_exam_id' });
+        }
+
+        // Check if webhook created access token for this exam
+        // If we just generated it, we need to grant access NOW
+        let token = findAccessByExamId(examId);
+
+        if (!token) {
+            // If we just generated it (or webhook failed), grant access now
+            const userIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.ip || req.connection.remoteAddress;
+            console.log(`[Poll] 🛡️ Granting access now for ${examId} to IP ${userIp}`);
+            const accessData = grantAccess(userIp, examId);
+            token = {
+                sessionToken: accessData.sessionToken,
+                examId: examId,
+                expiresAt: accessData.expiresAt
+            };
+        }
+
+        if (token) {
+            console.log(`[Poll] ✅ Token ready for exam ${examId}!`);
+            return res.json({
+                ready: true,
+                sessionToken: token.sessionToken,
+                examId: token.examId,
+                expiresAt: token.expiresAt
             });
+        } else {
+            console.log(`[Poll] ⏳ Token not ready yet for exam ${examId}`);
+            return res.json({ ready: false, reason: 'webhook_pending' });
+        }
     } catch (error) {
         console.error('[Poll] Error:', error);
         res.status(500).json({ error: 'Internal server error' });
