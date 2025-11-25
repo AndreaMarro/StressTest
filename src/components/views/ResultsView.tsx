@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { RotateCcw, AlertCircle, Download, BookOpen } from 'lucide-react';
+import { RotateCcw, AlertCircle, Download } from 'lucide-react';
 import { MathText } from '../ui/MathText';
 import { exportExamPDF } from '../../utils/pdfExport';
 import type { Question, UserState } from '../../types';
@@ -24,10 +23,6 @@ export function ResultsView({
     topic,
     difficulty
 }: ResultsViewProps) {
-    const [showStudyPlan, setShowStudyPlan] = useState(false);
-    const [studyPlan, setStudyPlan] = useState<string | null>(null);
-    const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
-
     const percentage = Math.round((userState.score / questions.length) * 100);
 
     // Determine rank/feedback
@@ -38,45 +33,6 @@ export function ResultsView({
     };
 
     const feedback = getFeedback();
-
-    const generateStudyPlan = async () => {
-        setIsGeneratingPlan(true);
-        setShowStudyPlan(true);
-
-        // Collect wrong answers
-        const wrongAnswers = questions.filter(_ => {
-            // Simple check - in a real app, reuse the compare logic or pass it down
-            // For now, we assume if it's not in the score, it's wrong.
-            // But we don't have per-question correctness here easily without re-running logic.
-            // Let's just send the ones where answer != correct (approximate for now, or better: use the logic from useExamState if we could)
-            // Since we don't have the compare function here, we'll rely on a simple check or just send all questions for the AI to analyze?
-            // Better: The AI endpoint expects a list of wrong answers with text.
-            // Let's just send the text of questions where the user didn't get points.
-            // Wait, we don't know which ones are correct here without the compare function.
-            // We'll just send the user's answer and correct answer for ALL questions and let AI decide?
-            // Or better, just send the ones that look wrong.
-            return true; // Placeholder: we send all for analysis in this version or refine later.
-        }).map(q => ({
-            text: q.text,
-            userAnswer: userState.answers[q.id] || "Nessuna risposta",
-            correctAnswer: q.correctAnswer
-        }));
-
-        try {
-            const res = await fetch('/api/generate-study-plan', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ wrongAnswers: wrongAnswers.slice(0, 5) }) // Limit to 5 to save tokens
-            });
-            const data = await res.json();
-            setStudyPlan(data.plan);
-        } catch (e) {
-            console.error(e);
-            setStudyPlan("Impossibile generare il piano di studi al momento.");
-        } finally {
-            setIsGeneratingPlan(false);
-        }
-    };
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500 pb-20">
@@ -110,39 +66,6 @@ export function ResultsView({
                     </button>
                 </div>
             </div>
-
-            {/* AI Analysis Button */}
-            {!showStudyPlan && percentage < 100 && (
-                <div className="flex justify-center">
-                    <button
-                        onClick={generateStudyPlan}
-                        className="flex items-center gap-2 px-6 py-4 bg-purple-600/20 text-purple-400 border border-purple-500/50 rounded hover:bg-purple-600/30 transition-all w-full md:w-auto justify-center"
-                    >
-                        <BookOpen className="w-5 h-5" />
-                        GENERA PIANO DI STUDIO (AI)
-                    </button>
-                </div>
-            )}
-
-            {/* Study Plan Section */}
-            {showStudyPlan && (
-                <div className="p-6 border border-purple-500/30 rounded-lg bg-purple-900/10 animate-in slide-in-from-bottom-4">
-                    <h3 className="text-xl font-bold text-purple-400 mb-4 flex items-center gap-2">
-                        <BookOpen className="w-5 h-5" /> DIAGNOSI DEL PRIMARIO
-                    </h3>
-                    {isGeneratingPlan ? (
-                        <div className="space-y-2">
-                            <div className="h-4 bg-purple-500/20 rounded animate-pulse w-3/4"></div>
-                            <div className="h-4 bg-purple-500/20 rounded animate-pulse w-1/2"></div>
-                            <div className="h-4 bg-purple-500/20 rounded animate-pulse w-5/6"></div>
-                        </div>
-                    ) : (
-                        <div className="prose prose-invert prose-sm max-w-none">
-                            <MathText content={studyPlan || ""} />
-                        </div>
-                    )}
-                </div>
-            )}
 
             {/* Detailed Review */}
             <div className="space-y-4">

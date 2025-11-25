@@ -102,22 +102,23 @@ export const exportExamPDF = (
         let yPos = 20;
 
         // === HEADER ===
-        doc.setFontSize(24);
+        doc.setFontSize(26);
         doc.setFont('helvetica', 'bold');
-        doc.setTextColor(0, 0, 0);
+        doc.setTextColor(20, 20, 20); // Almost black
         doc.text("StressTest FISICA", pageWidth / 2, yPos, { align: 'center' });
 
-        yPos += 8;
-        doc.setFontSize(10);
+        yPos += 9;
+        doc.setFontSize(11);
         doc.setFont('helvetica', 'normal');
-        doc.setTextColor(100, 100, 100);
+        doc.setTextColor(80, 80, 80); // Darker gray
         doc.text("Report Ufficiale - DM418/2025", pageWidth / 2, yPos, { align: 'center' });
 
-        yPos += 12;
-        doc.setLineWidth(0.5);
-        doc.setDrawColor(0, 0, 0);
+        yPos += 15;
+        // Accent line (Terminal Green-ish)
+        doc.setLineWidth(1.5);
+        doc.setDrawColor(0, 200, 0);
         doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 10;
+        yPos += 15;
 
         // === EXAM INFO ===
         doc.setFontSize(10);
@@ -251,55 +252,66 @@ export const exportExamPDF = (
                 yPos = 20;
             }
 
-            // Question Header
+            // Question Header Bar
+            doc.setFillColor(245, 245, 245);
+            doc.rect(margin, yPos - 4, pageWidth - 2 * margin, 8, 'F');
+
             doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(0, 0, 0);
-            doc.text(`Domanda ${idx + 1}`, margin, yPos);
+            doc.text(`Domanda ${idx + 1}`, margin + 2, yPos + 1);
 
             doc.setFontSize(9);
-            doc.setTextColor(isCorrect ? 0 : 200, isCorrect ? 150 : 0, isCorrect ? 0 : 0);
-            doc.text(isCorrect ? 'CORRETTA' : 'ERRATA', pageWidth - margin, yPos, { align: 'right' });
-            yPos += 5;
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(isCorrect ? 0 : 220, isCorrect ? 150 : 0, isCorrect ? 0 : 0);
+            doc.text(isCorrect ? 'CORRETTA' : 'ERRATA', pageWidth - margin - 2, yPos + 1, { align: 'right' });
+            yPos += 10;
 
             // Question Text
-            doc.setFontSize(9);
+            doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
-            doc.setTextColor(40, 40, 40);
+            doc.setTextColor(30, 30, 30);
             const questionText = sanitizeForPdf(convertLatexToReadable(q.text));
             const questionLines = doc.splitTextToSize(questionText, pageWidth - 2 * margin);
             doc.text(questionLines, margin, yPos);
-            yPos += questionLines.length * 4 + 2;
+            yPos += questionLines.length * 5 + 4;
 
             // Options (if multiple choice)
             if (q.type === 'multiple_choice' && q.options) {
-                doc.setFontSize(8);
-                doc.setTextColor(80, 80, 80);
+                doc.setFontSize(9);
+                doc.setTextColor(60, 60, 60);
                 q.options.forEach((opt) => {
                     const optText = sanitizeForPdf(convertLatexToReadable(opt));
-                    const optLines = doc.splitTextToSize(`- ${optText}`, pageWidth - 2 * margin - 10);
+                    const optLines = doc.splitTextToSize(`• ${optText}`, pageWidth - 2 * margin - 10);
                     doc.text(optLines, margin + 5, yPos);
-                    yPos += optLines.length * 3.5;
+                    yPos += optLines.length * 4;
                 });
-                yPos += 2;
+                yPos += 4;
             }
 
-            // Answers Comparison
-            doc.setFontSize(8);
+            // Answers Comparison Box
+            doc.setDrawColor(220, 220, 220);
+            doc.setLineWidth(0.1);
+            doc.line(margin, yPos, pageWidth - margin, yPos);
+            yPos += 5;
+
+            doc.setFontSize(9);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(100, 100, 100);
-            doc.text("Tua:", margin, yPos);
+            doc.setTextColor(80, 80, 80);
+            doc.text("Tua Risposta:", margin, yPos);
+
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(isCorrect ? 0 : 200, isCorrect ? 150 : 0, isCorrect ? 0 : 0);
-            doc.text(userAns ? sanitizeForPdf(convertLatexToReadable(userAns)) : '-', margin + 15, yPos);
+            doc.text(userAns ? sanitizeForPdf(convertLatexToReadable(userAns)) : 'Non data', margin + 30, yPos);
 
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(100, 100, 100);
-            doc.text("Corretta:", margin + 60, yPos);
-            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(80, 80, 80);
+            doc.text("Corretta:", margin + 80, yPos);
+
+            doc.setFont('helvetica', 'bold'); // Bold for correct answer
             doc.setTextColor(0, 150, 0);
-            doc.text(sanitizeForPdf(convertLatexToReadable(q.correctAnswer)), margin + 85, yPos);
-            yPos += 6;
+            doc.text(sanitizeForPdf(convertLatexToReadable(q.correctAnswer)), margin + 100, yPos);
+            yPos += 8;
 
             // Explanation Box
             if (q.explanation) {

@@ -136,11 +136,13 @@ async function generateExam(topic, difficulty, apiKey) {
       5. LINGUA:
          - Usa SOLO ITALIANO. Vietato usare connettivi inglesi come "Thus", "So", "Hence".
       6. SPIEGAZIONI ULTRA-DETTAGLIATE (FONDAMENTALE):
-         - Mostra OGNI SINGOLO passaggio matematico.
-         - Spiega il PERCHÉ di ogni scelta.
-         - Se c'è un'approssimazione, DICHIARALA.
+         - Mostra OGNI SINGOLO passaggio matematico. NON SALTARE NULLA.
+         - Se passi da $A=B$ a $A=C$, scrivi il passaggio intermedio.
+         - Spiega il PERCHÉ di ogni scelta fisica e matematica.
+         - Se c'è un'approssimazione, DICHIARALA e GIUSTIFICALA.
          - Anticipa errori comuni e SPIEGA perché sono sbagliati.
-         - NESSUN "ovviamente", "chiaramente". SPIEGA TUTTO.
+         - NESSUN "ovviamente", "chiaramente", "si vede che". SPIEGA TUTTO come se lo studente fosse lento.
+         - Usa elenchi puntati per i passaggi logici complessi.
       
       SYLLABUS OBBLIGATORIO COMPLETO (DM418/2025) - DISTRIBUZIONE CFU:
       
