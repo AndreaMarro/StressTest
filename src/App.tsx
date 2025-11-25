@@ -359,7 +359,7 @@ function App() {
           onClose={() => setIsPaymentModalOpen(false)}
           onSuccess={handlePaymentSuccess}
           examType={examType}
-          topic={selectedTopic}
+          topic={examType === 'full' ? 'full' : selectedTopic}
           difficulty={difficulty}
           userId={userId}
         />
