@@ -134,19 +134,56 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess, examType, topic, diff
             const data = await res.json();
 
             if (data.success) {
-                // Save session info
-                if (data.sessionToken) localStorage.setItem('sessionToken', data.sessionToken);
-                if (data.expiresAt) localStorage.setItem('accessExpiresAt', data.expiresAt);
-                if (data.examId) localStorage.setItem('currentExamId', data.examId);
+                if (data.processing && data.jobId) {
+                    // Start polling
+                    let attempts = 0;
+                    const maxAttempts = 60; // 2 minutes (2s interval)
 
-                onSuccess();
+                    while (attempts < maxAttempts) {
+                        await new Promise(r => setTimeout(r, 2000));
+                        attempts++;
+
+                        try {
+                            const pollRes = await fetch('/api/poll-promo-status', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ jobId: data.jobId })
+                            });
+                            const pollData = await pollRes.json();
+
+                            if (pollData.ready) {
+                                if (pollData.error) {
+                                    setPromoError(pollData.error);
+                                    setIsPromoLoading(false);
+                                    return;
+                                }
+                                // Success!
+                                if (pollData.sessionToken) localStorage.setItem('sessionToken', pollData.sessionToken);
+                                if (pollData.expiresAt) localStorage.setItem('accessExpiresAt', pollData.expiresAt);
+                                if (pollData.examId) localStorage.setItem('currentExamId', pollData.examId);
+                                onSuccess();
+                                return;
+                            }
+                            // Continue polling...
+                        } catch (e) {
+                            console.error("Poll error:", e);
+                        }
+                    }
+                    setPromoError("Timeout generazione esame. Riprova.");
+                } else {
+                    // Immediate success
+                    if (data.sessionToken) localStorage.setItem('sessionToken', data.sessionToken);
+                    if (data.expiresAt) localStorage.setItem('accessExpiresAt', data.expiresAt);
+                    if (data.examId) localStorage.setItem('currentExamId', data.examId);
+                    onSuccess();
+                }
             } else {
                 setPromoError(data.error || "Codice non valido");
             }
         } catch (err) {
             setPromoError("Errore di connessione");
         } finally {
-            setIsPromoLoading(false);
+            if (!isPromoLoading) setIsPromoLoading(false); // Only if not polling
         }
     };
 

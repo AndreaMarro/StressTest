@@ -22,6 +22,11 @@ const generateExamSchema = z.object({
 const app = express();
 const port = process.env.PORT || 3000;
 
+// In-memory lock for background generations
+const pendingGenerations = new Set();
+// In-memory map for promo code background jobs
+const promoJobs = new Map(); // jobId -> { status: 'pending'|'done'|'error', data: ... }
+
 // === ENV VALIDATION (Critical for Production) ===
 const requiredEnvVars = ['STRIPE_SECRET_KEY', 'DEEPSEEK_API_KEY'];
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
@@ -174,27 +179,65 @@ app.post('/api/redeem-promo', promoLimiter, async (req, res) => {
             const randomTopic = topic || TOPICS[Math.floor(Math.random() * TOPICS.length)];
             const randomDifficulty = difficulty || DIFFICULTIES[Math.floor(Math.random() * DIFFICULTIES.length)];
 
-            console.log(`🎓 Generating fresh exam for promo: ${randomTopic}/${randomDifficulty}`);
-            try {
-                const examData = await generateExam(randomTopic, randomDifficulty, process.env.DEEPSEEK_API_KEY);
-                const newId = Date.now().toString();
-                const newCacheEntry = {
-                    id: newId,
-                    topic: randomTopic,
-                    difficulty: randomDifficulty,
-                    questions: examData.questions,
-                    timestamp: new Date().toISOString()
-                };
-                const currentCache = getCache();
-                currentCache.push(newCacheEntry);
-                saveCache(currentCache);
-                chosenExamId = newId;
-                chosenTopic = randomTopic;
-                chosenDifficulty = randomDifficulty;
-            } catch (genError) {
-                console.error('Failed to generate exam for promo:', genError);
-                return res.status(500).json({ error: 'Impossibile generare esame al momento. Riprova più tardi.' });
-            }
+            console.log(`🎓 Promo needs generation. Starting background job for: ${randomTopic}/${randomDifficulty}`);
+
+            // Create background job
+            const jobId = crypto.randomUUID();
+            promoJobs.set(jobId, { status: 'pending', startTime: Date.now() });
+
+            // Start background generation
+            (async () => {
+                try {
+                    const examData = await generateExam(randomTopic, randomDifficulty, process.env.DEEPSEEK_API_KEY);
+                    const newId = Date.now().toString();
+                    const newCacheEntry = {
+                        id: newId,
+                        topic: randomTopic,
+                        difficulty: randomDifficulty,
+                        questions: examData.questions,
+                        timestamp: new Date().toISOString()
+                    };
+                    const currentCache = getCache();
+                    currentCache.push(newCacheEntry);
+                    saveCache(currentCache);
+
+                    // Grant access
+                    const { sessionToken, expiresAt } = grantAccess(clientIp, newId);
+
+                    // Update User History
+                    if (userId) {
+                        updateUserHistory(userId, newId);
+                    }
+
+                    // Update job status
+                    promoJobs.set(jobId, {
+                        status: 'done',
+                        data: {
+                            success: true,
+                            sessionToken,
+                            expiresAt,
+                            examId: newId,
+                            topic: randomTopic,
+                            difficulty: randomDifficulty
+                        }
+                    });
+                    console.log(`[Promo Job] ✅ Job ${jobId} completed for exam ${newId}`);
+
+                } catch (genError) {
+                    console.error('[Promo Job] ❌ Failed:', genError);
+                    promoJobs.set(jobId, {
+                        status: 'error',
+                        error: 'Impossibile generare esame al momento. Riprova più tardi.'
+                    });
+                }
+            })();
+
+            // Return processing status immediately
+            return res.json({
+                success: true,
+                processing: true,
+                jobId: jobId
+            });
         }
 
         // Grant access for the chosen exam
@@ -217,6 +260,34 @@ app.post('/api/redeem-promo', promoLimiter, async (req, res) => {
     } catch (error) {
         console.error('Promo redemption error:', error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Endpoint: Poll Promo Status
+app.post('/api/poll-promo-status', (req, res) => {
+    const { jobId } = req.body;
+    if (!jobId) return res.status(400).json({ error: 'Missing jobId' });
+
+    const job = promoJobs.get(jobId);
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+
+    if (job.status === 'pending') {
+        // Check timeout (e.g. 2 mins)
+        if (Date.now() - job.startTime > 120000) {
+            promoJobs.delete(jobId);
+            return res.json({ ready: false, error: 'Timeout generazione esame' });
+        }
+        return res.json({ ready: false });
+    }
+
+    if (job.status === 'error') {
+        promoJobs.delete(jobId); // Cleanup
+        return res.json({ ready: true, error: job.error });
+    }
+
+    if (job.status === 'done') {
+        promoJobs.delete(jobId); // Cleanup
+        return res.json({ ready: true, ...job.data });
     }
 });
 
@@ -549,71 +620,82 @@ app.post('/api/poll-payment-status', async (req, res) => {
 
         // LAZY GENERATION: If examId is missing, try to generate/find one now
         if (!examId && paymentIntent.status === 'succeeded') {
-            console.log('[Poll] ⚠️ Payment succeeded but no examId. Attempting lazy generation...');
-            const { topic, difficulty, excludeIds, userId } = paymentIntent.metadata;
 
-            if (topic && difficulty) {
-                try {
-                    // 1. Check Cache
-                    const cache = getCache();
-                    const excludeList = excludeIds ? excludeIds.split(',') : [];
-
-                    // Get user history to exclude
-                    const userHistory = userId ? getUserHistory(userId) : [];
-                    const allExcludedIds = [...excludeList, ...userHistory];
-
-                    let match = cache.find(e =>
-                        e.topic === topic &&
-                        e.difficulty === difficulty &&
-                        !allExcludedIds.includes(e.id)
-                    );
-
-                    if (match) {
-                        console.log(`[Poll] ✅ Found cached exam ${match.id} for lazy assignment`);
-                        examId = match.id;
-                    } else {
-                        // 2. Generate New
-                        console.log(`[Poll] 🔄 Generating fresh exam for lazy assignment (${topic}/${difficulty})...`);
-                        // Note: This might take time. If it times out, the client will retry.
-                        // Ideally we should use a job queue, but for now we await.
-                        const examData = await generateExam(topic, difficulty, process.env.DEEPSEEK_API_KEY);
-
-                        const newId = Date.now().toString();
-                        const newCacheEntry = {
-                            id: newId,
-                            topic,
-                            difficulty,
-                            questions: examData.questions,
-                            timestamp: new Date().toISOString()
-                        };
-
-                        const currentCache = getCache();
-                        currentCache.push(newCacheEntry);
-                        saveCache(currentCache);
-
-                        examId = newId;
-                        console.log(`[Poll] ✅ Generated new exam ${examId}`);
-                    }
-
-                    // 3. Update Stripe Metadata (CRITICAL: prevents double generation)
-                    await stripe.paymentIntents.update(paymentIntentId, {
-                        metadata: { examId: examId }
-                    });
-                    console.log(`[Poll] 💾 Updated Stripe metadata with examId: ${examId}`);
-
-                    // 4. Update User History
-                    if (userId) {
-                        updateUserHistory(userId, examId);
-                    }
-
-                } catch (err) {
-                    console.error('[Poll] ❌ Lazy generation failed:', err);
-                    return res.json({ ready: false, reason: 'generation_failed' });
-                }
-            } else {
-                console.log('[Poll] ❌ Cannot generate: missing topic/difficulty in metadata');
-                return res.json({ ready: false, reason: 'missing_metadata' });
+            // Check lock
+            if (pendingGenerations.has(paymentIntentId)) {
+                console.log(`[Poll] ⏳ Generation already in progress for ${paymentIntentId}`);
+                return res.json({ ready: false, reason: 'generating' });
             }
+
+            console.log('[Poll] ⚠️ Payment succeeded but no examId. Starting background generation...');
+            pendingGenerations.add(paymentIntentId);
+
+            // Background Task (Fire and Forget)
+            (async () => {
+                try {
+                    const { topic, difficulty, excludeIds, userId } = paymentIntent.metadata;
+
+                    if (topic && difficulty) {
+                        // 1. Check Cache
+                        const cache = getCache();
+                        const excludeList = excludeIds ? excludeIds.split(',') : [];
+                        const userHistory = userId ? getUserHistory(userId) : [];
+                        const allExcludedIds = [...excludeList, ...userHistory];
+
+                        let match = cache.find(e =>
+                            e.topic === topic &&
+                            e.difficulty === difficulty &&
+                            !allExcludedIds.includes(e.id)
+                        );
+
+                        let finalExamId;
+
+                        if (match) {
+                            console.log(`[Poll] ✅ Found cached exam ${match.id} for lazy assignment`);
+                            finalExamId = match.id;
+                        } else {
+                            // 2. Generate New
+                            console.log(`[Poll] 🔄 Generating fresh exam for lazy assignment (${topic}/${difficulty})...`);
+                            const examData = await generateExam(topic, difficulty, process.env.DEEPSEEK_API_KEY);
+
+                            const newId = Date.now().toString();
+                            const newCacheEntry = {
+                                id: newId,
+                                topic,
+                                difficulty,
+                                questions: examData.questions,
+                                timestamp: new Date().toISOString()
+                            };
+
+                            const currentCache = getCache();
+                            currentCache.push(newCacheEntry);
+                            saveCache(currentCache);
+
+                            finalExamId = newId;
+                            console.log(`[Poll] ✅ Generated new exam ${finalExamId}`);
+                        }
+
+                        // 3. Update Stripe Metadata (CRITICAL)
+                        await stripe.paymentIntents.update(paymentIntentId, {
+                            metadata: { examId: finalExamId }
+                        });
+                        console.log(`[Poll] 💾 Updated Stripe metadata with examId: ${finalExamId}`);
+
+                        // 4. Update User History
+                        if (userId) {
+                            updateUserHistory(userId, finalExamId);
+                        }
+                    } else {
+                        console.log('[Poll] ❌ Cannot generate: missing topic/difficulty in metadata');
+                    }
+                } catch (err) {
+                    console.error('[Poll] ❌ Background generation failed:', err);
+                } finally {
+                    pendingGenerations.delete(paymentIntentId);
+                }
+            })();
+
+            return res.json({ ready: false, reason: 'generation_started' });
         }
 
         if (!examId) {

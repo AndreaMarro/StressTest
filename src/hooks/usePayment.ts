@@ -5,7 +5,7 @@ export function usePayment() {
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const pollForWebhookCompletion = async (paymentIntentId: string) => {
-        const maxAttempts = 30; // 30 seconds
+        const maxAttempts = 90; // 90 seconds (DeepSeek can be slow)
 
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
             try {
