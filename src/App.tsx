@@ -16,7 +16,7 @@ import type { Question, UserState, Topic } from './types';
 
 // --- Constants ---
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// API_URL removed
 
 const TOPICS: Topic[] = [
   { id: 'intro', name: "Introduzione e Metodi", icon: <BookOpen className="w-4 h-4" /> },
@@ -107,7 +107,7 @@ export default function App() {
             localStorage.setItem('currentExamId', examId);
 
             // Verify access
-            const res = await fetch(`${API_URL}/api/verify-access`, {
+            const res = await fetch(`/api/verify-access`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ examId, sessionToken })
@@ -153,7 +153,7 @@ export default function App() {
         if (now < expiresDate) {
           setAccessExpiresAt(savedExpires);
           try {
-            const res = await fetch(`${API_URL}/api/verify-access`, {
+            const res = await fetch(`/api/verify-access`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ examId: savedExamId, sessionToken: savedToken })
@@ -199,7 +199,7 @@ export default function App() {
           try {
             console.log(`[Payment] Poll attempt ${attempt + 1}/${maxAttempts}...`);
 
-            const res = await fetch(`${API_URL}/api/poll-payment-status`, {
+            const res = await fetch(`/api/poll-payment-status`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ paymentIntentId })
@@ -217,7 +217,7 @@ export default function App() {
               setAccessExpiresAt(data.expiresAt);
 
               // Fetch exam
-              const accessRes = await fetch(`${API_URL}/api/verify-access`, {
+              const accessRes = await fetch(`/api/verify-access`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ examId: data.examId, sessionToken: data.sessionToken })
@@ -327,7 +327,7 @@ export default function App() {
       console.log('[App] Saved Token:', savedToken);
 
       try {
-        const res = await fetch(`${API_URL} /api/verify - access`, {
+        const res = await fetch(`/api/verify-access`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -448,7 +448,7 @@ export default function App() {
 
         try {
           // Verify with backend
-          const res = await fetch(`${API_URL} /api/verify - payment / ${paymentIntentId} `);
+          const res = await fetch(`/api/verify-payment/${paymentIntentId}`);
           const data = await res.json();
 
           console.log('[App] Payment verification response:', data);
@@ -473,7 +473,7 @@ export default function App() {
 
               // Verify access and fetch exam
               try {
-                const accessRes = await fetch(`${API_URL} /api/verify - access`, {
+                const accessRes = await fetch(`/api/verify-access`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ examId: data.examId, sessionToken: data.sessionToken })
@@ -493,7 +493,7 @@ export default function App() {
                   window.history.replaceState({}, '', window.location.pathname);
 
                   // Generate shareable access link
-                  const accessLink = `${window.location.origin}${window.location.pathname}?access = ${data.sessionToken}_${data.examId} `;
+                  const accessLink = `${window.location.origin}${window.location.pathname}?access=${data.sessionToken}_${data.examId}`;
                   console.log('[App] 🔗 Shareable access link:', accessLink);
 
                   // Show link to user
