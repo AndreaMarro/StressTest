@@ -28,7 +28,7 @@ export function StartScreen({
     onShowHistory
 }: StartScreenProps) {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[80vh] gap-8 animate-in fade-in zoom-in duration-500">
+        <div className="flex flex-col items-center justify-center min-h-[80dvh] gap-8 animate-in fade-in zoom-in duration-500">
 
             {/* Hero Section */}
             <div className="text-center space-y-6 max-w-2xl">
@@ -65,8 +65,8 @@ export function StartScreen({
                     <button
                         onClick={() => setExamType('full')}
                         className={`p-4 rounded border transition-all flex flex-col items-center gap-2 ${examType === 'full'
-                                ? 'border-terminal-green bg-terminal-green/10 text-terminal-green shadow-[0_0_15px_rgba(0,255,0,0.2)]'
-                                : 'border-terminal-dim/50 text-terminal-dim hover:border-terminal-green/50 hover:text-terminal-green/80'
+                            ? 'border-terminal-green bg-terminal-green/10 text-terminal-green shadow-[0_0_15px_rgba(0,255,0,0.2)]'
+                            : 'border-terminal-dim/50 text-terminal-dim hover:border-terminal-green/50 hover:text-terminal-green/80'
                             }`}
                     >
                         <GraduationCap className="w-6 h-6" />
@@ -77,8 +77,8 @@ export function StartScreen({
                     <button
                         onClick={() => setExamType('topic')}
                         className={`p-4 rounded border transition-all flex flex-col items-center gap-2 ${examType === 'topic'
-                                ? 'border-terminal-green bg-terminal-green/10 text-terminal-green shadow-[0_0_15px_rgba(0,255,0,0.2)]'
-                                : 'border-terminal-dim/50 text-terminal-dim hover:border-terminal-green/50 hover:text-terminal-green/80'
+                            ? 'border-terminal-green bg-terminal-green/10 text-terminal-green shadow-[0_0_15px_rgba(0,255,0,0.2)]'
+                            : 'border-terminal-dim/50 text-terminal-dim hover:border-terminal-green/50 hover:text-terminal-green/80'
                             }`}
                     >
                         <Brain className="w-6 h-6" />
@@ -97,8 +97,8 @@ export function StartScreen({
                                     key={t.id}
                                     onClick={() => setSelectedTopic(t.name)}
                                     className={`flex items-center gap-3 p-3 rounded border text-sm transition-all text-left ${selectedTopic === t.name
-                                            ? 'border-terminal-green bg-terminal-green/10 text-terminal-green'
-                                            : 'border-terminal-dim/30 text-terminal-dim hover:border-terminal-green/30'
+                                        ? 'border-terminal-green bg-terminal-green/10 text-terminal-green'
+                                        : 'border-terminal-dim/30 text-terminal-dim hover:border-terminal-green/30'
                                         }`}
                                 >
                                     {t.icon}
@@ -119,10 +119,10 @@ export function StartScreen({
                                     key={d}
                                     onClick={() => setDifficulty(d)}
                                     className={`flex-1 py-2 text-xs uppercase tracking-wider border rounded transition-all ${difficulty === d
-                                            ? d === 'hard'
-                                                ? 'border-red-500 text-red-500 bg-red-500/10 shadow-[0_0_10px_rgba(255,0,0,0.2)]'
-                                                : 'border-terminal-green text-terminal-green bg-terminal-green/10'
-                                            : 'border-terminal-dim/30 text-terminal-dim hover:border-terminal-dim'
+                                        ? d === 'hard'
+                                            ? 'border-red-500 text-red-500 bg-red-500/10 shadow-[0_0_10px_rgba(255,0,0,0.2)]'
+                                            : 'border-terminal-green text-terminal-green bg-terminal-green/10'
+                                        : 'border-terminal-dim/30 text-terminal-dim hover:border-terminal-dim'
                                         }`}
                                 >
                                     {d === 'hard' ? 'Semestre Filtro' : d}
@@ -137,8 +137,8 @@ export function StartScreen({
                     onClick={onStart}
                     disabled={!examType}
                     className={`w-full py-4 mt-4 font-bold text-lg tracking-widest uppercase transition-all relative overflow-hidden group ${examType
-                            ? 'bg-terminal-green text-terminal-black hover:bg-terminal-green/90 shadow-[0_0_20px_rgba(0,255,0,0.4)]'
-                            : 'bg-terminal-dim/20 text-terminal-dim cursor-not-allowed'
+                        ? 'bg-terminal-green text-terminal-black hover:bg-terminal-green/90 shadow-[0_0_20px_rgba(0,255,0,0.4)]'
+                        : 'bg-terminal-dim/20 text-terminal-dim cursor-not-allowed'
                         }`}
                 >
                     <span className="relative z-10 flex items-center justify-center gap-2">

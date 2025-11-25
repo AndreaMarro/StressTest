@@ -752,9 +752,20 @@ app.post('/api/report-bug', bugReportLimiter, (req, res) => {
         const { examId, questionIndex, issueType, description, userAgent, timestamp } = req.body;
 
         // Validation
-        if (examId === undefined || questionIndex === undefined || !issueType) {
+        const bugReportSchema = z.object({
+            examId: z.string().min(1),
+            questionIndex: z.number().int().min(0),
+            issueType: z.enum(['typo', 'logic', 'clarity', 'other']),
+            description: z.string().optional(),
+            userAgent: z.string().optional(),
+            timestamp: z.string().optional()
+        });
+
+        const validation = bugReportSchema.safeParse(req.body);
+        if (!validation.success) {
             return res.status(400).json({
-                error: 'Campi obbligatori mancanti (examId, questionIndex, issueType)'
+                error: 'Dati non validi. Il Primario non accetta scarabocchi.',
+                details: validation.error.errors
             });
         }
 

@@ -213,7 +213,7 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess, examType, topic, diff
                                             value={promoCode}
                                             onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                                             placeholder="CODICE PROMO"
-                                            className="flex-1 p-2 border-2 border-black rounded font-mono text-sm uppercase outline-none focus:bg-gray-50"
+                                            className="flex-1 p-2 border-2 border-black rounded font-mono text-base uppercase outline-none focus:bg-gray-50"
                                             disabled={isPromoLoading}
                                         />
                                         <NeoButton

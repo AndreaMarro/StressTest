@@ -57,7 +57,7 @@ export function ExamView({
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-100px)]">
+        <div className="flex flex-col h-[calc(100dvh-100px)]">
             {/* Header Bar */}
             <div className="flex justify-between items-center mb-6 p-4 border border-terminal-dim/30 rounded bg-terminal-black/50 backdrop-blur sticky top-0 z-30">
                 <div className="flex items-center gap-4">
