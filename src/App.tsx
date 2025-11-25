@@ -64,7 +64,9 @@ function App() {
     clearSession,
     userId,
     nickname,
-    setUserId
+    setUserId,
+    seenExamIds,
+    setSeenExamIds
   } = useSession({
     mode,
     setMode,
@@ -122,6 +124,7 @@ function App() {
 
             window.history.replaceState({}, '', window.location.pathname);
 
+            setSeenExamIds(prev => Array.from(new Set([...prev, data.examId])));
             startExam();
             return;
           }
@@ -239,6 +242,7 @@ function App() {
                   // Clean URL
                   window.history.replaceState({}, '', window.location.pathname);
 
+                  setSeenExamIds(prev => Array.from(new Set([...prev, data.examId])));
                   startExam();
                   return;
                 }
@@ -361,6 +365,7 @@ function App() {
           examType={examType}
           topic={examType === 'full' ? 'full' : selectedTopic}
           difficulty={difficulty}
+          excludeIds={seenExamIds}
           userId={userId}
         />
       )}
