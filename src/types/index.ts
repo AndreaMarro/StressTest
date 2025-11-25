@@ -20,6 +20,7 @@ export interface UserState {
     isExamActive: boolean;
     isExamFinished: boolean;
     score: number;
+    isComplete?: boolean;
 }
 
 export interface Topic {

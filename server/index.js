@@ -843,6 +843,7 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
 
 // --- User History System (Unique Exam Guarantee) ---
 const USER_HISTORY_FILE = path.join(__dirname, 'data', 'user_history.json');
+const USERS_FILE = path.join(__dirname, 'data', 'users.json');
 
 const getUserHistory = (userId) => {
     try {
@@ -873,6 +874,86 @@ const updateUserHistory = (userId, examId) => {
         console.error("Error updating user history:", e);
     }
 };
+
+// --- Authentication System ---
+
+// Helper: Hash password
+const hashPassword = (password) => {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+    return { salt, hash };
+};
+
+// Helper: Verify password
+const verifyPassword = (password, salt, hash) => {
+    const verifyHash = crypto.scryptSync(password, salt, 64).toString('hex');
+    return hash === verifyHash;
+};
+
+// Helper: Get users
+const getUsers = () => {
+    try {
+        if (!fs.existsSync(USERS_FILE)) return {};
+        return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
+    } catch (e) {
+        return {};
+    }
+};
+
+// Helper: Save users
+const saveUsers = (users) => {
+    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+};
+
+// Endpoint: Register
+app.post('/api/auth/register', async (req, res) => {
+    const { nickname, password, currentUserId } = req.body;
+
+    if (!nickname || !password || nickname.length < 3 || password.length < 6) {
+        return res.status(400).json({ error: 'Nickname (min 3) e Password (min 6) richiesti.' });
+    }
+
+    const users = getUsers();
+    if (users[nickname]) {
+        return res.status(409).json({ error: 'Nickname già in uso.' });
+    }
+
+    const { salt, hash } = hashPassword(password);
+
+    // Use currentUserId if provided, otherwise generate new
+    const userId = currentUserId || crypto.randomUUID();
+
+    users[nickname] = {
+        salt,
+        hash,
+        userId,
+        createdAt: new Date().toISOString()
+    };
+
+    saveUsers(users);
+    console.log(`[Auth] Registered new user: ${nickname} (${userId})`);
+
+    res.json({ success: true, userId, nickname });
+});
+
+// Endpoint: Login
+app.post('/api/auth/login', async (req, res) => {
+    const { nickname, password } = req.body;
+
+    if (!nickname || !password) {
+        return res.status(400).json({ error: 'Credenziali mancanti.' });
+    }
+
+    const users = getUsers();
+    const user = users[nickname];
+
+    if (!user || !verifyPassword(password, user.salt, user.hash)) {
+        return res.status(401).json({ error: 'Nickname o password errati.' });
+    }
+
+    console.log(`[Auth] Login successful: ${nickname} (${user.userId})`);
+    res.json({ success: true, userId: user.userId, nickname });
+});
 
 // --- Bug Reporting System ---
 

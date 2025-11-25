@@ -201,22 +201,46 @@ export function useSession({
         setAccessExpiresAt(null);
     }, []);
 
-    // User Identity (for history tracking)
-    const [userId] = useState<string>(() => {
-        const saved = localStorage.getItem('stressTestUserId');
-        if (saved) return saved;
-        const newId = crypto.randomUUID();
-        localStorage.setItem('stressTestUserId', newId);
-        return newId;
-    });
+    // --- User ID & History (Unique Exam Guarantee) ---
+    const [userId, setUserIdState] = useState<string>('');
+    const [nickname, setNicknameState] = useState<string | null>(null);
+
+    useEffect(() => {
+        // Initialize User ID
+        let storedUserId = localStorage.getItem('stress_test_user_id');
+        if (!storedUserId) {
+            storedUserId = crypto.randomUUID();
+            localStorage.setItem('stress_test_user_id', storedUserId);
+        }
+        setUserIdState(storedUserId);
+
+        // Initialize Nickname
+        const storedNickname = localStorage.getItem('stress_test_nickname');
+        if (storedNickname) {
+            setNicknameState(storedNickname);
+        }
+    }, []);
+
+    const setUserId = (newId: string, newNickname?: string) => {
+        setUserIdState(newId);
+        localStorage.setItem('stress_test_user_id', newId);
+        if (newNickname) {
+            setNicknameState(newNickname);
+            localStorage.setItem('stress_test_nickname', newNickname);
+        }
+    };
 
     return {
         accessExpiresAt,
         setAccessExpiresAt,
         accessTimeLeft,
+        timeLeft: accessTimeLeft,
+        isExpired: accessTimeLeft === 0,
         seenExamIds,
         setSeenExamIds,
         clearSession,
-        userId
+        userId,
+        nickname,
+        setUserId
     };
 }

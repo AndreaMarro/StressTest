@@ -1,41 +1,41 @@
 import { useState, useEffect } from 'react';
 import {
-  BookOpen, Activity, Droplets, Waves, Thermometer, Zap, Play
+  BookOpen, Activity, Droplets, Waves, Thermometer, Zap, Play, Brain, User
 } from 'lucide-react';
 import TerminalLayout from './components/layout/TerminalLayout';
 import { PaymentModal } from './components/ui/PaymentModal';
+import { AuthModal } from './components/ui/AuthModal';
 import { HistoryView } from './components/HistoryView';
 import { StartScreen } from './components/views/StartScreen';
 import { ExamView } from './components/views/ExamView';
 import { ResultsView } from './components/views/ResultsView';
-import { useExamState } from './hooks/useExamState';
-import { usePayment } from './hooks/usePayment';
 import { useSession } from './hooks/useSession';
-import type { Topic } from './types';
+import { usePayment } from './hooks/usePayment';
+import type { Question, UserState } from './types';
 
-// --- Constants ---
-
-const TOPICS: Topic[] = [
-  { id: 'intro', name: "Introduzione e Metodi", icon: <BookOpen className="w-4 h-4" /> },
-  { id: 'mechanics', name: "Meccanica", icon: <Activity className="w-4 h-4" /> },
-  { id: 'fluids', name: "Meccanica dei Fluidi", icon: <Droplets className="w-4 h-4" /> },
-  { id: 'waves', name: "Onde Meccaniche", icon: <Waves className="w-4 h-4" /> },
-  { id: 'thermo', name: "Termodinamica", icon: <Thermometer className="w-4 h-4" /> },
-  { id: 'electromag', name: "Elettricità e Magnetismo", icon: <Zap className="w-4 h-4" /> },
-  { id: 'radiation', name: "Radiazioni e Ottica", icon: <Play className="w-4 h-4" /> }
+const TOPICS = [
+  { id: 'full', name: 'Simulazione Completa', icon: <Brain className="w-5 h-5" />, desc: 'Tutti gli argomenti (31 domande)' },
+  { id: 'Introduzione e Metodi', name: 'Introduzione e Metodi', icon: <BookOpen className="w-5 h-5" />, desc: 'Grandezze, Unità, Vettori' },
+  { id: 'Meccanica', name: 'Meccanica', icon: <Activity className="w-5 h-5" />, desc: 'Cinematica, Dinamica, Energia' },
+  { id: 'Meccanica dei Fluidi', name: 'Meccanica dei Fluidi', icon: <Droplets className="w-5 h-5" />, desc: 'Idrostatica, Idrodinamica' },
+  { id: 'Onde Meccaniche', name: 'Onde Meccaniche', icon: <Waves className="w-5 h-5" />, desc: 'Suono, Oscillazioni' },
+  { id: 'Termodinamica', name: 'Termodinamica', icon: <Thermometer className="w-5 h-5" />, desc: 'Calore, Gas, Cicli' },
+  { id: 'Elettricità e Magnetismo', name: 'Elettricità e Magnetismo', icon: <Zap className="w-5 h-5" />, desc: 'Campi, Circuiti, Induzione' },
+  { id: 'Radiazioni e Ottica', name: 'Radiazioni e Ottica', icon: <Play className="w-5 h-5" />, desc: 'Ottica geometrica, Nucleare' },
 ];
 
-// --- Main Component ---
-
-export default function App() {
-  // --- State ---
+function App() {
   const [mode, setMode] = useState<'start' | 'loading' | 'exam' | 'results'>('start');
-  const [examType, setExamType] = useState<'full' | 'topic' | null>(null);
-  const [selectedTopic, setSelectedTopic] = useState<string>(TOPICS[0].name);
+  const [examType, setExamType] = useState<'full' | 'topic' | null>('full');
+  const [selectedTopic, setSelectedTopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isTitleAnimating, setIsTitleAnimating] = useState(true);
   const [showHistory, setShowHistory] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [history, setHistory] = useState<any[]>(() => {
@@ -43,101 +43,74 @@ export default function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  // --- Hooks ---
-  const {
-    questions,
-    setQuestions,
-    userState,
-    setUserState,
-    startExam: startExamState,
-    finishExam: finishExamState
-  } = useExamState();
+  const [userState, setUserState] = useState<UserState>({
+    currentQuestionIndex: 0,
+    answers: {},
+    flagged: {},
+    score: 0,
+    timeRemaining: 0,
+    isExamActive: false,
+    isExamFinished: false,
+    isComplete: false
+  });
 
   const {
-    showPayment,
-    setShowPayment,
-    errorMsg,
-    setErrorMsg,
     pollForWebhookCompletion
   } = usePayment();
 
   const {
-    setAccessExpiresAt,
-    accessTimeLeft,
-    setSeenExamIds,
+    timeLeft,
+    isExpired,
     clearSession,
-    userId
+    userId,
+    nickname,
+    setUserId
   } = useSession({
     mode,
     setMode,
     setQuestions,
-    userState,
     setUserState,
-    questions,
-    setErrorMsg
+    setErrorMsg,
+    userState,
+    questions
   });
-
-  // --- Handlers ---
-
-  const startExam = () => {
-    startExamState();
-    setMode('exam');
-  };
-
-  const handleFinishExam = () => {
-    const score = finishExamState();
-    setMode('results');
-
-    // Save history
-    const newHistoryItem = {
-      id: localStorage.getItem('currentExamId') || Date.now().toString(),
-      date: new Date().toISOString(),
-      score,
-      totalQuestions: questions.length,
-      difficulty,
-      topic: examType === 'full' ? 'Simulazione Completa' : selectedTopic,
-      answers: userState.answers
-    };
-
-    const updatedHistory = [newHistoryItem, ...history];
-    setHistory(updatedHistory);
-    localStorage.setItem('examHistory', JSON.stringify(updatedHistory));
-
-    // Clear session
-    clearSession();
-  };
-
-
 
   const handleStartClick = () => {
     if (!examType) return;
+
+    if (examType === 'topic' && !selectedTopic) {
+      setErrorMsg('Seleziona un argomento per continuare.');
+      return;
+    }
+
+    // Store pending exam details
     localStorage.setItem('pendingExamType', examType);
     localStorage.setItem('pendingTopic', selectedTopic);
     localStorage.setItem('pendingDifficulty', difficulty);
-    setShowPayment(true);
+    setIsPaymentModalOpen(true);
   };
 
   const handlePaymentSuccess = async (paymentIntent?: any) => {
-    setShowPayment(false);
+    setIsPaymentModalOpen(false);
 
     // 1. Direct Payment Intent (No Redirect)
     if (paymentIntent && paymentIntent.status === 'succeeded') {
-      console.log('[App] 💳 Direct payment success detected:', paymentIntent.id);
+      console.log('[App] Payment succeeded immediately:', paymentIntent.id);
       setMode('loading');
       setErrorMsg(null);
 
-      // Poll for the token (since webhook might be slightly delayed)
+      // We need to wait for the token to be generated via webhook or lazy generation
+      // Poll for status
       const data = await pollForWebhookCompletion(paymentIntent.id);
 
       if (data) {
         localStorage.setItem('sessionToken', data.sessionToken);
         localStorage.setItem('currentExamId', data.examId);
         localStorage.setItem('accessExpiresAt', data.expiresAt);
-        setAccessExpiresAt(data.expiresAt);
 
         // Verify Access
         try {
-          const accessRes = await fetch(`/api/verify-access`, {
+          const accessRes = await fetch('/api/verify-access', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ examId: data.examId, sessionToken: data.sessionToken })
@@ -148,7 +121,6 @@ export default function App() {
             setQuestions(accessData.exam.questions);
 
             window.history.replaceState({}, '', window.location.pathname);
-            // alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}`);
 
             startExam();
             return;
@@ -171,17 +143,12 @@ export default function App() {
     const redirectStatus = urlParams.get('redirect_status');
 
     if (paymentIntentId && redirectStatus === 'succeeded') {
-      // This is handled by useEffect on mount, but if we are here, maybe we should ignore?
-      // Actually, if we are here, it means PaymentModal called onSuccess.
-      // But PaymentModal is NOT open if we redirected.
-      // So this block is likely redundant here, but harmless.
       return;
     }
 
     // 3. Promo Code Flow (Fallback)
     const savedToken = localStorage.getItem('sessionToken');
     const savedExamId = localStorage.getItem('currentExamId');
-    const savedExpires = localStorage.getItem('accessExpiresAt');
 
     if (savedToken && savedExamId) {
       try {
@@ -198,8 +165,6 @@ export default function App() {
 
         if (data.hasAccess && data.exam) {
           setQuestions(data.exam.questions);
-          if (savedExpires) setAccessExpiresAt(savedExpires);
-          setSeenExamIds(prev => [...prev, savedExamId]);
           startExam();
         } else {
           throw new Error(data.error || 'Access denied');
@@ -247,13 +212,12 @@ export default function App() {
               localStorage.setItem('sessionToken', data.sessionToken);
               localStorage.setItem('currentExamId', data.examId);
               if (data.expiresAt) {
-                setAccessExpiresAt(data.expiresAt);
                 localStorage.setItem('accessExpiresAt', data.expiresAt);
               }
 
               // 3. Verify Access (Double Check)
               try {
-                const accessRes = await fetch(`/api/verify-access`, {
+                const accessRes = await fetch('/api/verify-access', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ examId: data.examId, sessionToken: data.sessionToken })
@@ -275,8 +239,6 @@ export default function App() {
                   // Clean URL
                   window.history.replaceState({}, '', window.location.pathname);
 
-                  // alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}`);
-
                   startExam();
                   return;
                 }
@@ -290,9 +252,6 @@ export default function App() {
               console.warn('[App] Payment succeeded but no token. Polling webhook...');
               const pollData = await pollForWebhookCompletion(paymentIntentId);
               if (pollData) {
-                // Retry access verification with poll data
-                // ... (Simplified: just reload page or let the user try again?)
-                // Better: set local storage and reload
                 localStorage.setItem('sessionToken', pollData.sessionToken);
                 localStorage.setItem('currentExamId', pollData.examId);
                 window.location.reload();
@@ -334,27 +293,87 @@ export default function App() {
   useEffect(() => {
     const examId = localStorage.getItem('currentExamId');
     if (examId && Object.keys(userState.answers).length > 0) {
-      localStorage.setItem(`answers_${examId} `, JSON.stringify(userState.answers));
+      localStorage.setItem(`answers_${examId}`, JSON.stringify(userState.answers));
     }
   }, [userState.answers]);
 
+  const startExam = () => {
+    setUserState(prev => ({
+      ...prev,
+      timeRemaining: examType === 'full' ? 6000 : 3600, // 100 min or 60 min
+      isComplete: false,
+      answers: {},
+      score: 0
+    }));
+    setMode('exam');
+  };
 
+  const handleSubmit = () => {
+    let score = 0;
+    questions.forEach(q => {
+      if (userState.answers[q.id] === q.correctAnswer) {
+        score++;
+      }
+    });
+    setUserState(prev => ({ ...prev, score, isComplete: true }));
+    setMode('results');
 
+    // Update history
+    const newHistoryItem = {
+      date: new Date().toISOString(),
+      score,
+      total: questions.length,
+      type: examType,
+      topic: selectedTopic,
+      difficulty
+    };
+
+    const updatedHistory = [newHistoryItem, ...history].slice(0, 10);
+    setHistory(updatedHistory);
+    localStorage.setItem('examHistory', JSON.stringify(updatedHistory));
+  };
+
+  const handleRestart = () => {
+    setMode('start');
+    setUserState({
+      currentQuestionIndex: 0,
+      answers: {},
+      flagged: {},
+      score: 0,
+      timeRemaining: 0,
+      isExamActive: false,
+      isExamFinished: false,
+      isComplete: false
+    });
+    clearSession();
+  };
 
   // --- Render ---
 
   return (
     <TerminalLayout>
       {/* Payment Modal */}
-      {showPayment && (
+      {isPaymentModalOpen && (
         <PaymentModal
-          isOpen={true}
-          onClose={() => setShowPayment(false)}
+          isOpen={isPaymentModalOpen}
+          onClose={() => setIsPaymentModalOpen(false)}
           onSuccess={handlePaymentSuccess}
           examType={examType}
           topic={selectedTopic}
           difficulty={difficulty}
           userId={userId}
+        />
+      )}
+
+      {/* Auth Modal */}
+      {isAuthModalOpen && (
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          currentUserId={userId}
+          onLoginSuccess={(newId, newNick) => {
+            setUserId(newId, newNick);
+          }}
         />
       )}
 
@@ -401,6 +420,21 @@ export default function App() {
               <div className="w-2 h-2 bg-terminal-green rounded-full animate-pulse"></div>
             </div>
           </div>
+          <div className="flex items-center gap-4">
+            {/* Auth Button */}
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded border border-terminal-dim/30 hover:border-terminal-green text-terminal-dim hover:text-terminal-green transition-all text-sm font-mono"
+            >
+              <User className="w-4 h-4" />
+              <span className="hidden sm:inline">{nickname || 'PROFILO'}</span>
+            </button>
+
+            <div className="flex items-center gap-2 text-terminal-dim text-sm font-mono">
+              <div className={`w-2 h-2 rounded-full ${isExpired ? 'bg-red-500' : 'bg-terminal-green animate-pulse'}`}></div>
+              {isExpired ? 'SESSIONE SCADUTA' : 'SISTEMA ATTIVO'}
+            </div>
+          </div>
           <div className="text-center space-y-2">
             <h2 className="text-xl font-bold text-terminal-green animate-pulse">GENERAZIONE ESAME IN CORSO...</h2>
             <p className="text-terminal-dim text-sm max-w-md">
@@ -417,8 +451,8 @@ export default function App() {
           questions={questions}
           userState={userState}
           setUserState={setUserState}
-          onFinish={handleFinishExam}
-          accessTimeLeft={accessTimeLeft}
+          onFinish={handleSubmit}
+          accessTimeLeft={timeLeft}
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
@@ -428,12 +462,7 @@ export default function App() {
         <ResultsView
           userState={userState}
           questions={questions}
-          onRestart={() => {
-            // Clear session data to prevent auto-restore
-            localStorage.removeItem('stressTestSession');
-            localStorage.removeItem('stressTestStartTime');
-            setMode('start');
-          }}
+          onRestart={handleRestart}
           history={history}
           examType={examType || 'full'}
           topic={selectedTopic}
@@ -443,3 +472,5 @@ export default function App() {
     </TerminalLayout>
   );
 }
+
+export default App;
