@@ -147,23 +147,11 @@ app.post('/api/redeem-promo', promoLimiter, async (req, res) => {
 
         if (topic && difficulty) {
             // Look for a matching exam in cache that hasn't been seen
-            const cache = getCache();
-
-            // Get user history to exclude
-            const userHistory = userId ? getUserHistory(userId) : [];
-            const allExcludedIds = [...excludeIds, ...userHistory];
-
-            const match = cache.find(e =>
-                e.topic === topic &&
-                e.difficulty === difficulty &&
-                !allExcludedIds.includes(e.id)
-            );
+            const match = findCachedExam(topic, difficulty, excludeIds, userId);
 
             if (match) {
                 chosenExamId = match.id;
-                console.log(`✅ Promo: found existing exam ${chosenExamId} for ${topic}/${difficulty} (not in exclude list)`);
-            } else {
-                console.log(`⚠️ Promo: no fresh exam found in cache for ${topic}/${difficulty} (checked ${cache.length} exams, excluded ${allExcludedIds.length})`);
+                console.log(`✅ Promo: found existing exam ${chosenExamId} for ${topic}/${difficulty}`);
             }
         }
 
@@ -316,6 +304,29 @@ const getCache = () => {
         console.error("Error reading exam cache:", e);
         return [];
     }
+};
+
+// Helper: Find a cached exam respecting exclusions
+const findCachedExam = (topic, difficulty, excludeIds = [], userId = null) => {
+    const cache = getCache();
+
+    // Get user history to exclude
+    const userHistory = userId ? getUserHistory(userId) : [];
+    const allExcludedIds = [...excludeIds, ...userHistory];
+
+    const match = cache.find(e =>
+        e.topic === topic &&
+        e.difficulty === difficulty &&
+        !allExcludedIds.includes(e.id)
+    );
+
+    if (match) {
+        console.log(`[Cache] HIT for ${topic}/${difficulty} (ID: ${match.id})`);
+        return match;
+    }
+
+    console.log(`[Cache] MISS for ${topic}/${difficulty} (Excluded: ${allExcludedIds.length})`);
+    return null;
 };
 
 const saveCache = (cache) => {
@@ -636,17 +647,9 @@ app.post('/api/poll-payment-status', async (req, res) => {
                     const { topic, difficulty, excludeIds, userId } = paymentIntent.metadata;
 
                     if (topic && difficulty) {
-                        // 1. Check Cache
-                        const cache = getCache();
+                        // 1. Try to find in cache first
                         const excludeList = excludeIds ? excludeIds.split(',') : [];
-                        const userHistory = userId ? getUserHistory(userId) : [];
-                        const allExcludedIds = [...excludeList, ...userHistory];
-
-                        let match = cache.find(e =>
-                            e.topic === topic &&
-                            e.difficulty === difficulty &&
-                            !allExcludedIds.includes(e.id)
-                        );
+                        const match = findCachedExam(topic, difficulty, excludeList, userId);
 
                         let finalExamId;
 
