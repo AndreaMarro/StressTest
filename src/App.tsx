@@ -107,54 +107,7 @@ export default function App() {
     clearSession();
   };
 
-  const triggerExamGeneration = async (type: string, topic: string, diff: string) => {
-    setMode('loading');
-    setErrorMsg(null);
 
-    try {
-      const topicToUse = type === 'full' ? 'full' : topic;
-      const response = await fetch('/api/generate-exam', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topic: topicToUse,
-          difficulty: diff,
-          excludeIds: seenExamIds
-        })
-      });
-
-      if (!response.ok) throw new Error('Failed to fetch exam');
-
-      const data = await response.json();
-
-      if (!data.questions || data.questions.length === 0) {
-        throw new Error('No questions received');
-      }
-
-      if (data.sessionToken) {
-        localStorage.setItem('sessionToken', data.sessionToken);
-      }
-
-      if (data.id) {
-        localStorage.setItem('currentExamId', data.id);
-        if (data.expiresAt) {
-          localStorage.setItem('accessExpiresAt', data.expiresAt);
-          setAccessExpiresAt(data.expiresAt);
-        }
-        const newSeenIds = [...seenExamIds, data.id];
-        setSeenExamIds(newSeenIds);
-        localStorage.setItem('seenExamIds', JSON.stringify(newSeenIds));
-      }
-
-      setQuestions(data.questions);
-      startExam();
-    } catch (err: unknown) {
-      console.error(err);
-      const message = err instanceof Error ? err.message : "Errore sconosciuto";
-      setErrorMsg(message || "Errore nel caricamento del test. Riprova.");
-      setMode('start');
-    }
-  };
 
   const handleStartClick = () => {
     if (!examType) return;
@@ -256,16 +209,18 @@ export default function App() {
 
       if (paymentIntentId && redirectStatus === 'succeeded') {
         console.log('[App] 💳 Stripe redirect detected:', paymentIntentId);
+        setMode('loading'); // Show loading immediately
+        setErrorMsg(null);
 
         try {
+          // 1. Verify Payment with Server
           const res = await fetch(`/api/verify-payment/${paymentIntentId}`);
           const data = await res.json();
 
-          if (data.status === 'succeeded') {
-            const pendingType = localStorage.getItem('pendingExamType') as 'full' | 'topic' | null;
-            const pendingTopic = localStorage.getItem('pendingTopic');
-            const pendingDifficulty = localStorage.getItem('pendingDifficulty') as 'easy' | 'medium' | 'hard' | null;
+          console.log('[App] Payment verification result:', data);
 
+          if (data.status === 'succeeded') {
+            // 2. If succeeded, we expect a token.
             if (data.sessionToken && data.examId) {
               console.log('[App] ✅ Payment verified, token received');
               localStorage.setItem('sessionToken', data.sessionToken);
@@ -275,6 +230,7 @@ export default function App() {
                 localStorage.setItem('accessExpiresAt', data.expiresAt);
               }
 
+              // 3. Verify Access (Double Check)
               try {
                 const accessRes = await fetch(`/api/verify-access`, {
                   method: 'POST',
@@ -285,46 +241,67 @@ export default function App() {
 
                 if (accessData.hasAccess && accessData.exam) {
                   setQuestions(accessData.exam.questions);
+
+                  // Restore pending state if available
+                  const pendingType = localStorage.getItem('pendingExamType') as 'full' | 'topic' | null;
+                  const pendingTopic = localStorage.getItem('pendingTopic');
+                  const pendingDifficulty = localStorage.getItem('pendingDifficulty') as 'easy' | 'medium' | 'hard' | null;
+
                   if (pendingType) setExamType(pendingType);
                   if (pendingTopic) setSelectedTopic(pendingTopic);
                   if (pendingDifficulty) setDifficulty(pendingDifficulty);
 
+                  // Clean URL
                   window.history.replaceState({}, '', window.location.pathname);
 
                   const accessLink = `${window.location.origin}${window.location.pathname}?access=${data.sessionToken}_${data.examId}`;
-                  alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}\n\nPuoi usare questo link su qualsiasi dispositivo!`);
+                  // alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}`);
 
                   startExam();
                   return;
                 }
               } catch (e) {
                 console.error('[App] ❌ Access verification failed:', e);
-                setErrorMsg('Errore nella verifica accesso. Riprova.');
+                setErrorMsg('Errore nella verifica accesso. Contatta il supporto.');
+                setMode('start');
+              }
+            } else {
+              // Succeeded but no token? This shouldn't happen with the fix, but if it does, poll.
+              console.warn('[App] Payment succeeded but no token. Polling webhook...');
+              const pollData = await pollForWebhookCompletion(paymentIntentId);
+              if (pollData) {
+                // Retry access verification with poll data
+                // ... (Simplified: just reload page or let the user try again?)
+                // Better: set local storage and reload
+                localStorage.setItem('sessionToken', pollData.sessionToken);
+                localStorage.setItem('currentExamId', pollData.examId);
+                window.location.reload();
+                return;
+              } else {
+                setErrorMsg('Pagamento confermato ma errore nella generazione token. Contatta il supporto.');
+                setMode('start');
               }
             }
-
-            // Fallback
-            if (pendingType) {
-              setExamType(pendingType);
-              if (pendingTopic) setSelectedTopic(pendingTopic);
-              if (pendingDifficulty) setDifficulty(pendingDifficulty);
-            } else {
-              setExamType('full');
-            }
-            window.history.replaceState({}, '', window.location.pathname);
-            triggerExamGeneration(
-              pendingType || 'full',
-              pendingTopic || 'Introduzione e Metodi',
-              pendingDifficulty || 'medium'
-            );
           } else if (data.status === 'processing') {
-            setErrorMsg("Pagamento in elaborazione. Ricarica la pagina tra poco.");
+            console.log('[App] Payment processing. Polling...');
+            const pollData = await pollForWebhookCompletion(paymentIntentId);
+            if (pollData) {
+              localStorage.setItem('sessionToken', pollData.sessionToken);
+              localStorage.setItem('currentExamId', pollData.examId);
+              window.location.reload();
+              return;
+            } else {
+              setErrorMsg("Pagamento ancora in elaborazione. Ricarica la pagina tra poco.");
+              setMode('start');
+            }
           } else {
-            setErrorMsg(`Pagamento non riuscito: ${data.status}. Riprova.`);
+            setErrorMsg(`Stato pagamento: ${data.status}. Riprova.`);
+            setMode('start');
           }
         } catch (e) {
           console.error("Payment verification failed", e);
           setErrorMsg(`Errore verifica pagamento: ${(e as Error).message}.`);
+          setMode('start');
         }
       }
     };
