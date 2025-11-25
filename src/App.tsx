@@ -585,7 +585,12 @@ export default function App() {
         <ResultsView
           userState={userState}
           questions={questions}
-          onRestart={() => setMode('start')}
+          onRestart={() => {
+            // Clear session data to prevent auto-restore
+            localStorage.removeItem('stressTestSession');
+            localStorage.removeItem('stressTestStartTime');
+            setMode('start');
+          }}
           history={history}
           examType={examType || 'full'}
           topic={selectedTopic}
