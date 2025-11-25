@@ -32,30 +32,36 @@ const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
         if (!stripe || !elements) return;
 
         setIsLoading(true);
+        setMessage(null);
 
-        const { error, paymentIntent } = await stripe.confirmPayment({
-            elements,
-            confirmParams: {
-                return_url: window.location.origin,
-                payment_method_data: {
-                    billing_details: {
-                        email: email || undefined,
+        try {
+            const { error, paymentIntent } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    return_url: window.location.origin,
+                    payment_method_data: {
+                        billing_details: {
+                            email: email || undefined,
+                        },
                     },
+                    receipt_email: email || undefined,
                 },
-                receipt_email: email || undefined,
-            },
-            redirect: 'if_required',
-        });
+                redirect: 'if_required',
+            });
 
-        if (error) {
-            setMessage(error.message || "Qualcosa è andato storto.");
-        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-            onSuccess();
-        } else {
-            setMessage("Stato del pagamento imprevisto.");
+            if (error) {
+                setMessage(error.message || "Qualcosa è andato storto.");
+            } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+                onSuccess();
+            } else {
+                setMessage(`Stato del pagamento imprevisto: ${paymentIntent?.status}`);
+            }
+        } catch (err) {
+            console.error("Payment error:", err);
+            setMessage("Errore tecnico durante il pagamento. Riprova.");
+        } finally {
+            setIsLoading(false);
         }
-
-        setIsLoading(false);
     };
 
     return (
