@@ -32,69 +32,90 @@ function validateSyllabusCoverage(questions) {
 }
 
 function sanitizeJson(jsonStr) {
+    console.log('[JSON Sanitizer] Starting sanitization...');
+
     // 1. Remove markdown code blocks
     let clean = jsonStr.replace(/```json\n?|\n?```/g, '').trim();
 
-    // 2. Fix common LaTeX backslash issues in JSON
-    // If the AI outputs single backslashes for LaTeX commands (e.g. \frac instead of \\frac),
-    // JSON.parse will fail or interpret them as escape sequences.
-    // We need to double them, but ONLY if they aren't already doubled.
+    // 2. Fix common LaTeX formatting issues BEFORE parsing
+    // These are string-level replacements (not affecting JSON structure)
 
-    // This regex looks for a backslash that is NOT followed by another backslash,
-    // and NOT part of a valid JSON escape sequence (", \, /, b, f, n, r, t, uXXXX).
-    // However, fixing this with regex is risky. 
-    // A safer approach for this specific context (LaTeX in JSON):
-    // The AI is instructed to use double backslashes, but might fail.
+    // Fix \cdotp (wrong) → \cdot (correct) for multiplication
+    clean = clean.replace(/\\\\cdotp/g, '\\\\cdot');
 
-    // Let's try to parse first. If it fails, we try to repair.
+    // Fix missing spaces in \text{} (e.g., "10\text{m/s}" → "10 \text{ m/s}")
+    // This regex finds number followed immediately by \text without space
+    clean = clean.replace(/(\d)(\\\\text\{)/g, '$1 $2');
+
+    // Fix \text{} without proper spacing for units
+    // e.g., "\text{m/s}" should be " \text{ m/s}" when after numbers
+    clean = clean.replace(/(\\\\text\{)([A-Za-z])/g, '$1 $2');
+
+    console.log('[JSON Sanitizer] Applied LaTeX formatting fixes');
+
     return clean;
 }
 
 function repairAndParse(jsonStr) {
+    // Attempt 1: Standard parse
     try {
-        return JSON.parse(jsonStr);
+        const result = JSON.parse(jsonStr);
+        console.log('[JSON Parser] ✅ Standard parse successful');
+        return result;
     } catch (e) {
-        console.warn("[JSON Parser] Standard parse failed, attempting repair...", e.message);
+        console.warn('[JSON Parser] ⚠️ Standard parse failed:', e.message);
+        console.warn('[JSON Parser] Error position:', e.message.match(/position (\d+)/)?.[1] || 'unknown');
+    }
 
+    // Attempt 2: Fix invalid escape sequences
+    try {
         let repaired = jsonStr;
 
-        // Attempt 1: Double backslashes for LaTeX commands if they look like single backslashes
-        // This is a heuristic: find backslashes followed by letters that aren't standard escapes
-        // Standard escapes: \" \\ \/ \b \f \n \r \t \u
-        // We want to catch \f, \t, \n, \r if they are actually LaTeX (e.g. \frac, \text, \nu, \rho)
-        // But \n is newline... this is tricky.
-        // DeepSeek usually outputs valid JSON string escapes. 
-        // The issue is often unescaped backslashes for LaTeX.
+        // Common issue: Single backslashes for LaTeX commands that aren't valid JSON escapes
+        // Valid JSON escapes: \" \\ \/ \b \f \n \r \t \uXXXX
+        // Invalid examples: \c \d \m \s \a (used in LaTeX like \cos, \degree, \mu, \sqrt, \alpha)
 
-        // Simple fix: Replace single backslashes with double, EXCEPT for valid JSON escapes.
-        // But simpler: The prompt asks for double backslashes.
-
-        // Let's try a library-like approach if available, or just simple cleanup.
-        // Common error: "Bad escaped character"
-
-        // Try to escape unescaped backslashes that are likely LaTeX
-        // Look for \ followed by a letter, where the combination isn't a valid escape.
-        // Valid escapes: b, f, n, r, t, u
-        // LaTeX examples: \frac, \text, \alpha
-
-        // If we see \f, it's form feed. \frac starts with form feed? No, \f is valid.
-        // If the string is "\\frac", it parses to "\frac".
-        // If the string is "\frac", it fails because \f is form feed, then "rac"... wait, \f is valid escape.
-        // "\t" is tab. "\text" -> tab + "ext".
-        // So "\text" parses validly but becomes "	ext". This is BAD for LaTeX.
-
-        // We need to detect if the string contains LaTeX patterns that were interpreted as control chars.
-        // Actually, the error `SyntaxError: Bad escaped character` happens for things like `\c` or `\s` which aren't valid escapes.
-
-        // Regex to find invalid escapes: backslash followed by something that is NOT " / \ b f n r t u
+        // Strategy: Find backslashes NOT followed by valid escape chars
+        // Regex: \ followed by any char that is NOT: " \ / b f n r t u
         repaired = repaired.replace(/\\([^"\\/bfnrtu])/g, '\\\\$1');
 
-        try {
-            return JSON.parse(repaired);
-        } catch (e2) {
-            console.error("[JSON Parser] Repair failed:", e2.message);
-            throw e; // Throw original error
-        }
+        console.log('[JSON Parser] Applied escape sequence repair');
+
+        const result = JSON.parse(repaired);
+        console.log('[JSON Parser] ✅ Repair attempt 1 successful');
+        return result;
+    } catch (e2) {
+        console.warn('[JSON Parser] ⚠️ Repair attempt 1 failed:', e2.message);
+    }
+
+    // Attempt 3: Aggressive cleaning - remove control characters
+    try {
+        let cleaned = jsonStr;
+
+        // Remove non-printable control characters (except \n, \r, \t which are valid)
+        cleaned = cleaned.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+
+        // Fix unescaped quotes inside strings (heuristic: quotes not preceded by backslash)
+        // This is risky but worth trying as last resort
+
+        console.log('[JSON Parser] Applied aggressive cleaning');
+
+        const result = JSON.parse(cleaned);
+        console.log('[JSON Parser] ✅ Repair attempt 2 successful');
+        return result;
+    } catch (e3) {
+        console.error('[JSON Parser] ❌ All repair attempts failed');
+        console.error('[JSON Parser] Original error:', e3.message);
+        console.error('[JSON Parser] First 500 chars of input:', jsonStr.substring(0, 500));
+        console.error('[JSON Parser] Last 200 chars of input:', jsonStr.substring(jsonStr.length - 200));
+
+        // Throw detailed error for debugging
+        const detailedError = new Error(
+            `JSON parsing failed after 3 attempts. Original error: ${e3.message}. ` +
+            `This likely means the AI generated malformed JSON. Check server logs for input sample.`
+        );
+        detailedError.name = 'JSONParseError';
+        throw detailedError;
     }
 }
 
@@ -129,21 +150,69 @@ async function generateExam(topic, difficulty, apiKey) {
          - Usa SOLO numeri semplici (1, 2, 5, 10) o potenze di 10.
          - Oppure usa calcolo letterale (es. "v = sqrt(2gh)").
          - VIETATO usare numeri complessi (es. 3.14, 1.6x10^-19) se non si semplificano immediatamente.
-      4. SARCASMO EDUCATIVO:
-         - Sii brutalmente onesto nelle spiegazioni.
-         - Varia gli insulti: usa ironia sulla loro futura carriera medica (es. "Se sbagli questo, farai danni in corsia").
-         - NON essere ripetitivo con "se... forse...". Sii creativo.
-      5. LINGUA:
-         - Usa SOLO ITALIANO. Vietato usare connettivi inglesi come "Thus", "So", "Hence".
-      6. SPIEGAZIONI ULTRA-DETTAGLIATE (FONDAMENTALE):
-         - Mostra OGNI SINGOLO passaggio matematico. NON SALTARE NULLA.
-         - Se passi da $A=B$ a $A=C$, scrivi il passaggio intermedio.
-         - Spiega il PERCHÉ di ogni scelta fisica e matematica.
-         - Se c'è un'approssimazione, DICHIARALA e GIUSTIFICALA.
-         - Anticipa errori comuni e SPIEGA perché sono sbagliati.
-         - NESSUN "ovviamente", "chiaramente", "si vede che". SPIEGA TUTTO come se lo studente fosse lento.
-         - Usa elenchi puntati per i passaggi logici complessi.
-      
+       4. SARCASMO EDUCATIVO (CREATIVITÀ OBBLIGATORIA):
+          - Sii brutalmente onesto nelle spiegazioni, ma VARIA il tipo di sarcasmo.
+          - VIETATO usare formule ripetitive tipo "Se... forse...". Usa questi modelli:
+            
+            **Esempi di Sarcasmo Variato** (ruotali):
+            1. "Errore da specializzando del primo anno ubriaco dopo il turno di notte."
+            2. "Se applichi [risposta sbagliata], il paziente muore per [conseguenza fisica assurda]. Complimenti."
+            3. "Hai confuso X con Y come confonderesti un cuore con un fegato. Torna sui libri di anatomia."
+            4. "Questo calcolo è talmente sbagliato che violeresti le leggi della termodinamica. Impressionante."
+            5. "Con questa logica, faresti esplodere un termometro provando a misurare la febbre."
+            6. "Errore elementare. Questa la sapeva anche mio nonno, e non era medico."
+            7. "Se curassi i pazienti come risolvi le equazioni, avremmo le celle frigorifere piene."
+            8. "Risposta sbagliata. Ma almeno hai dimostrato creatività nell'ignorare la fisica."
+            9. "Questo errore è classificabile come 'negligenza medica preventiva'."
+            10. "Hai scelto l'opzione peggiore con la sicurezza di un chirurgo che tiene il bisturi al contrario."
+            11. "Se questa fosse una domanda d'esame reale, saresti già bocciato e sotto inchiesta."
+            12. "Complimenti, hai violato simultaneamente Newton, Bernoulli e il buonsenso."
+          
+          - Inserisci il sarcasmo IN MODO NATURALE nella spiegazione, non come appendice.
+          - Varia il tono: cinico, ironico, freddo, sardonico. MAI gentile o incoraggiante.
+          
+       5. LINGUA:
+          - Usa SOLO ITALIANO. Vietato usare connettivi inglesi come "Thus", "So", "Hence".
+          
+       6. SPIEGAZIONI ULTRA-DETTAGLIATE (FONDAMENTALE - MASSIMA PRIORITÀ):
+          
+          **Ogni spiegazione DEVE contenere**:
+          
+          a) **Setup Concettuale** (2-3 righe):
+             - Identifica il principio fisico coinvolto
+             - Dichiara esplicitamente le grandezze note e incognite
+             - Esempio: "Problema di dinamica rotazionale. Noto: momento d'inerzia $I$, velocità angolare $\\omega$. Incognito: energia cinetica rotazionale."
+          
+          b) **Derivazione Formule** (se applicabile):
+             - NON scrivere formule "dal nulla". Derival sempre.
+             - Esempio SBAGLIATO: "Usiamo $E_k = \\frac{1}{2}mv^2$"
+             - Esempio CORRETTO: "Dal teorema del lavoro-energia: $L = \\Delta E_k$. Per una forza costante: $L = F \\cdot s = ma \\cdot s$. Sostituendo $a = \\frac{v^2}{2s}$ (da cinematica): otteniamo $E_k = \\frac{1}{2}mv^2$."
+          
+          c) **Passaggi Algebrici Espliciti** (TUTTI):
+             - Mai saltare steps. Mostra OGNI sostituzione, semplificazione, raccoglimento.
+             - Esempio: Se vai da $F = ma$ a $a = \\frac{F}{m}$, scrivi: "Dividiamo entrambi i membri per $m$: $$F = ma \\Rightarrow \\frac{F}{m} = a$$"
+             - Se sostituisci valori numerici, mostra il calcolo intermedio:
+               Esempio: "$v = \\sqrt{2gh} = \\sqrt{2 \\cdot 10 \\cdot 5} = \\sqrt{100} = 10 \\text{ m/s}$"
+          
+          d) **Giustificazioni Fisiche**:
+             - Spiega PERCHÉ usi una formula e non un'altra.
+             - Esempio: "Usiamo conservazione dell'energia (non dinamica) perché le forze dissipative sono assenti."
+          
+          e) **Errori Comuni e Trappole**:
+             - Anticipa almeno 1-2 errori che uno studente potrebbe fare.
+             - Esempio: "ATTENZIONE: NON confondere velocità angolare $\\omega$ (rad/s) con frequenza $f$ (Hz). La relazione è $\\omega = 2\\pi f$."
+          
+          f) **Approssimazioni Dichiarate**:
+             - Se usi $g = 10 \\text{ m/s}^2$ invece di $9.81$, scrivi: "Approssimazione standard: $g \\approx 10 \\text{ m/s}^2$"
+             - Se trascuri l\\'attrito: "Assumiamo superficie priva di attrito (idealizzazione)."
+          
+          g) **Verifica Dimensionale** (opzionale ma apprezzata):
+             - Esempio: "Verifica unità: $[E] = [m][v]^2 = \\text{kg} \\cdot (\\text{m/s})^2 = \\text{J}$ ✓"
+          
+          **LUNGHEZZA TARGET**: Ogni spiegazione dovrebbe essere 15-25 righe di testo formattato.
+          **VIETATO**: "Ovviamente", "Chiaramente", "Banalmente", "Si vede facilmente", "Come è noto".
+          **OBBLIGATORIO**: Trattare lo studente come se fosse lento ma recuperabile con pazienza (cinica).
+       
       SYLLABUS OBBLIGATORIO COMPLETO (DM418/2025) - DISTRIBUZIONE CFU:
       
       **1. INTRODUZIONE E METODI (0.25 CFU - 1 domanda)**:

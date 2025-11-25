@@ -1,6 +1,8 @@
 import { Menu, X, AlertCircle, Clock, Flag, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react';
 import { MathText } from '../ui/MathText';
+import { BugReportButton } from '../ui/BugReportButton';
 import type { Question, UserState } from '../../types';
+
 
 interface ExamViewProps {
     questions: Question[];
@@ -226,6 +228,12 @@ export function ExamView({
                     </div>
                 </div>
             </div>
+
+            {/* Bug Report Button (Floating) */}
+            <BugReportButton
+                questionIndex={userState.currentQuestionIndex}
+                examId={typeof window !== 'undefined' ? localStorage.getItem('currentExamId') : null}
+            />
         </div>
     );
 }

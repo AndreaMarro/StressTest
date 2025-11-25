@@ -736,6 +736,90 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
     res.json({ received: true });
 });
 
+// --- Bug Reporting System ---
+
+const BUG_REPORT_FILE = path.join(__dirname, 'data', 'bug_reports.json');
+
+// Rate limiter for bug reports (prevent spam)
+const bugReportLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes  
+    max: 10, // Max 10 bug reports per 15 min per IP
+    message: { error: 'Troppe segnalazioni. Il Primario dice: "Calma. Riprova tra 15 minuti."' }
+});
+
+app.post('/api/report-bug', bugReportLimiter, (req, res) => {
+    try {
+        const { examId, questionIndex, issueType, description, userAgent, timestamp } = req.body;
+
+        // Validation
+        if (examId === undefined || questionIndex === undefined || !issueType) {
+            return res.status(400).json({
+                error: 'Campi obbligatori mancanti (examId, questionIndex, issueType)'
+            });
+        }
+
+        const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.ip || req.connection.remoteAddress;
+
+        const bugReport = {
+            id: Date.now().toString(),
+            examId,
+            questionIndex,
+            issueType,
+            description: description || null,
+            userAgent: userAgent || null,
+            clientIp,
+            timestamp: timestamp || new Date().toISOString(),
+            status: 'pending' // Can be: pending, reviewed, fixed, invalid
+        };
+
+        console.log(`[Bug Report] Received report for exam ${examId}, question ${questionIndex}`);
+        console.log(`[Bug Report] Type: ${issueType}, IP: ${clientIp}`);
+
+        // Ensure data directory and file exist
+        if (!fs.existsSync(BUG_REPORT_FILE)) {
+            fs.writeFileSync(BUG_REPORT_FILE, JSON.stringify([], null, 2));
+        }
+
+        // Read existing reports
+        let reports = [];
+        try {
+            const data = fs.readFileSync(BUG_REPORT_FILE, 'utf8');
+            reports = JSON.parse(data);
+        } catch (e) {
+            console.warn('[Bug Report] Could not read existing reports, starting fresh:', e.message);
+            reports = [];
+        }
+
+        // Append new report
+        reports.push(bugReport);
+
+        // Save (append-only)
+        fs.writeFileSync(BUG_REPORT_FILE, JSON.stringify(reports, null, 2));
+
+        console.log(`[Bug Report] Saved report ID ${bugReport.id}`);
+
+        // Primario-style response
+        const primaroResponses = [
+            '✅ Segnalazione ricevuta. Se hai ragione, correggerò. Se ti sbagli, peggio per te.',
+            '✅ Nota presa. Se è un vero errore, lo risolverò. Se è ignoranza tua, studia di più.',
+            '✅ Vedrò. Ma se mi fai perdere tempo con segnalazioni inutili, te ne pentirai.',
+        ];
+
+        const randomResponse = primaroResponses[Math.floor(Math.random() * primaroResponses.length)];
+
+        res.json({
+            success: true,
+            message: randomResponse,
+            reportId: bugReport.id
+        });
+
+    } catch (error) {
+        console.error('[Bug Report] Error:', error);
+        res.status(500).json({
+            error: 'Errore nel salvare la segnalazione. Il Primario non è contento.'
+        });
+    }
+});
 
 
 // Health Check Endpoint (for Render, monitoring, etc.)
