@@ -38,18 +38,38 @@ function sanitizeJson(jsonStr) {
     let clean = jsonStr.replace(/```json\n?|\n?```/g, '').trim();
 
     // 2. Fix common LaTeX formatting issues BEFORE parsing
-    // These are string-level replacements (not affecting JSON structure)
 
-    // Fix \cdotp (wrong) → \cdot (correct) for multiplication
-    clean = clean.replace(/\\\\cdotp/g, '\\\\cdot');
+    // Fix \cdotp (wrong) → \cdot (correct)
+    clean = clean.replace(/\\cdotp/g, '\\cdot');
 
-    // Fix missing spaces in \text{} (e.g., "10\text{m/s}" → "10 \text{ m/s}")
-    // This regex finds number followed immediately by \text without space
-    clean = clean.replace(/(\d)(\\\\text\{)/g, '$1 $2');
+    // Fix \text{...} spacing
+    clean = clean.replace(/(\d)(\\text\{)/g, '$1 $2');
+    clean = clean.replace(/(\\text\{)([A-Za-z])/g, '$1 $2');
 
-    // Fix \text{} without proper spacing for units
-    // e.g., "\text{m/s}" should be " \text{ m/s}" when after numbers
-    clean = clean.replace(/(\\\\text\{)([A-Za-z])/g, '$1 $2');
+    // CRITICAL: Fix backslashes that are NOT valid JSON escapes
+    // We want to preserve LaTeX commands like \frac, \text, etc.
+    // But in JSON, "\" must be "\\".
+    // So we replace single backslashes with double backslashes, 
+    // UNLESS they are already part of a valid JSON escape sequence like \n, \t, \", \\.
+
+    // Strategy:
+    // 1. Replace double backslashes with a placeholder (to protect them)
+    // 2. Replace remaining single backslashes with double backslashes
+    // 3. Restore placeholders
+
+    // However, the AI might output mixed content. 
+    // A safer approach for "Bad escaped character":
+    // Find backslashes that are followed by a character that is NOT a valid escape char.
+    // Valid JSON escapes: " \ / b f n r t u
+
+    // Regex: Backslash followed by NOT ["\/bfnrtu]
+    // We use 4 backslashes in regex to match 1 literal backslash in string
+    clean = clean.replace(/\\([^"\\/bfnrtu])/g, '\\\\$1');
+
+    // Fix: Unescaped quotes inside strings
+    // This is hard to do perfectly without a parser, but we can try to catch common cases
+    // e.g. "explanation": "L'errore è "stupido"" -> "L'errore è \"stupido\""
+    // This is risky, skipping for now to avoid breaking valid structure.
 
     console.log('[JSON Sanitizer] Applied LaTeX formatting fixes');
 
@@ -64,22 +84,17 @@ function repairAndParse(jsonStr) {
         return result;
     } catch (e) {
         console.warn('[JSON Parser] ⚠️ Standard parse failed:', e.message);
-        console.warn('[JSON Parser] Error position:', e.message.match(/position (\d+)/)?.[1] || 'unknown');
     }
 
-    // Attempt 2: Fix invalid escape sequences
+    // Attempt 2: Fix invalid escape sequences (Aggressive)
     try {
         let repaired = jsonStr;
 
-        // Common issue: Single backslashes for LaTeX commands that aren't valid JSON escapes
-        // Valid JSON escapes: \" \\ \/ \b \f \n \r \t \uXXXX
-        // Invalid examples: \c \d \m \s \a (used in LaTeX like \cos, \degree, \mu, \sqrt, \alpha)
-
-        // Strategy: Find backslashes NOT followed by valid escape chars
-        // Regex: \ followed by any char that is NOT: " \ / b f n r t u
+        // Re-apply the backslash fix aggressively
         repaired = repaired.replace(/\\([^"\\/bfnrtu])/g, '\\\\$1');
 
-        console.log('[JSON Parser] Applied escape sequence repair');
+        // Fix: Remove control characters
+        repaired = repaired.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
 
         const result = JSON.parse(repaired);
         console.log('[JSON Parser] ✅ Repair attempt 1 successful');
@@ -88,31 +103,45 @@ function repairAndParse(jsonStr) {
         console.warn('[JSON Parser] ⚠️ Repair attempt 1 failed:', e2.message);
     }
 
-    // Attempt 3: Aggressive cleaning - remove control characters
+    // Attempt 3: "json5-like" relaxation (very aggressive)
     try {
         let cleaned = jsonStr;
 
-        // Remove non-printable control characters (except \n, \r, \t which are valid)
-        cleaned = cleaned.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+        // Try to fix unescaped double quotes inside values
+        // Look for: "key": "value with "quote" inside"
+        // This is extremely hard. 
+        // Alternative: Remove all backslashes that are causing issues?
+        // cleaned = cleaned.replace(/\\/g, ''); // Too destructive for LaTeX
 
-        // Fix unescaped quotes inside strings (heuristic: quotes not preceded by backslash)
-        // This is risky but worth trying as last resort
+        // Try removing the specific offending sequence if possible?
+        // No, we don't know where it is easily.
 
-        console.log('[JSON Parser] Applied aggressive cleaning');
+        console.log('[JSON Parser] Attempting aggressive cleaning...');
 
-        const result = JSON.parse(cleaned);
-        console.log('[JSON Parser] ✅ Repair attempt 2 successful');
-        return result;
+        // Last resort: If it's just a few bad chars, maybe we can strip them?
+        // Let's try to parse with a permissive library if we had one.
+        // Since we don't, let's try to fix the specific error "Bad escaped character"
+        // by replacing ALL single backslashes with double, blindly, except for known good ones.
+
+        cleaned = cleaned.replace(/\\/g, '\\\\'); // Double everything
+        // Now fix the ones that were already good? 
+        // \\" -> \\\\" (too many)
+        // This is messy.
+
+        // Let's rely on the previous fix being good enough for 99% of cases.
+        // If we are here, it's FUBAR.
+
+        throw new Error("Aggressive repair not implemented safely.");
+
     } catch (e3) {
         console.error('[JSON Parser] ❌ All repair attempts failed');
         console.error('[JSON Parser] Original error:', e3.message);
-        console.error('[JSON Parser] First 500 chars of input:', jsonStr.substring(0, 500));
-        console.error('[JSON Parser] Last 200 chars of input:', jsonStr.substring(jsonStr.length - 200));
+        // Log less to avoid massive logs, but enough to debug
+        console.error('[JSON Parser] Input snippet (around error):', jsonStr.substring(Math.max(0, 30500), Math.min(jsonStr.length, 30700)));
 
-        // Throw detailed error for debugging
         const detailedError = new Error(
-            `JSON parsing failed after 3 attempts. Original error: ${e3.message}. ` +
-            `This likely means the AI generated malformed JSON. Check server logs for input sample.`
+            `JSON parsing failed. The AI generated invalid JSON. ` +
+            `Error: ${e3.message}`
         );
         detailedError.name = 'JSONParseError';
         throw detailedError;

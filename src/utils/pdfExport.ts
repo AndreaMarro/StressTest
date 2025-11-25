@@ -74,6 +74,8 @@ export const exportExamPDF = (
 ) => {
     // Sanitize text for PDF (standard fonts don't support all UTF-8)
     // Map problematic characters to safe ASCII or supported symbols
+    // Sanitize text for PDF (standard fonts don't support all UTF-8)
+    // Map problematic characters to safe ASCII or supported symbols
     const sanitizeForPdf = (str: string): string => {
         return str
             .replace(/€/g, 'EUR')
@@ -83,13 +85,26 @@ export const exportExamPDF = (
             .replace(/”/g, '"')
             .replace(/‘/g, "'")
             .replace(/’/g, "'")
-            .replace(/π/g, '(pi)') // Map Greek to text if font fails
+            .replace(/à/g, "a'")
+            .replace(/è/g, "e'")
+            .replace(/é/g, "e'")
+            .replace(/ì/g, "i'")
+            .replace(/ò/g, "o'")
+            .replace(/ù/g, "u'")
+            .replace(/À/g, "A'")
+            .replace(/È/g, "E'")
+            .replace(/É/g, "E'")
+            .replace(/Ì/g, "I'")
+            .replace(/Ò/g, "O'")
+            .replace(/Ù/g, "U'")
+            .replace(/π/g, '(pi)')
             .replace(/α/g, '(alpha)')
             .replace(/β/g, '(beta)')
             .replace(/μ/g, 'u')
             .replace(/Ω/g, 'Ohm')
             .replace(/Δ/g, 'Delta')
-            .replace(/°/g, 'deg');
+            .replace(/°/g, 'deg')
+            .replace(/[^\x00-\x7F]+/g, ''); // Remove any other non-ASCII chars as last resort
     };
 
     try {
