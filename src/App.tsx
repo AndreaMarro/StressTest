@@ -303,6 +303,7 @@ export default function App() {
               } else {
                 setErrorMsg('Pagamento confermato ma errore nella generazione token. Contatta il supporto.');
                 setMode('start');
+                return;
               }
             }
           } else if (data.status === 'processing') {

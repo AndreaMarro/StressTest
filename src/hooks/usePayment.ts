@@ -5,7 +5,7 @@ export function usePayment() {
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const pollForWebhookCompletion = async (paymentIntentId: string) => {
-        const maxAttempts = 15; // 15 seconds
+        const maxAttempts = 30; // 30 seconds
 
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
             try {
