@@ -41,29 +41,37 @@ export function ResultsView({
             <div className="text-center space-y-4 p-8 border border-terminal-dim/30 rounded-lg bg-terminal-black/50 backdrop-blur relative overflow-hidden">
                 <div className={`absolute inset-0 opacity-10 ${percentage >= 60 ? 'bg-terminal-green' : 'bg-red-500'}`}></div>
 
-                <h2 className="text-2xl font-mono text-terminal-dim">RISULTATO FINALE</h2>
-                <div className="text-6xl md:text-8xl font-bold tracking-tighter mb-4">
-                    {userState.score}<span className="text-4xl text-terminal-dim">/{questions.length}</span>
-                </div>
+                <div className="relative z-10">
+                    <h2 className="text-2xl font-mono text-terminal-dim">RISULTATO FINALE</h2>
+                    <div className="text-6xl md:text-8xl font-bold tracking-tighter mb-4">
+                        {userState.score}<span className="text-4xl text-terminal-dim">/{questions.length}</span>
+                    </div>
 
-                <div className={`text-xl md:text-2xl font-bold ${feedback.color} animate-pulse`}>
-                    {feedback.text}
-                </div>
+                    <div className={`text-xl md:text-2xl font-bold ${feedback.color} animate-pulse`}>
+                        {feedback.text}
+                    </div>
 
-                <div className="flex justify-center gap-4 mt-6">
-                    <button
-                        onClick={onRestart}
-                        className="flex items-center gap-2 px-6 py-3 bg-terminal-green text-terminal-black font-bold rounded hover:bg-terminal-green/90 transition-all"
-                    >
-                        <RotateCcw className="w-5 h-5" /> NUOVO TEST
-                    </button>
+                    <div className="flex justify-center gap-4 mt-6">
+                        <button
+                            onClick={() => {
+                                console.log('Button clicked: NUOVO TEST');
+                                onRestart();
+                            }}
+                            className="flex items-center gap-2 px-6 py-3 bg-terminal-green text-terminal-black font-bold rounded hover:bg-terminal-green/90 transition-all cursor-pointer active:scale-95"
+                        >
+                            <RotateCcw className="w-5 h-5" /> NUOVO TEST
+                        </button>
 
-                    <button
-                        onClick={() => exportExamPDF(questions, userState, examType, topic, difficulty)}
-                        className="flex items-center gap-2 px-6 py-3 border border-terminal-dim text-terminal-dim hover:text-terminal-green hover:border-terminal-green rounded transition-all"
-                    >
-                        <Download className="w-5 h-5" /> SALVA PDF
-                    </button>
+                        <button
+                            onClick={() => {
+                                console.log('Button clicked: SALVA PDF');
+                                exportExamPDF(questions, userState, examType, topic, difficulty);
+                            }}
+                            className="flex items-center gap-2 px-6 py-3 border border-terminal-dim text-terminal-dim hover:text-terminal-green hover:border-terminal-green rounded transition-all cursor-pointer active:scale-95"
+                        >
+                            <Download className="w-5 h-5" /> SALVA PDF
+                        </button>
+                    </div>
                 </div>
             </div>
 
