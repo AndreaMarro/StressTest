@@ -117,17 +117,17 @@ export default function App() {
     setShowPayment(true);
   };
 
-  const handlePaymentSuccess = async () => {
+  const handlePaymentSuccess = async (paymentIntent?: any) => {
     setShowPayment(false);
 
-    // Check for redirect first
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentIntentId = urlParams.get('payment_intent');
-    const redirectStatus = urlParams.get('redirect_status');
+    // 1. Direct Payment Intent (No Redirect)
+    if (paymentIntent && paymentIntent.status === 'succeeded') {
+      console.log('[App] 💳 Direct payment success detected:', paymentIntent.id);
+      setMode('loading');
+      setErrorMsg(null);
 
-    if (paymentIntentId && redirectStatus === 'succeeded') {
-      console.log('[Payment] 💳 Stripe redirect detected, starting polling...');
-      const data = await pollForWebhookCompletion(paymentIntentId);
+      // Poll for the token (since webhook might be slightly delayed)
+      const data = await pollForWebhookCompletion(paymentIntent.id);
 
       if (data) {
         localStorage.setItem('sessionToken', data.sessionToken);
@@ -135,29 +135,52 @@ export default function App() {
         localStorage.setItem('accessExpiresAt', data.expiresAt);
         setAccessExpiresAt(data.expiresAt);
 
-        const accessRes = await fetch(`/api/verify-access`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ examId: data.examId, sessionToken: data.sessionToken })
-        });
-        const accessData = await accessRes.json();
+        // Verify Access
+        try {
+          const accessRes = await fetch(`/api/verify-access`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ examId: data.examId, sessionToken: data.sessionToken })
+          });
+          const accessData = await accessRes.json();
 
-        if (accessData.hasAccess && accessData.exam) {
-          setQuestions(accessData.exam.questions);
-          setSeenExamIds(prev => [...prev, data.examId]);
+          if (accessData.hasAccess && accessData.exam) {
+            setQuestions(accessData.exam.questions);
+            setSeenExamIds(prev => [...prev, data.examId]);
 
-          const accessLink = `${window.location.origin}${window.location.pathname}?access=${data.sessionToken}_${data.examId}`;
-          window.history.replaceState({}, '', window.location.pathname);
-          alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}\n\nPuoi usare questo link su qualsiasi dispositivo!`);
+            const accessLink = `${window.location.origin}${window.location.pathname}?access=${data.sessionToken}_${data.examId}`;
+            window.history.replaceState({}, '', window.location.pathname);
+            // alert(`✅ Pagamento riuscito!\n\n🔗 Link di accesso (valido 45 min):\n${accessLink}`);
 
-          startExam();
-          return;
+            startExam();
+            return;
+          }
+        } catch (e) {
+          console.error('[App] ❌ Access verification failed:', e);
+          setErrorMsg('Errore nella verifica accesso. Contatta il supporto.');
+          setMode('start');
         }
+      } else {
+        setErrorMsg('Pagamento confermato ma errore nella generazione token. Contatta il supporto.');
+        setMode('start');
       }
       return;
     }
 
-    // Promo code flow
+    // 2. Check for Redirect (if page reloaded)
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentIntentId = urlParams.get('payment_intent');
+    const redirectStatus = urlParams.get('redirect_status');
+
+    if (paymentIntentId && redirectStatus === 'succeeded') {
+      // This is handled by useEffect on mount, but if we are here, maybe we should ignore?
+      // Actually, if we are here, it means PaymentModal called onSuccess.
+      // But PaymentModal is NOT open if we redirected.
+      // So this block is likely redundant here, but harmless.
+      return;
+    }
+
+    // 3. Promo Code Flow (Fallback)
     const savedToken = localStorage.getItem('sessionToken');
     const savedExamId = localStorage.getItem('currentExamId');
     const savedExpires = localStorage.getItem('accessExpiresAt');

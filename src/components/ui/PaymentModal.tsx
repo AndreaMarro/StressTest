@@ -12,14 +12,14 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 interface PaymentModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSuccess: () => void;
+    onSuccess: (paymentIntent?: any) => void;
     examType?: 'full' | 'topic' | null;
     topic?: string;
     difficulty?: string;
     excludeIds?: string[];
 }
 
-const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
+const CheckoutForm = ({ onSuccess }: { onSuccess: (paymentIntent?: any) => void }) => {
     const stripe = useStripe();
     const elements = useElements();
     const [message, setMessage] = useState<string | null>(null);
@@ -52,7 +52,7 @@ const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
             if (error) {
                 setMessage(error.message || "Qualcosa è andato storto.");
             } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-                onSuccess();
+                onSuccess(paymentIntent);
             } else {
                 setMessage(`Stato del pagamento imprevisto: ${paymentIntent?.status}`);
             }
