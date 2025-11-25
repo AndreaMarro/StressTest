@@ -9,6 +9,14 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const { generateExam } = require('./services/examGenerator');
+const { z } = require('zod');
+
+// Validation Schemas
+const generateExamSchema = z.object({
+    topic: z.string().min(1),
+    difficulty: z.enum(['easy', 'medium', 'hard']),
+    excludeIds: z.array(z.string()).optional()
+});
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -380,11 +388,16 @@ setTimeout(seedCache, 10000);
 // 1. Generate Exam (Cache-First Strategy)
 app.post('/api/generate-exam', aiLimiter, async (req, res) => {
     console.log('Received /api/generate-exam request');
-    const { topic, difficulty, excludeIds = [] } = req.body;
-
-    if (!topic || !difficulty) {
-        return res.status(400).json({ error: 'Topic and difficulty are required' });
+    // Validation
+    const validation = generateExamSchema.safeParse(req.body);
+    if (!validation.success) {
+        return res.status(400).json({
+            error: 'Invalid input',
+            details: validation.error.errors
+        });
     }
+
+    const { topic, difficulty, excludeIds = [] } = validation.data;
 
     // 1. Check Cache with Exclusion
     const cache = getCache();

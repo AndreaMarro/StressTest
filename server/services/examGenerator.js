@@ -31,6 +31,73 @@ function validateSyllabusCoverage(questions) {
     };
 }
 
+function sanitizeJson(jsonStr) {
+    // 1. Remove markdown code blocks
+    let clean = jsonStr.replace(/```json\n?|\n?```/g, '').trim();
+
+    // 2. Fix common LaTeX backslash issues in JSON
+    // If the AI outputs single backslashes for LaTeX commands (e.g. \frac instead of \\frac),
+    // JSON.parse will fail or interpret them as escape sequences.
+    // We need to double them, but ONLY if they aren't already doubled.
+
+    // This regex looks for a backslash that is NOT followed by another backslash,
+    // and NOT part of a valid JSON escape sequence (", \, /, b, f, n, r, t, uXXXX).
+    // However, fixing this with regex is risky. 
+    // A safer approach for this specific context (LaTeX in JSON):
+    // The AI is instructed to use double backslashes, but might fail.
+
+    // Let's try to parse first. If it fails, we try to repair.
+    return clean;
+}
+
+function repairAndParse(jsonStr) {
+    try {
+        return JSON.parse(jsonStr);
+    } catch (e) {
+        console.warn("[JSON Parser] Standard parse failed, attempting repair...", e.message);
+
+        let repaired = jsonStr;
+
+        // Attempt 1: Double backslashes for LaTeX commands if they look like single backslashes
+        // This is a heuristic: find backslashes followed by letters that aren't standard escapes
+        // Standard escapes: \" \\ \/ \b \f \n \r \t \u
+        // We want to catch \f, \t, \n, \r if they are actually LaTeX (e.g. \frac, \text, \nu, \rho)
+        // But \n is newline... this is tricky.
+        // DeepSeek usually outputs valid JSON string escapes. 
+        // The issue is often unescaped backslashes for LaTeX.
+
+        // Simple fix: Replace single backslashes with double, EXCEPT for valid JSON escapes.
+        // But simpler: The prompt asks for double backslashes.
+
+        // Let's try a library-like approach if available, or just simple cleanup.
+        // Common error: "Bad escaped character"
+
+        // Try to escape unescaped backslashes that are likely LaTeX
+        // Look for \ followed by a letter, where the combination isn't a valid escape.
+        // Valid escapes: b, f, n, r, t, u
+        // LaTeX examples: \frac, \text, \alpha
+
+        // If we see \f, it's form feed. \frac starts with form feed? No, \f is valid.
+        // If the string is "\\frac", it parses to "\frac".
+        // If the string is "\frac", it fails because \f is form feed, then "rac"... wait, \f is valid escape.
+        // "\t" is tab. "\text" -> tab + "ext".
+        // So "\text" parses validly but becomes "	ext". This is BAD for LaTeX.
+
+        // We need to detect if the string contains LaTeX patterns that were interpreted as control chars.
+        // Actually, the error `SyntaxError: Bad escaped character` happens for things like `\c` or `\s` which aren't valid escapes.
+
+        // Regex to find invalid escapes: backslash followed by something that is NOT " / \ b f n r t u
+        repaired = repaired.replace(/\\([^"\\/bfnrtu])/g, '\\\\$1');
+
+        try {
+            return JSON.parse(repaired);
+        } catch (e2) {
+            console.error("[JSON Parser] Repair failed:", e2.message);
+            throw e; // Throw original error
+        }
+    }
+}
+
 async function generateExam(topic, difficulty, apiKey) {
     if (!apiKey) {
         throw new Error("API Key is required");
@@ -187,8 +254,8 @@ async function generateExam(topic, difficulty, apiKey) {
     });
 
     const content = completion.choices[0].message.content;
-    const jsonStr = content.replace(/```json\n?|\n?```/g, '');
-    const examData = JSON.parse(jsonStr);
+    const cleanJson = sanitizeJson(content);
+    const examData = repairAndParse(cleanJson);
 
     // --- SYLLABUS VALIDATION ---
     if (isFullExam) {
