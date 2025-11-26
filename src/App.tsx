@@ -304,7 +304,7 @@ function App() {
   const startExam = () => {
     setUserState(prev => ({
       ...prev,
-      timeRemaining: examType === 'full' ? 6000 : 3600, // 100 min or 60 min
+      timeRemaining: examType === 'full' ? 2700 : 1800, // 45 min or 30 min
       isComplete: false,
       answers: {},
       score: 0
